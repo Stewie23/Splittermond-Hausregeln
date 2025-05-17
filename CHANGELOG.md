@@ -1,3 +1,8 @@
+## 13.0.4
+### Fixed
+ * Styling der Journal Seiten ist jetzt konsistenter mit dem Rest
+ * Bilder in den Kompenien werden jetzt gefunden 
+
 ## 13.0.3
 Mit großem Dank an ID_Bastion für das Überarbeiten der Dokumentation und an kleinerFuchs fürs Testen
 ### Breaking changes
