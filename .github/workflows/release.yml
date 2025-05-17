@@ -72,16 +72,10 @@ jobs:
           npm set "//npm.pkg.github.com/:_authToken=garbage"
         env:
             NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Create release
-        uses: elgohr/Github-Release-Action@release-20241111151247
-        with:
-          title: v${{github.event.inputs.version}}
-          tag: v${{github.event.inputs.version}}
-        env:
-         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
+          generate_release_notes: true
           draft: false
           tag_name: v${{github.event.inputs.version}}
           files: |
