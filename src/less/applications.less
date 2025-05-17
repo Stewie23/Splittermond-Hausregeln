@@ -12,10 +12,14 @@
     font-family: @font-primary;
     font-variant-numeric: lining-nums;
   }
-  button.header-control:extend(button.button-style) {
+  button.header-control:not(.icon) {
+    .button-style();
     color: @window-foreground-color;
     width: 22px;
     height: 22px;
+  }
+  button.header-control.icon {
+    color: @window-foreground-color;
   }
 }
 
@@ -24,10 +28,14 @@
     color: @window-foreground-color;
   }
 
-  button {
+  button:not(.icon) {
     .button-style();
+
+    label {
+      color: var(--color-text);
+    }
   }
-  button.button-inline {
+  button.button-inline:not(.icon) {
     .button-inline();
   }
 }
@@ -39,7 +47,7 @@ dialog.application.dialog .window-header {
 
 //DialogV2 body
 dialog.application .window-content {
-  .window-body-def()
+    .window-body-def()
 }
 
 //ApplicationV2 header
@@ -49,8 +57,7 @@ form.application .window-header {
 
 //ApplicationV2 body
 form.application .window-content {
-  .window-body-def();
-
+    .window-body-def();
 }
 
 //Application V1

@@ -22,7 +22,7 @@
     .journal-entry-page {
         width: 100%;
     }
-    
+
 
     .journal-page-content {
         padding-bottom: var(--line-height);
@@ -59,6 +59,7 @@
     .journal-page-header {
         h1, h2, h3, h4, h5, h6 {
             margin-top: var(--line-height);
+            color: var(--color-active-text);
         }
         
         
@@ -68,6 +69,7 @@
         font-family: @font-secondary;
         font-weight: 400;
         line-height: normal;
+        color: var(--color-active-text);
     }
 
     h1, h2, h3 {
@@ -323,6 +325,15 @@
 
         .level3 .headings {
             margin-left: calc(2 * var(--level-indent) + var(--sidebar-width-collapsed));
+        }
+    }
+}
+
+.sheet.journal-sheet {
+    .editor-content {
+        color: var(--color-text-secondary);
+        h1,h2,h3,h4,h5,h6 {
+            color: var(--color-text-secondary);
         }
     }
 }
