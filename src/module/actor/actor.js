@@ -15,8 +15,8 @@ import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
 import {evaluate, of} from "./modifiers/expressions/scalar";
-import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel.js";
-import {DamageModel} from "../item/dataModel/propertyModels/DamageModel.js";
+import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
+import {DamageModel} from "../item/dataModel/propertyModels/DamageModel";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -1472,6 +1472,7 @@ function toItemFeatureModel(genesisFeatures){
             console.warn(`Splittermond | Unknown feature: ${f.name}`);
             foundryApi.warnUser("splittermond.message.featureParsingFailure",{feature: f.name})
         }
+        return isFeature;
     })
     return {internalFeatureList: featureList};
 
