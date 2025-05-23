@@ -1,4 +1,5 @@
 import {identity} from "../../../foundryMocks.js"; //also declares core foundry objects globally
+import {beforeEach,afterEach} from "mocha";
 import {expect} from 'chai';
 import {createHtml} from "../../../../handlebarHarness.ts";
 import {produceJQuery} from "../../../../jQueryHarness.js";
@@ -14,7 +15,8 @@ describe("Spell Properties display", () => {
         return {data: this.item};
     };
     global.foundry.appv1.sheets.ItemSheet.prototype.activateListeners = () => {};
-    global.duplicate = (obj) => obj;
+    beforeEach(()=> {global.duplicate = (obj) => obj});
+    afterEach(() => {global.duplicate = undefined;});
 
     it("displays the availableIn property of the spell item", async () => {
         const availableInDisplayConfig = {

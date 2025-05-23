@@ -7,6 +7,8 @@ class EmbeddedDataModel extends SplittermondDataModel<{ aString: string, aNumber
 
 class MainDataClass extends SplittermondDataModel<{
     embeddedModel: EmbeddedDataModel,
+    array: EmbeddedDataModel[],
+    schema: {moreEmbediments: EmbeddedDataModel}
     anObject: Record<string, string>
 }> {
 }
@@ -31,6 +33,8 @@ export namespace ToObjectProducesInput {
 export namespace InputAcceptsObjectOfEmbeddedDataClasses {
     export const mainClass = new MainDataClass({
         embeddedModel: new EmbeddedDataModel({aString: "str", aNumber: 3}).toObject(),
+        array: [{aString: "str3", aNumber: 5}],
+        schema: {moreEmbediments: {aString:"str2", aNumber: 4}},
         anObject: {
             what: "a",
             is: "3"

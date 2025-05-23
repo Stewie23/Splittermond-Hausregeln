@@ -1,9 +1,9 @@
-import * as Dice from "../util/dice.js"
-import * as Chat from "../util/chat.js";
+import * as Dice from "../util/dice"
+import * as Chat from "../util/chat";
 
-import Attribute from "./attribute.js";
+import Attribute from "./attribute";
 import Skill from "./skill.js";
-import DerivedValue from "./derived-value.js";
+import DerivedValue from "./derived-value";
 import ModifierManager from "./modifier-manager";
 import Attack from "./attack";
 import ActiveDefense from "./active-defense.js";
@@ -15,8 +15,8 @@ import {foundryApi} from "../api/foundryApi";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import {addModifier} from "./modifiers/modifierAddition";
 import {evaluate, of} from "./modifiers/expressions/scalar";
-import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel.js";
-import {DamageModel} from "../item/dataModel/propertyModels/DamageModel.js";
+import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
+import {DamageModel} from "../item/dataModel/propertyModels/DamageModel";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -77,21 +77,21 @@ export default class SplittermondActor extends Actor {
         this._weaknesses = new Susceptibilities("weakness", this.modifier);
 
         if (!this.attributes) {
-            this.attributes = CONFIG.splittermond.attributes.reduce((obj, id) => {
+            this.attributes = splittermond.attributes.reduce((obj, id) => {
                 obj[id] = new Attribute(this, id);
                 return obj;
             }, {});
         }
 
         if (!this.derivedValues) {
-            this.derivedValues = CONFIG.splittermond.derivedValues.reduce((obj, id) => {
+            this.derivedValues = splittermond.derivedValues.reduce((obj, id) => {
                 obj[id] = new DerivedValue(this, id);
                 return obj;
             }, {});
         }
 
         if (!this.skills) {
-            this.skills = [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic].reduce((obj, id) => {
+            this.skills = [...splittermond.skillGroups.general, ...splittermond.skillGroups.magic].reduce((obj, id) => {
                 obj[id] = new Skill(this, id);
                 return obj;
             }, {});
@@ -880,15 +880,11 @@ export default class SplittermondActor extends Actor {
     /** @returns {{pointSpent:boolean, getBonus(skillName:SplittermondSkill): number}} splinterpoints spent */
     spendSplinterpoint() {
         if (this.splinterpoints.value > 0) {
-            this.update({
-                system: {
-                    ...this.system,
+            this.system.updateSource({
                     splinterpoints: {
                         ...this.system.splinterpoints,
                         value: parseInt(this.system.splinterpoints.value) - 1,
-
                     }
-                }
             });
             return {pointSpent: true, getBonus: (skillName) => this.#getSplinterpointBonus(skillName)}
         }
@@ -1247,24 +1243,24 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        return this.update({"system.focus": focusData, "system.health": healthData});
+        return this.system.updateSource({focus: focusData, health: healthData});
     }
 
     async longRest() {
         const data = this.system;
         let p = new Promise((resolve, reject) => {
             let dialog = new Dialog({
-                title: game.i18n.localize("splittermond.clearChanneledFocus"),
-                content: "<p>" + game.i18n.localize("splittermond.clearChanneledFocus") + "</p>",
+                title: foundryApi.localize("splittermond.clearChanneledFocus"),
+                content: "<p>" + foundryApi.localize("splittermond.clearChanneledFocus") + "</p>",
                 buttons: {
                     yes: {
-                        label: game.i18n.localize("splittermond.yes"),
+                        label: foundryApi.localize("splittermond.yes"),
                         callback: html => {
                             resolve(true);
                         }
                     },
                     no: {
-                        label: game.i18n.localize("splittermond.no"),
+                        label: foundryApi.localize("splittermond.no"),
                         callback: html => {
                             resolve(false);
                         }
@@ -1290,7 +1286,7 @@ export default class SplittermondActor extends Actor {
         focusData.consumed.value = Math.max(focusData.consumed.value - data.focusRegeneration.multiplier * this.attributes.willpower.value - data.focusRegeneration.bonus, 0);
         healthData.consumed.value = Math.max(healthData.consumed.value - data.healthRegeneration.multiplier * this.attributes.constitution.value - data.healthRegeneration.bonus, 0);
 
-        return this.update({"system.focus": focusData, "system.health": healthData});
+        return this.system.updateSource({focus: focusData, health: healthData});
     }
 
     /**
@@ -1464,9 +1460,16 @@ function toItemFeatureModel(genesisFeatures){
     }
     /**@type {{name:ItemFeature, value:number}[]}*/
     const featureList = genesisFeatures.map(f =>({
-        name: normalizeName(f.name),
+        name: normalizeName(f.name.replace(/\s*\d+\s*$/,"").trim()),
         value: parseInt(f.value ?? 1)})
-    )
+    ).filter(f => {
+        const isFeature = splittermond.itemFeatures.includes(f.name)
+        if(!isFeature){
+            console.warn(`Splittermond | Unknown feature: ${f.name}`);
+            foundryApi.warnUser("splittermond.message.featureParsingFailure",{feature: f.name})
+        }
+        return isFeature;
+    })
     return {internalFeatureList: featureList};
 
 }

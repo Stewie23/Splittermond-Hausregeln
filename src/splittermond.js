@@ -608,7 +608,7 @@ Hooks.on('renderChatMessageHTML', /**@param {HTMLElement} html*/function (app, h
                 const damageRoll = DamageRoll.from(i.formula, features)
                 //the modifier we 'reflected' from inside damage roll already accounted for "Wuchtig" so, if we reapply modifiers,
                 //we have to make sure we don't double damage by accident
-                const modifier = features.hasFeature("Wuchtig") ? math.floor(i.modifier * 0.5) : i.modifier;
+                const modifier = features.hasFeature("Wuchtig") ? Math.floor(i.modifier * 0.5) : i.modifier;
                 damageRoll.increaseDamage(modifier)
                 return {
                     damageRoll,

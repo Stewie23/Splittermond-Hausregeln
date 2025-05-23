@@ -235,11 +235,19 @@ dialog.dialog input[type="text"]:extend(input[type=text]) {
   line-height: inherit;
 }
 
+dialog section form input[type="file"] {
+  background-color: #00000000;
+  border: 1px solid var(--color-secondary);
+  color: var(--color-text-secondary);
+}
+
 input[type="text"],
 input[type="number"],
 input[type="password"],
 input[type="date"],
 input[type="time"],
+input[type="search"],
+input[type="file"]
 #autoexpanddummy {
   padding: 1px 3px;
   border-width: 4px;

@@ -1,7 +1,11 @@
+## 13.0.5
+### Fixed
+ * Berechnung von Schaden bei Waffen mit dem Merkmal "Wuchtig" funktioniert wieder
+ * Merkmale von Gegenständen, die nicht bekannt sind, werden nun Ignoriert und blockieren nicht den Genesis Import. 
 ## 13.0.4
 ### Fixed
  * Styling der Journal Seiten ist jetzt konsistenter mit dem Rest
- * Bilder in den Kompenien werden jetzt gefunden 
+ * Bilder in den Kompendien werden jetzt gefunden 
 
 ## 13.0.3
 Mit großem Dank an ID_Bastion für das Überarbeiten der Dokumentation und an kleinerFuchs fürs Testen
