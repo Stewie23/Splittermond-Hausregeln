@@ -1,4 +1,5 @@
-export const itemFeatures = [
+//As per MSK p. 47-48
+const originalItemFeatures = [
     "Ablenkend",
     "Auslöser",
     "Deckung",
@@ -50,4 +51,38 @@ export const itemFeatures = [
     "Zweihändig"
 ] as const ;
 
-export type ItemFeature = typeof itemFeatures[number];
+// As per MSK p. 90-92
+const itemImprovements = [
+    "Bequem",
+    "Dornen",
+    "Erhöhte Härte",
+    "Erhöhte Schadensreduktion",
+    "Erhöhter Waffenschaden",
+    "Gehärtet",
+    "Geheimfach",
+    "Haleterung",
+    "Hochwertige Fertigung",
+    "Ferndistanz",
+    "Fertigkeitsbonus",
+    "Kälteschutz",
+    "Paarwaffe",
+    "Reduzierte Behinderung",
+    "Reduzierter Tick-Zuschlag",
+    "Reduzierte Last",
+    "Reduzierte Waffengeschwindigkeit",
+    "Schmutzabweisend",
+    "Treffsicher",
+    "Unauffällig",
+    "Schutz vor Schadensarten",
+    "Verbesserte Defensive",
+    "Verbesserte Exaktheit",
+    "Verbesserte Schärfe",
+    "Verbesserter Entwaffnungsschutz",
+    "Wasserfest",
+    "Verbesserter Kritischer Schaden",
+    "Verbessertes Ablenken",
+    "Zerlegbar",
+] as const
+
+export const itemFeatures = Array.from(new Set([...originalItemFeatures,...itemImprovements])) as ItemFeature[];
+export type ItemFeature = typeof originalItemFeatures[number] | typeof itemImprovements[number];

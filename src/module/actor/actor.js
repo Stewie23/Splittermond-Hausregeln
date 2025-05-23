@@ -1464,9 +1464,15 @@ function toItemFeatureModel(genesisFeatures){
     }
     /**@type {{name:ItemFeature, value:number}[]}*/
     const featureList = genesisFeatures.map(f =>({
-        name: normalizeName(f.name),
+        name: normalizeName(f.name.replace(/\s*\d+\s*$/,"").trim()),
         value: parseInt(f.value ?? 1)})
-    )
+    ).filter(f => {
+        const isFeature = splittermond.itemFeatures.includes(f.name)
+        if(!isFeature){
+            console.warn(`Splittermond | Unknown feature: ${f.name}`);
+            foundryApi.warnUser("splittermond.message.featureParsingFailure",{feature: f.name})
+        }
+    })
     return {internalFeatureList: featureList};
 
 }
