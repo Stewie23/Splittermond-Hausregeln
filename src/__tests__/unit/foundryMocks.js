@@ -149,6 +149,8 @@ global.Dialog = class {
 
 global.game = {};
 
+global.CONFIG = {};
+
 /**
  *  @param {T} input
  *  @return {T}

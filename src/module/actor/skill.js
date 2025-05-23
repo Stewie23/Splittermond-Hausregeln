@@ -5,6 +5,8 @@ import * as Chat from "../util/chat";
 import * as Tooltip from "../util/tooltip";
 import {parseRollDifficulty} from "../util/rollDifficultyParser";
 import {asString} from "module/actor/modifiers/expressions/scalar";
+import {foundryApi} from "../api/foundryApi";
+import {splittermond} from "../config";
 
 
 export default class Skill extends Modifiable {
@@ -20,9 +22,9 @@ export default class Skill extends Modifiable {
         this.id = skill.toLowerCase().trim();
         this.label = skill;
         if (this.actor.system.skills[skill]) {
-            this.label = game.i18n.localize(`splittermond.skillLabel.${this.id}`);
-            attribute1 = attribute1 ? attribute1 : CONFIG.splittermond.skillAttributes[skill][0];
-            attribute2 = attribute2 ? attribute2 : CONFIG.splittermond.skillAttributes[skill][1];
+            this.label = foundryApi.localize(`splittermond.skillLabel.${this.id}`);
+            attribute1 = attribute1 ? attribute1 : splittermond.skillAttributes[skill][0];
+            attribute2 = attribute2 ? attribute2 : splittermond.skillAttributes[skill][1];
             this.attribute1 = this.actor.attributes[attribute1];
             this.attribute2 = this.actor.attributes[attribute2];
         }

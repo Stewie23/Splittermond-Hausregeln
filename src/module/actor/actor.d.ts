@@ -47,3 +47,4 @@ declare class SplittermondActor extends Actor {
 }
 
 export default SplittermondActor;
+export function calculateHeroLevels(): number[];
