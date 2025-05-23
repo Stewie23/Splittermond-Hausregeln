@@ -29,4 +29,6 @@ export declare class DataModel<T extends object, PARENT> extends _InternalDataMo
 }
 
 export type DataModelConstructorInput<T> = {
-    [K in keyof T]: T[K] extends DataModel<infer U, any> ? DataModelConstructorInput<U> : T[K] };
+    [K in keyof T]: T[K] extends DataModel<infer U, any> ? DataModelConstructorInput<U> :
+            T[K] extends object ? DataModelConstructorInput<T[K]>:
+                T[K] };
