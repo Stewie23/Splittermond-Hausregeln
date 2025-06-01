@@ -1,6 +1,7 @@
 ## 13.0.6
 ### Fixed
  * Bei exakt verbleiben nur die ursprüngliche Anzahl an Würfen
+ * Angriffe können wieder gelöscht werden
 
 ## 13.0.5
 ### Fixed
