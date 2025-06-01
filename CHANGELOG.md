@@ -2,6 +2,7 @@
 ### Fixed
  * Bei exakt verbleiben nur die ursprüngliche Anzahl an Würfen
  * Angriffe können wieder gelöscht werden
+ * Säkundäre Waffenmerkmale werden wieder korrekt angezeigt
 
 ## 13.0.5
 ### Fixed
