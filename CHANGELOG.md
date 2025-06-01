@@ -1,7 +1,14 @@
+## 13.0.6
+### Fixed
+ * Bei exakt verbleiben nur die ursprüngliche Anzahl an Würfen
+
 ## 13.0.5
 ### Fixed
  * Berechnung von Schaden bei Waffen mit dem Merkmal "Wuchtig" funktioniert wieder
  * Merkmale von Gegenständen, die nicht bekannt sind, werden nun Ignoriert und blockieren nicht den Genesis Import. 
+ * Styling der Settings verbessert
+ * Styling des Charakterimportdialogs verbessert
+
 ## 13.0.4
 ### Fixed
  * Styling der Journal Seiten ist jetzt konsistenter mit dem Rest

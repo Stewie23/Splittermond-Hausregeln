@@ -171,6 +171,24 @@ describe("DamageRoll evaluation", () => {
         expect(evaluatedRoll.roll.formula).to.equal("2d6kh1");
     });
 
+    it("Should not keep more dice than the original", async () => {
+        const damageString = "1d6"
+
+        const damageRoll = DamageRoll.parse(damageString, "Exakt 3");
+        const evaluatedRoll = await damageRoll.evaluate();
+
+        expect(evaluatedRoll.roll.formula).to.equal("4d6kh1");
+    });
+
+    it("Should add an optional die for exact feature 2", async () => {
+        const damageString = "2d6"
+
+        const damageRoll = DamageRoll.parse(damageString, "Exakt 2");
+        const evaluatedRoll = await damageRoll.evaluate();
+
+        expect(evaluatedRoll.roll.formula).to.equal("4d6kh2");
+    });
+
     it("Should not increase the lowest dice for scharf feature", async () => {
         const damageString = "2d6";
         const rollMock: FoundryRoll = createTestRoll("2d6", [1, 1], 0);

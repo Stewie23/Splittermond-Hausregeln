@@ -155,8 +155,9 @@ async function evaluateDamageRoll(roll: FoundryRoll, features: ItemFeaturesModel
         if (exactValue) {
             activeFeatures.add("Exakt");
             const dieTerm = getFirstDieTerm(roll);
+            const diceToKeep = dieTerm.number;
             dieTerm.number += exactValue;
-            dieTerm.modifiers.push(`kh${exactValue}`)
+            dieTerm.modifiers.push(`kh${diceToKeep}`)
             roll.resetFormula();
         }
     }
