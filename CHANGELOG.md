@@ -3,6 +3,8 @@
  * Bei exakt verbleiben nur die ursprüngliche Anzahl an Würfen
  * Angriffe können wieder gelöscht werden
  * Säkundäre Waffenmerkmale werden wieder korrekt angezeigt
+### Known issues
+ * Der Import von Items mittels Ctrl+V funktieniert bis auf weiteres nur wenn der Text in eine Eingabe (Journalseite, Chat) eingefügt wird. Ursache ist die Art wie Foundry solche Eingaben handhabt. Eine Lösung ist in Arbeit
 
 ## 13.0.5
 ### Fixed
