@@ -1,6 +1,27 @@
 import {DataModel} from "./DataModel";
 
 
+export interface KeybindingActionConfig {
+    editable?: KeybindingActionBinding[];
+    hint?: string;
+    name: string;
+    namespace?: string;
+    onDown?: Function;
+    onUp?: Function;
+    order?: number;
+    precedence?: number;
+    repeat?: boolean;
+    reservedModifiers?: string[];
+    restricted?: boolean;
+    uneditable?: KeybindingActionBinding[];
+}
+
+export interface KeybindingActionBinding {
+    index?: number;
+    key: string;
+    modifiers?: string[];
+}
+
 export interface Speaker {
     scene: string;
     actor: string|null;

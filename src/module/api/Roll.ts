@@ -103,18 +103,7 @@ export function addRolls(one: Roll, other: Roll): Roll {
     const oneTerms = one.terms
     const otherTerms = other.terms
 
-    /*
-     *Workaround for foundry bug https://github.com/foundryvtt/foundryvtt/issues/12080
-     *
-     * Since foundry allows that either all terms are evaluated or none, we don't need to bother checking 'other'
-     */
-    //TODO: Remove with Foundry V13
-    const isEvaluated = one._evaluated;
-    const addTerm = isEvaluated ? Terms.getEvaluatedAddTerm() : Terms.getUnevaluatedAddTerm();
-    if (isEvaluated) {
-        oneTerms.forEach(term => term._evaluated = true)
-        otherTerms.forEach(term => term._evaluated = true)
-    }
+    const addTerm = foundryApi.rollInfra.plusTerm();
     return Roll.fromTerms([...oneTerms, addTerm, ...otherTerms])
 }
 
@@ -126,9 +115,7 @@ export function sumRolls(rolls: Roll[]): Roll {
         return rolls[0];
     }
 
-    //TODO: Remove with Foundry V13, see above
-    const isEvaluated = rolls.some(r => r._evaluated);
-    const addTerm = isEvaluated ? Terms.getEvaluatedAddTerm() : Terms.getUnevaluatedAddTerm();
+    const addTerm = foundryApi.rollInfra.plusTerm();
 
     const terms: (Die | OperatorTerm | NumericTerm | ParentheticTerm)[] = []
     rolls.map(r => r.terms)
@@ -137,27 +124,6 @@ export function sumRolls(rolls: Roll[]): Roll {
             terms.push(addTerm)
         })
     terms.pop()
-    terms.forEach(term => term._evaluated = isEvaluated) //TODO: Remove with Foundry V13, see above
 
     return Roll.fromTerms(terms);
-}
-
-namespace Terms {
-    let evaluatedAddTerm: OperatorTerm | null = null;
-    let unEvaluatedAddTerm: OperatorTerm | null = null;
-
-    export function getEvaluatedAddTerm(): OperatorTerm {
-        if (evaluatedAddTerm === null) {
-            evaluatedAddTerm = foundryApi.rollInfra.plusTerm()
-            evaluatedAddTerm._evaluated = true;
-        }
-        return evaluatedAddTerm
-    }
-
-    export function getUnevaluatedAddTerm(): OperatorTerm {
-        if (unEvaluatedAddTerm === null) {
-            unEvaluatedAddTerm = foundryApi.rollInfra.plusTerm()
-        }
-        return unEvaluatedAddTerm
-    }
 }

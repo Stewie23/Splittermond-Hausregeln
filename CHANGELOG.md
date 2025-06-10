@@ -1,3 +1,8 @@
+## 13.0.7
+### Fixed
+* Import von Items durch Strg+V auf der Leinwand funktioniert wieder
+* Der Itemimport wird bei Anwendung von Strg+V im Chat oder im Journal nicht mehr ausgeführt
+
 ## 13.0.6
 ### Fixed
  * Bei exakt verbleiben nur die ursprüngliche Anzahl an Würfen
