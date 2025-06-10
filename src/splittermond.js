@@ -208,7 +208,27 @@ Hooks.once("init", async function () {
         });
 
 
-    document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), false);
+    foundryApi.keybindings.register("splittermond", "paste", {
+        name: foundryApi.localize("splittermond.keybindings.paste.name"),
+        hint: foundryApi.localize("splittermond.keybindings.paste.hint"),
+        uneditable: [{
+            key: "KeyV",
+            modifiers: ["Control"],
+        }],
+        onDown: ()=> {
+            if(CONFIG.debug.keybindings) {
+                console.debug("Splittermond | Keybinding paste event triggered");
+            }
+            //Direct access of the clipboard is only allowed in a secure context (HTTPS or localhost), which not all users have.
+            //Therefore, we set up a one time paste event to trigger the item importer.
+            document.addEventListener('paste', (e) => ItemImporter.pasteEventhandler(e), {once:true});
+            //Do not report as consumed such that the paste event gets produced.
+            return false;
+        },
+        restricted:true,
+        //Run after the default handler from foundry, we don't want to care about a document copy operation
+        precedence: CONST.KEYBINDING_PRECEDENCE.DEFERRED
+    })
 
     if(import.meta.env.PROD !== true) {
         const quenchTestsInit = (await import("./__tests__/integration/quench")).init;

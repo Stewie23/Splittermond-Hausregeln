@@ -1,6 +1,6 @@
 import type {
     ChatMessageTypes,
-    Hooks,
+    Hooks, KeybindingActionBinding, KeybindingActionConfig,
     MergeObjectOptions,
     SettingsConfig,
     SettingTypeMapper,
@@ -188,5 +188,23 @@ export const foundryApi = new class FoundryApi {
                 game.settings.register(namespace, key, data);
             }
         }
+    }
+
+    get keybindings() {
+       return {
+           get(namespace:string, action:string):KeybindingActionBinding[]{
+                // @ts-ignore
+                return game.keybindings.get(namespace, action);
+           },
+           register(namespace:string, action:string, data: KeybindingActionConfig){
+                // @ts-ignore
+                game.keybindings.register(namespace, action, data);
+           },
+           set(namespace:string, action:string, data: KeybindingActionBinding[]){
+                // @ts-ignore
+                game.keybindings.set(namespace, action, data);
+           }
+       }
+
     }
 }

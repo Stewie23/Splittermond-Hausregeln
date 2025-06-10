@@ -246,8 +246,8 @@
   "primaryTokenAttribute": "healthBar",
   "secondaryTokenAttribute": "focusBar",
   "compatibility": {
-    "minimum": 13,
-    "verified": 13.342,
+    "minimum": 13.345,
+    "verified": 13.345,
     "maximum": 13
   },
   "url": "https://github.com/SplittermondFoundry/splittermond",

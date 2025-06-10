@@ -678,7 +678,13 @@
     },
     "maneuver": "Manöver",
     "maneuvers": "Manöver",
-    "grazingHit": "Streiftreffer"
+    "grazingHit": "Streiftreffer",
+    "keybindings": {
+      "paste": {
+        "name": "Item Einfügen",
+        "hint": "Erlaubt das Importieren von Items aus der Zwischenablage."
+      }
+    }
   },
   "COMBAT": {
     "Round": "Tick"

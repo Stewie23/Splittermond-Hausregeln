@@ -69,7 +69,7 @@
           "unknownObject": "unknown",
           "allErrorMessage": "Syntax error in modifier string '{str}' in '{objectName}'!",
           "foNoCost": "Expression '{expression}' is not convertible to focus costs.",
-          "notANumber": "Expression '{expression}' is not convertible to a number.",
+          "notANumber": "Expression '{expression}' is not convertible to a number."
         }
       }
     },
@@ -137,6 +137,12 @@
         "wind": "wind damage",
         "water": "water damage",
         "nature": "nature damage"
+      }
+    },
+    "keybindings": {
+      "paste": {
+        "name": "Paste Item",
+        "hint": "Permits importing items from the clipboard into the game"
       }
     }
   }

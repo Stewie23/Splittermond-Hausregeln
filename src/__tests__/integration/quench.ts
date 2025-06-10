@@ -10,6 +10,7 @@ import type {Quench} from "@ethaks/fvtt-quench";
 import {settingsTest} from "./settings.test";
 import {foundryRollTest} from "./api/Roll.test";
 import {modifierTest} from "./modifier.test";
+import {foundryKeybindingsTest} from "./api/keybindings.test";
 
 declare const Hooks: any;
 
@@ -26,6 +27,7 @@ function registerQuenchTests(quench: Quench) {
     quench.registerBatch("splittermond.mergeObjects", mergeObjectTest);
     quench.registerBatch("splittermond.SettingsModule", settingsTest);
     quench.registerBatch("splittermond.modifier", modifierTest);
+    quench.registerBatch("splittermond.keybindings", foundryKeybindingsTest);
 }
 
 export function init() {
