@@ -1,3 +1,7 @@
+## 13.0.9
+### Fixed
+* Fehlerhafte Korrektur von 13.0.8 korrigiert.
+
 ## 13.0.8
 ### Fixed
 * LP und FO regenieren sich nun korrekt bei Ruhephasen
