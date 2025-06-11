@@ -1,3 +1,7 @@
+## 13.0.8
+### Fixed
+* LP und FO regenieren sich nun korrekt bei Ruhephasen
+* Upgrade auf Font Awesome 6
 ## 13.0.7
 ### Fixed
 * Import von Items durch Strg+V auf der Leinwand funktioniert wieder
