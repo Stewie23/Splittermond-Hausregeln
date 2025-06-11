@@ -104,6 +104,8 @@ describe("SplittermondActor", () => {
             focus: new FocusDataModel({consumed: {value: 0}, exhausted: {value: 0}, channeled: {entries: []}}),
             currency: {S: 0, L: 0, T: 0},
         });
+        // Mock update to avoid side effects and allow assertions
+        sandbox.spy(actor, "update")
     });
 
     describe("Spell Cost Reduction", () => {
@@ -191,6 +193,8 @@ describe("SplittermondActor", () => {
             expect(actor.system.health.exhausted.value).to.equal(0);
             expect(actor.system.focus.consumed.value).to.equal(5);
             expect(actor.system.health.consumed.value).to.equal(3);
+            // Ensure update was called
+            expect((actor.update as sinon.SinonSpy).calledOnce).to.be.true;
         });
 
         it("should handle long rest correctly", async () => {
@@ -215,6 +219,8 @@ describe("SplittermondActor", () => {
 
             expect(actor.system.focus.consumed.value).to.equal(6);
             expect(actor.system.health.consumed.value).to.equal(2);
+            // Ensure update was called
+            expect((actor.update as sinon.SinonSpy).calledOnce).to.be.true;
         });
     });
 
