@@ -21,7 +21,7 @@ export declare class DataModel<T extends object, PARENT> extends _InternalDataMo
 
     getFlag(scope: string, key: string): unknown;
 
-    updateSource(data: Partial<T>): void;
+    updateSource(data: Partial<T>|Partial<DataModelConstructorInput<T>>): void;
 
     constructor(data: DataModelConstructorInput<T>, options?: any);
 

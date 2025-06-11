@@ -17,18 +17,24 @@ global.Hooks = {
     call(){},
 }
 
-global.Actor = class Actor{
+class FoundryDocument {
     constructor(data, context) {
+    }
+
+    async update(data, options){
+        for (const key in data) {
+            this[key] = data[key];
+        }
     }
 }
 
-global.Item = class Item{
-    constructor(data, context) {
-    }
+global.Actor = class Actor extends FoundryDocument{
+}
+
+global.Item = class Item extends FoundryDocument{
 };
-global.ChatMessage = class ChatMessage{
-    constructor(data, context) {
-    }
+
+global.ChatMessage = class ChatMessage extends FoundryDocument{
 };
 
 global.foundry = {
@@ -107,10 +113,6 @@ global.foundry = {
                 for (const key in data) {
                     this[key] = data[key];
                 }
-            }
-
-            update(data, context) {
-                this.updateSource(data, context)
             }
 
             /**

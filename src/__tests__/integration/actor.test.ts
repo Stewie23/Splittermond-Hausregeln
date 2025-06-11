@@ -8,7 +8,8 @@ import {actorCreator} from "../../module/data/EntityCreator";
 import * as Cara_Aeternia from "../resources/importSamples/Hexenkönigin/Cara_Aeternia.json";
 import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataModel";
 
-declare const Actor: any
+declare const Actor: any;
+declare var Dialog: any;
 
 export function actorTest(context: QuenchBatchContext) {
     const {it, expect, afterEach, beforeEach} = context;
@@ -209,5 +210,63 @@ export function actorTest(context: QuenchBatchContext) {
         });
 
 
+    });
+
+    // New integration test for update propagation
+    describe("Actor rest methods update document", () => {
+        let actor: SplittermondActor;
+        let originalDialog:any
+        beforeEach(async () => {
+            originalDialog = Dialog;
+            actor = await actorCreator.createCharacter({type: "character", name: "Rest Test", system: {}});
+        });
+        afterEach(async () => {
+            if (actor && actor.id) await Actor.deleteDocuments([actor.id]);
+            Dialog = originalDialog;
+        });
+
+        it("shortRest persists replenishment of exhausted stats", async () => {
+            const systemCopy = new CharacterDataModel((actor.system as CharacterDataModel).toObject());
+            systemCopy.focus.updateSource({exhausted: {value: 10}});
+            systemCopy.health.updateSource({exhausted: {value: 8}});
+            await actor.update({system: actor.system});
+
+            await actor.shortRest();
+
+            // Refetch actor from database to ensure update was persisted
+            const updated = foundryApi.getActor(actor.id);
+            expect(updated?.system.focus.exhausted.value).to.equal(0);
+            expect(updated?.system.health.exhausted.value).to.equal(0);
+        });
+
+        it("longRest persits replenishment of consumed stats", async () => {
+            // Simulate dialog auto-confirmation
+            Dialog = class {
+                constructor(options: any) {
+                    if (options?.buttons?.yes) options.buttons.yes.callback();
+                }
+                render() {}
+            };
+            const systemCopy = new CharacterDataModel((actor.system as CharacterDataModel).toObject());
+            systemCopy.focus.updateSource({exhausted: {value: 10}});
+            systemCopy.health.updateSource({exhausted: {value: 8}});
+            systemCopy.focus.updateSource({consumed: {value: 10}});
+            systemCopy.health.updateSource({consumed: {value: 8}});
+            systemCopy.updateSource({attributes:{...actor.system.attributes,
+                willpower: { species:0, initial: 2, advances:0 },
+                constitution: { species:0, initial: 3, advances:0 }
+            }});
+            await actor.update({system: systemCopy});
+
+            await actor.longRest();
+
+            // Refetch actor from database to ensure update was persisted
+            const updated = foundryApi.getActor(actor.id);
+            expect(updated?.system.focus.exhausted.value).to.equal(0);
+            expect(updated?.system.health.exhausted.value).to.equal(0);
+            // Check that consumed values were reduced
+            expect(updated?.system.focus.consumed.value).to.equal(6);
+            expect(updated?.system.health.consumed.value).to.equal(2);
+        });
     });
 }
