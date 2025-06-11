@@ -1236,16 +1236,13 @@ export default class SplittermondActor extends Actor {
     }
 
     async shortRest() {
-        const locallyUpdatedSystem = this.system;
-        let focusData = duplicate(locallyUpdatedSystem.focus);
-        let healthData = duplicate(locallyUpdatedSystem.health);
+        let focusData = duplicate(this.system.focus);
+        let healthData = duplicate(this.system.health);
 
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        locallyUpdatedSystem.health = healthData;
-        locallyUpdatedSystem.focus = focusData;
-        return await this.update({system: locallyUpdatedSystem}) //propagate update to the database
+        return await this.update({system: {health: healthData, focus:focusData}}) //propagate update to the database
     }
 
     async longRest() {
@@ -1271,7 +1268,6 @@ export default class SplittermondActor extends Actor {
             dialog.render(true);
         });
 
-        const locallyUpdatedSystem = this.system;
         let focusData = duplicate(this.system.focus);
         let healthData = duplicate(this.system.health);
 
@@ -1285,12 +1281,10 @@ export default class SplittermondActor extends Actor {
         focusData.exhausted.value = 0;
         healthData.exhausted.value = 0;
 
-        focusData.consumed.value = Math.max(focusData.consumed.value - locallyUpdatedSystem.focusRegeneration.multiplier * this.attributes.willpower.value - locallyUpdatedSystem.focusRegeneration.bonus, 0);
-        healthData.consumed.value = Math.max(healthData.consumed.value - locallyUpdatedSystem.healthRegeneration.multiplier * this.attributes.constitution.value - locallyUpdatedSystem.healthRegeneration.bonus, 0);
+        focusData.consumed.value = Math.max(focusData.consumed.value - this.system.focusRegeneration.multiplier * this.attributes.willpower.value - this.system.focusRegeneration.bonus, 0);
+        healthData.consumed.value = Math.max(healthData.consumed.value - this.system.healthRegeneration.multiplier * this.attributes.constitution.value - this.system.healthRegeneration.bonus, 0);
 
-        locallyUpdatedSystem.focus = focusData;
-        locallyUpdatedSystem.health = healthData;
-        return await this.update({system: locallyUpdatedSystem}) //propagate update to the database
+        return await this.update({system: {health: healthData, focus:focusData}}) //propagate update to the database
     }
 
     /**
