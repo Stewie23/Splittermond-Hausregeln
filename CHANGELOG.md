@@ -1,3 +1,7 @@
+## 13.0.10
+### Fixed
+* Merkmal Stabil wird nun wieder korrekt bei der Schadensberechnung berücksichtigt
+* Wenn Durchdringung größer als die Gesamtschadensreduktion ist, reduziert "Durchdringung" nun nicht mehr mit "Stabil" geschützte Schadensreduktion.
 ## 13.0.9
 ### Fixed
 * Fehlerhafte Korrektur von 13.0.8 korrigiert.
