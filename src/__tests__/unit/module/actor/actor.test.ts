@@ -231,6 +231,77 @@ describe("SplittermondActor", () => {
             expect(result).to.equal("rolled");
         });
     });
+
+    describe("protectedDamageReduction", () => {
+        beforeEach(() => {
+            // Default: stableProtectsAllReduction true
+            asMock(settings.registerBoolean).returnsSetting(true);
+        });
+
+        it("returns 0 if no item protects damage reduction", () => {
+            actor.items = [
+                {
+                    system: {
+                        features: { hasFeature: () => false },
+                        equipped: true,
+                        damageReduction: 2
+                    }
+                }
+            ] as any;
+            expect(actor.protectedDamageReduction).to.equal(0);
+        });
+
+        it("returns damageReduction if item protects and getStableProtectsAllReduction is true", () => {
+            asMock(settings.registerBoolean).returnsSetting(true);
+            // Stub damageReduction getter
+            sandbox.stub(actor, "damageReduction").get(() => 7);
+            actor.items = [
+                {
+                    system: {
+                        features: { hasFeature: (f: string) => f === "Stabil" },
+                        equipped: true,
+                        damageReduction: 2
+                    }
+                }
+            ] as any;
+            expect(actor.protectedDamageReduction).to.equal(7);
+        });
+
+        it("returns sum of protected items' damageReduction if getStableProtectsAllReduction is false", () => {
+            asMock(settings.registerBoolean).returnsSetting(false);
+            sandbox.stub(actor, "damageReduction").get(() => 15);
+            actor.items = [
+                {
+                    system: {
+                        features: { hasFeature: (f: string) => f === "Stabil" },
+                        equipped: true,
+                        damageReduction: 2
+                    }
+                },
+                {
+                    system: {
+                        features: { hasFeature: (f: string) => f === "Stabil" },
+                        equipped: true,
+                        damageReduction: 3
+                    }
+                },
+            ] as any;
+            expect(actor.protectedDamageReduction).to.equal(5);
+        });
+
+        it("returns 0 if no equipped item has Stabil feature", () => {
+            actor.items = [
+                {
+                    system: {
+                        features: { hasFeature: () => false },
+                        equipped: false,
+                        damageReduction: 2
+                    }
+                }
+            ] as any;
+            expect(actor.protectedDamageReduction).to.equal(0);
+        });
+    });
 });
 
 function asCharacter(actor: SplittermondActor) {
