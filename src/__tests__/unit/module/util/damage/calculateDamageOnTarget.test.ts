@@ -121,6 +121,17 @@ describe("Damage Application", () => {
             expect(result.render()).to.equal("12V12");
         });
 
+        it("should keep protected reduction if override is greater than base reduction", () => {
+            const damageImplement = createDamageImplement(21, 6);
+            const damageEvent = createDamageEvent(sandbox, {implements: [damageImplement], _costBase: consumed});
+            const target = setUpTarget(sandbox, 5, {});
+            sandbox.stub(target, "protectedDamageReduction").get(() => 5);
+
+            const result = calculateDamageOnTarget(damageEvent, target);
+
+            expect(result.render()).to.equal("16V16");
+        });
+
         it("should account for reduction override from multiple sources", () => {
             const damageImplement1 = createDamageImplement(5, 3);
             const damageImplement2 = createDamageImplement(3, 5);

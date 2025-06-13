@@ -116,9 +116,13 @@ class AddedDamageCalculator {
 }
 
 function calculateApplicableOverride(event: DamageEvent, target: SplittermondActor, realizedDamageReductionOverride: CostModifier) {
+    const allReduction = event.costBase.multiply(target.damageReduction);
     const protectedReduction = event.costBase.multiply(target.protectedDamageReduction);
-    //Override protection can cancel at most what we override.
-    return event.costBase.add(realizedDamageReductionOverride).subtract(protectedReduction).toModifier(true);
+    const overridableReduction = allReduction.subtract(protectedReduction);
+    const applicableReductionOverride = realizedDamageReductionOverride.subtract(protectedReduction)
+    const overrideExcess= event.costBase.add(applicableReductionOverride).subtract(overridableReduction).toModifier(true);
+
+    return event.costBase.add(applicableReductionOverride).subtract(overrideExcess).toModifier(true);
 }
 
 function calculateActualDamageReduction(event: DamageEvent, target: SplittermondActor, applicableReductionOverride: CostModifier) {
