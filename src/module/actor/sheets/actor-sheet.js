@@ -29,13 +29,13 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
             || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type === "mastery" && i.system.skill === s)).forEach(skill => {
                 sheetData.generalSkills[skill] = this.actor.skills[skill];
             });
         sheetData.magicSkills = {};
         CONFIG.splittermond.skillGroups.magic.filter(s => !sheetData.hideSkills
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type === "mastery" && i.system.skill === s)).forEach(skill => {
                 sheetData.magicSkills[skill] = this.actor.skills[skill];
             });
 
@@ -536,7 +536,7 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
 
             }
 
-            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction != 0) {
+            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction !== 0) {
                 let formula = new Tooltip.TooltipFormula();
                 this.actor.modifier.getForId("damagereduction").getModifiers().addTooltipFormulaElements(formula);
                 content += formula.render();
@@ -587,6 +587,10 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         super.activateListeners(html);
     }
 
+    /**
+     * @param {SplittermondItem} itemData
+     * @returns {Promise<void>}
+     */
     async _onDropItemCreate(itemData) {
         if (itemData.type === "spell") {
             if (itemData.system.availableIn) {
@@ -596,23 +600,31 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
                 });
                 let selectedSkill = "";
                 if (availableIn.split(",").length > 1) {
-                    let p = new Promise((resolve, reject) => {
+                    let p = new Promise((resolve) => {
                         let buttons = {};
 
 
                         availableIn.split(",").forEach(item => {
-                            let data = item.trim().toLowerCase().split(" ");
-                            if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
-                                buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
+                            const data = item.trim().toLowerCase().split(" ");
+                            const skillName = data[0];
+                            if (CONFIG.splittermond.skillGroups.magic.includes(skillName)) {
+                                const skillLevelParse = parseInt(data[1]);
+                                const skillLevel = isNaN(skillLevelParse) ? 0 : skillLevelParse;
+                                const skillLevelLabel = isNaN(skillLevelParse) ? "?" : `${skillLevelParse}`;
+                                if(isNaN(skillLevelParse)) {
+                                    console.warn(`Splittermond | Skill level for magic skill ${itemData.name} is not a number. Using 0 as default value.`);
+                                }
+                                buttons[skillName] = {
+                                    //Communicate to the user that the skill level is wrong by displaying a question mark
+                                    label: `${foundryApi.localize(`splittermond.skillLabel.${data[0].trim()}`)} ${skillLevelLabel}`,
                                     callback: html => {
-                                        resolve(data[0] + " " + data[1])
+                                        resolve(`${skillName} ${skillLevel}`);
                                     }
                                 }
                             }
                         });
                         //if the entries from the availableIn are not valid, show all magic skills for all levels
-                        //this is fallback prudes hideous GUI, but should prevent errors at item rendering.
+                        //this is fallback produces a hideous GUI, but should prevent errors at item rendering.
                         if (Object.keys(buttons).length === 0) {
                             splittermond.skillGroups.magic.forEach(item => {
                                     buttons[item] = {
@@ -651,7 +663,7 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
                 if (selectedSkill) {
                     let skillData = selectedSkill.split(" ");
                     itemData.system.skill = skillData[0];
-                    itemData.system.skillLevel = skillData[1];
+                    itemData.system.skillLevel = parseInt(skillData[1]);
                 }
 
                 if (!itemData.system.skill) {
@@ -733,13 +745,13 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             const currentScene = game.scenes.current?.id || null;
             let combats = game.combats.filter(c => (c.scene === null) || (c.scene.id === currentScene));
             if (combats.length > 0) {
-                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
+                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id === this.actor.id));
                 if (activeCombat != null) {
                     var currentTick = activeCombat.current.round;
                     //check if this status is already present
                     var hasSameStatus = this.actor.items
                         .filter(e => {
-                            return e.type == "statuseffect" && e.name == itemData.name && e.system.startTick;
+                            return e.type === "statuseffect" && e.name === itemData.name && e.system.startTick;
                         })
                         .map(e => {
                             var ticks = [];

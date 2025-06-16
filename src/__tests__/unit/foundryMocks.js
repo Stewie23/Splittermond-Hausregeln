@@ -125,6 +125,12 @@ global.foundry = {
     },
     appv1: {
         sheets: {
+            ActorSheet: class {
+                constructor(...args) {
+                    this.actor = null;
+                    this.system = {};
+                }
+            },
             ItemSheet: class {
                 constructor(item) {
                     this.item = item;
