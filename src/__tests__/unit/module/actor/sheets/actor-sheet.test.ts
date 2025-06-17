@@ -70,6 +70,18 @@ describe ("SplittermondActorSheet", () => {
             expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(2);
         });
 
+        it("should select only valid skill and skillLevel ", async () => {
+            const itemData: any = {
+                type: "spell",
+                system: {availableIn: "crazy antics, illusionmagic 2, illumanic 1"}
+            };
+            await sheet._onDropItemCreate(itemData);
+
+            expect(superFunctionStub.called).to.be.true;
+            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("illusionmagic");
+            expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(2);
+        });
+
         it("should prompt for skill selection if availableIn has multiple skills", async () => {
             sandbox.stub(global, "Dialog").callsFake(function (options: any) {
                 if (options?.buttons?.deathmagic) {
@@ -181,13 +193,13 @@ describe ("SplittermondActorSheet", () => {
 
             expect(superFunctionStub.called).to.be.true;
             expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("athletics");
-            expect(superFunctionStub.lastCall.lastArg.system.level).to.equal("3");
+            expect(superFunctionStub.lastCall.lastArg.system.level).to.equal(3);
         });
 
         it("should prompt for skill selection if availableIn has multiple skills", async () => {
             sandbox.stub(global, "Dialog").callsFake(function (options: any) {
-                if (options?.buttons?.swords) {
-                    options.buttons.swords.callback();
+                if (options?.buttons?.acrobatics) {
+                    options.buttons.acrobatics.callback();
                 }
                 return {
                     render: () => {
@@ -197,12 +209,12 @@ describe ("SplittermondActorSheet", () => {
 
             const itemData: any = {
                 type: "mastery",
-                system: {availableIn: "athletics 2, swords 1"}
+                system: {availableIn: "athletics 2, acrobatics 1"}
             };
 
             await sheet._onDropItemCreate(itemData);
-            expect(itemData.system.skill).to.equal("swords");
-            expect(itemData.system.level).to.equal("1");
+            expect(itemData.system.skill).to.equal("acrobatics");
+            expect(itemData.system.level).to.equal(1);
         });
 
         it("should return early if dialog is cancelled", async () => {
@@ -218,7 +230,7 @@ describe ("SplittermondActorSheet", () => {
 
             const itemData: any = {
                 type: "mastery",
-                system: {availableIn: "athletics 2, swords 1"}
+                system: {availableIn: "athletics 2, acrobatics 1"}
             };
 
             await sheet._onDropItemCreate(itemData);
@@ -227,27 +239,36 @@ describe ("SplittermondActorSheet", () => {
             expect(itemData.system.skill).to.be.undefined;
         });
 
-        it("should fallback to all skills if availableIn is invalid", async () => {
-            sandbox.stub(global, "Dialog").callsFake(function (options: any) {
-                if (options?.buttons?.athletics) {
-                    options.buttons.athletics.callback();
-                }
-                return {
-                    render: () => {
-                    }
-                };
-            });
+        [
+            {title: "For single Item", availableIn: "invaliskill"},
+            {title: "For multiple items", availableIn: "invalidskill1, invalidskill2"}
+        ].forEach(testInput => {
+            splittermond.skillGroups.all
+                .flatMap(skill => ({skill, skillLevel: 0, name: `${skill} 0`}))
+                .forEach(({skill, skillLevel, name}) => {
+                    it(`${testInput.title}: should allow selection of ${name} if availableIn is not valid`, async () => {
+                        sandbox.stub(global, "Dialog").callsFake(function (options: any) {
+                            if (options?.buttons?.[skill]) {
+                                options.buttons[skill].callback();
+                            }
+                            return {
+                                render: () => {
+                                }
+                            };
+                        });
 
-            const itemData: any = {
-                type: "mastery",
-                system: {availableIn: "invalidskill"}
-            };
+                        const itemData: any = {
+                            type: "mastery",
+                            system: {availableIn: "invalidskill"}
+                        };
 
-            await sheet._onDropItemCreate(itemData);
+                        await sheet._onDropItemCreate(itemData);
 
-            expect(superFunctionStub.called).to.be.true;
-            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("athletics");
-            expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(0);
+                        expect(superFunctionStub.called).to.be.true;
+                        expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal(skill);
+                        expect(superFunctionStub.lastCall.lastArg.system.level).to.equal(skillLevel);
+                    });
+                });
         });
     });
 });
