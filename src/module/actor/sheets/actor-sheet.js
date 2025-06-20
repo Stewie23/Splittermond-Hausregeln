@@ -5,6 +5,7 @@ import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
 import {ItemFeaturesModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel.js";
 import {DamageRoll} from "../../util/damage/DamageRoll.js";
 import {CostBase} from "../../util/costs/costTypes.js";
+import {parseAvailableIn, selectSkillDialog} from "./parseAvailableIn";
 
 export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {
@@ -29,13 +30,13 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         CONFIG.splittermond.skillGroups.general.filter(s => !sheetData.hideSkills
             || ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(s)
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type === "mastery" && i.system.skill === s)).forEach(skill => {
                 sheetData.generalSkills[skill] = this.actor.skills[skill];
             });
         sheetData.magicSkills = {};
         CONFIG.splittermond.skillGroups.magic.filter(s => !sheetData.hideSkills
             || this.actor.skills[s].points > 0
-            || this.actor.items.find(i => i.type == "mastery" && i.system.skill == s)).forEach(skill => {
+            || this.actor.items.find(i => i.type === "mastery" && i.system.skill === s)).forEach(skill => {
                 sheetData.magicSkills[skill] = this.actor.skills[skill];
             });
 
@@ -536,7 +537,7 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
 
             }
 
-            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction != 0) {
+            if (event.currentTarget.classList.contains("damage-reduction") && this.actor.damageReduction !== 0) {
                 let formula = new Tooltip.TooltipFormula();
                 this.actor.modifier.getForId("damagereduction").getModifiers().addTooltipFormulaElements(formula);
                 content += formula.render();
@@ -587,145 +588,42 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         super.activateListeners(html);
     }
 
+    /**
+     * @param {SplittermondItem} itemData
+     * @returns {Promise<void>}
+     */
     async _onDropItemCreate(itemData) {
-        if (itemData.type === "spell") {
-            if (itemData.system.availableIn) {
-                let availableIn = itemData.system.availableIn.trim().toLowerCase();
-                CONFIG.splittermond.skillGroups.magic.forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
-                });
-                let selectedSkill = "";
-                if (availableIn.split(",").length > 1) {
-                    let p = new Promise((resolve, reject) => {
-                        let buttons = {};
+        if (itemData.type === "spell" || itemData.type === "mastery") {
+            const isSpell = itemData.type === "spell";
+            const allowedSkills = isSpell
+                ? splittermond.skillGroups.magic
+                : splittermond.skillGroups.all;
+            const defaultLevel = isSpell ? 0 : (itemData.system.level ?? 0);
+            const dialogTitle = isSpell
+                ? foundryApi.localize("splittermond.chooseMagicSkill")
+                : foundryApi.localize("splittermond.chooseSkill");
 
-
-                        availableIn.split(",").forEach(item => {
-                            let data = item.trim().toLowerCase().split(" ");
-                            if (CONFIG.splittermond.skillGroups.magic.includes(data[0])) {
-                                buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0].trim()}`) + " " + data[1],
-                                    callback: html => {
-                                        resolve(data[0] + " " + data[1])
-                                    }
-                                }
-                            }
-                        });
-                        //if the entries from the availableIn are not valid, show all magic skills for all levels
-                        //this is fallback prudes hideous GUI, but should prevent errors at item rendering.
-                        if (Object.keys(buttons).length === 0) {
-                            splittermond.skillGroups.magic.forEach(item => {
-                                    buttons[item] = {
-                                        label: foundryApi.localize(`splittermond.skillLabel.${item}`),
-                                        callback: html => {
-                                            resolve(`${item} 0`);
-                                        }
-                                    };
-                            });
-                        }
-                        buttons["_cancel"] = {
-                            label: game.i18n.localize("splittermond.cancel"),
-                            callback: html => {
-                                resolve("");
-                            }
-                        }
-                        let dialog = new Dialog({
-                            title: game.i18n.localize("splittermond.chooseMagicSkill"),
-                            content: "",
-                            buttons: buttons
-                        }, {
-                            classes: ["splittermond", "dialog", "selection"]
-                        });
-                        dialog.render(true);
-                    });
-
-                    selectedSkill = await p;
-                    if (!selectedSkill.trim())
-                        return;
-                } else {
-                    if (availableIn.trim())
-                        selectedSkill = availableIn;
+                const parsed = parseAvailableIn(
+                    itemData.system?.availableIn ?? "",
+                    allowedSkills,
+                    defaultLevel
+                );
+                let selectedSkill;
+                if (parsed.length > 1 || parsed.length === 0) {
+                    selectedSkill = await selectSkillDialog(
+                        parsed,
+                        allowedSkills,
+                        dialogTitle,
+                        defaultLevel
+                    );
+                } else if (parsed.length === 1) {
+                    selectedSkill = {skill: parsed[0].skill, level: parsed[0].level ?? 0 };
                 }
 
+                if (!selectedSkill) return;
 
-                if (selectedSkill) {
-                    let skillData = selectedSkill.split(" ");
-                    itemData.system.skill = skillData[0];
-                    itemData.system.skillLevel = skillData[1];
-                }
-
-                if (!itemData.system.skill) {
-                    return;
-                }
-            }
-        }
-
-        if (itemData.type === "mastery") {
-            if (itemData.system.availableIn) {
-                let availableIn = itemData.system.availableIn.trim().toLowerCase();
-                [...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].forEach(i => {
-                    availableIn = availableIn.replace(game.i18n.localize(`splittermond.skillLabel.${i}`).toLowerCase(), i);
-                });
-                let selectedSkill = itemData.system.skill;
-                if (availableIn.split(",").length > 1) {
-                    let p = new Promise((resolve, reject) => {
-                        let buttons = {};
-
-
-                        availableIn.split(",").forEach(item => {
-                            let data = item.trim().toLowerCase().split(" ");
-                            if (data.length < 2) {
-                                data[1] = itemData.system.level;
-                            }
-                            if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(data[0])) {
-                                buttons[data[0]] = {
-                                    label: game.i18n.localize(`splittermond.skillLabel.${data[0]}`),
-                                    callback: html => {
-                                        resolve(data[0] + " " + data[1])
-                                    }
-                                }
-                            }
-                        });
-                        buttons["_cancel"] = {
-                            label: game.i18n.localize("splittermond.cancel"),
-                            callback: html => {
-                                resolve("");
-                            }
-                        }
-                        let dialog = new Dialog({
-                            title: game.i18n.localize("splittermond.chooseSkill"),
-                            content: "",
-                            buttons: buttons
-                        }, {
-                            classes: ["splittermond", "dialog", "selection"]
-                        });
-                        dialog.render(true);
-                    });
-
-                    selectedSkill = await p;
-                    if (!selectedSkill.trim())
-                        return;
-                } else {
-                    if (availableIn)
-                        selectedSkill = availableIn;
-                }
-
-                if (selectedSkill === "" || selectedSkill === "none") {
-                    return;
-                }
-
-                let skillData = selectedSkill.split(" ");
-                itemData.system.skill = skillData[0];
-                if ([...CONFIG.splittermond.skillGroups.general, ...CONFIG.splittermond.skillGroups.magic, ...CONFIG.splittermond.skillGroups.fighting].includes(skillData[0])) {
-                    itemData.system.skill = skillData[0];
-                    if (skillData.length > 1) {
-                        itemData.system.level = skillData[1];
-                    }
-                } else {
-                    return;
-                }
-
-            }
+                itemData.system.skill = selectedSkill.skill;
+                itemData.system[isSpell ? "skillLevel" : "level"] = selectedSkill.level;
         }
 
         var rerenderCombatTracker = false;
@@ -733,13 +631,13 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             const currentScene = game.scenes.current?.id || null;
             let combats = game.combats.filter(c => (c.scene === null) || (c.scene.id === currentScene));
             if (combats.length > 0) {
-                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id == this.actor.id));
+                var activeCombat = combats.find(e => e.combatants.find(f => f.actor.id === this.actor.id));
                 if (activeCombat != null) {
                     var currentTick = activeCombat.current.round;
                     //check if this status is already present
                     var hasSameStatus = this.actor.items
                         .filter(e => {
-                            return e.type == "statuseffect" && e.name == itemData.name && e.system.startTick;
+                            return e.type === "statuseffect" && e.name === itemData.name && e.system.startTick;
                         })
                         .map(e => {
                             var ticks = [];

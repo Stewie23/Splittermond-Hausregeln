@@ -1,7 +1,12 @@
+## 13.0.11
+### Fixed
+* Anfügen von Zaubern an einen Charakter oder NSC ist jetzt robuster gegenüber Fehleingaben 
+* Zaubermerkmale können wieder angegeben werden
 ## 13.0.10
 ### Fixed
 * Merkmal Stabil wird nun wieder korrekt bei der Schadensberechnung berücksichtigt
 * Wenn Durchdringung größer als die Gesamtschadensreduktion ist, reduziert "Durchdringung" nun nicht mehr mit "Stabil" geschützte Schadensreduktion.
+
 ## 13.0.9
 ### Fixed
 * Fehlerhafte Korrektur von 13.0.8 korrigiert.
@@ -10,6 +15,7 @@
 ### Fixed
 * LP und FO regenieren sich nun korrekt bei Ruhephasen
 * Upgrade auf Font Awesome 6
+
 ## 13.0.7
 ### Fixed
 * Import von Items durch Strg+V auf der Leinwand funktioniert wieder
