@@ -1,7 +1,7 @@
 ## 13.0.11
 ### Fixed
-* Anfügen von Zaubern an einen Charakter oder NSC ist jetzt robuster gegenüber Fehleingaben
-
+* Anfügen von Zaubern an einen Charakter oder NSC ist jetzt robuster gegenüber Fehleingaben 
+* Zaubermerkmale können wieder angegeben werden
 ## 13.0.10
 ### Fixed
 * Merkmal Stabil wird nun wieder korrekt bei der Schadensberechnung berücksichtigt

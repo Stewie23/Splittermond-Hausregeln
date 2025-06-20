@@ -136,7 +136,7 @@ export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemShee
     _updateObject(event, formData) {
         if(formData["system.features.innateFeatures"] !== undefined) {
             formData["system.features.internalFeatureList"] = parseFeatures(formData["system.features.innateFeatures"]);
-            delete formData["system.features.features"];
+            delete formData["system.features.innateFeatures"];
         }
         return super._updateObject(event, formData);
     }
