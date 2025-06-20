@@ -77,10 +77,10 @@ export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemShee
                  * However,Foundry seems to like to use null for nullable boolean values. If that is the case
                  * This guard will convert all falsy to truthy values.
                  */
-                if (prop.value === undefined) {
+                if (prop.template  === "select" && prop.value === undefined) {
                     prop.value = "undefined";
                 }
-                if(prop.value === null) {
+                if(prop.input === "select" && prop.value === null) {
                     prop.value = "null";
                 }
                 prop.placeholderText = prop.placeholderText ?? prop.label;
@@ -92,8 +92,8 @@ export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemShee
                 }
             });
         });
-        //We await the promises in ther foreach function but we don't return properties, so the outermost function
-        //has no way of knowing that stuff needs to be awaited. So we await the promises here and return the properties
+        //We await the promises in the foreach function, but we don't return properties there, so the outermost function
+        //has no way of knowing that stuff needs to be awaited. Thus, we await the promises here and return the properties
         await Promise.all(promisesToAwait);
         return sheetProperties
     }
