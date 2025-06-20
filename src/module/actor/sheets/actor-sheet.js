@@ -600,16 +600,15 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
                 : splittermond.skillGroups.all;
             const defaultLevel = isSpell ? 0 : (itemData.system.level ?? 0);
             const dialogTitle = isSpell
-                ? foundryApi.localize("splittermond.chooseMagicSkill")//TODO
-                : foundryApi.localize("splittermond.chooseSkill");//TODO
+                ? foundryApi.localize("splittermond.chooseMagicSkill")
+                : foundryApi.localize("splittermond.chooseSkill");
 
-            if (itemData.system.availableIn) {
                 const parsed = parseAvailableIn(
-                    itemData.system.availableIn,
+                    itemData.system?.availableIn ?? "",
                     allowedSkills,
                     defaultLevel
                 );
-                let selectedSkill = "";
+                let selectedSkill;
                 if (parsed.length > 1 || parsed.length === 0) {
                     selectedSkill = await selectSkillDialog(
                         parsed,
@@ -617,17 +616,14 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
                         dialogTitle,
                         defaultLevel
                     );
-                    if (!selectedSkill.trim()) return;
                 } else if (parsed.length === 1) {
-                    selectedSkill = `${parsed[0].skill} ${parsed[0].level}`;
+                    selectedSkill = {skill: parsed[0].skill, level: parsed[0].level ?? 0 };
                 }
 
-                if (!selectedSkill || selectedSkill === "none") return;
+                if (!selectedSkill) return;
 
-                let skillData = selectedSkill.split(" ");
-                itemData.system.skill = skillData[0];
-                itemData.system[isSpell ? "skillLevel" : "level"] = parseInt(skillData[1]);
-            }
+                itemData.system.skill = selectedSkill.skill;
+                itemData.system[isSpell ? "skillLevel" : "level"] = selectedSkill.level;
         }
 
         var rerenderCombatTracker = false;

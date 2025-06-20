@@ -1,5 +1,7 @@
 {
   "splittermond": {
+    "chooseMagicSkill": "Choose a school af magic!",
+    "chooseSkill": "Choose a skill!",
     "damageType": "damage type",
     "damageCategory": "damage category",
     "unknownError": "An unknown error occurred. Please file a bug report.",

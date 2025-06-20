@@ -104,6 +104,7 @@ describe ("SplittermondActorSheet", () => {
         });
 
         [
+            {title: "For no Item", availableIn: null},
             {title: "For single Item", availableIn: "invaliskill"},
             {title: "For multiple items", availableIn: "invalidskill1, invalidskill2"}].forEach(testInput => {
 
@@ -240,6 +241,7 @@ describe ("SplittermondActorSheet", () => {
         });
 
         [
+            {title: "For no Item", availableIn: null},
             {title: "For single Item", availableIn: "invaliskill"},
             {title: "For multiple items", availableIn: "invalidskill1, invalidskill2"}
         ].forEach(testInput => {
