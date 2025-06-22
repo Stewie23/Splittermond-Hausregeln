@@ -3,33 +3,35 @@ import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config.js";
 import {importSpell as spellImporter} from "./item-importer/spellImporter";
 import {importNpc as npcImporter} from "./item-importer/npcImporter";
+import {FoundryDialog} from "../api/Dialog.js";
 
 export default class ItemImporter {
 
+    /**
+     * Prompts the user to select a folder for the imported item.
+     * @returns {Promise<string|"">} The ID of the selected folder, or an empty string if no folder is selected.
+     * @private
+     */
     static async _folderDialog() {
         let folderList = foundryApi.getFolders("Item")
             .reduce((str, folder) => `${str} <option value="${folder.id}">${folder.name}</option>`, "");
-
-        return new Promise((resolve, reject) => {
-            const folderLabel = foundryApi.localize("splittermond.itemImport.folder");
-            const noFolderLabel = foundryApi.localize("splittermond.itemImport.noFolder");
-            let dialog = new Dialog({
-                title: foundryApi.localize("splittermond.itemImport.selectAFolder"),
-                content: `<label>${folderLabel}</label> <select name="folder">
-                <option value="">${noFolderLabel}</option>
-            ${folderList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: foundryApi.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="folder"]')[0].value);
-                        }
+        const folderLabel = foundryApi.localize("splittermond.itemImport.folder");
+        const noFolderLabel = foundryApi.localize("splittermond.itemImport.noFolder");
+        return await FoundryDialog.prompt({
+                window:{title: foundryApi.localize("splittermond.itemImport.selectAFolder")},
+                content: `<label>${folderLabel}</label> 
+                    <select name="folder">
+                        <option value="">${noFolderLabel}</option>
+                        ${folderList}
+                    </select>`,
+                ok: {
+                    label: foundryApi.localize("splittermond.ok"),
+                    callback: (event, button, dialog) => {
+                        const selectedIndex = button.form.elements.folder.selectedIndex;
+                        return button.form.elements.folder[selectedIndex].value
                     }
                 }
             });
-            dialog.render(true);
-        });
     }
 
     static async _skillDialog(skillOptions) {
