@@ -5,7 +5,7 @@ import {actorCreator} from "../../../module/data/EntityCreator";
 declare const game: any
 
 export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
-    const {describe, it, expect} = context;
+    const {describe, it, expect, afterEach} = context;
 
     describe("ChatMessage", () => {
         it("should be a class", () => {
@@ -166,6 +166,62 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
             expect(underTest, "CONFIG does not have a property called splittermond").to.be.an("object");
             expect(underTest instanceof Object && "Item" in underTest && underTest.Item,
                 "CONFIG.splittermond does not have a property called splittermond").to.be.an("object");
+        });
+    });
+
+    describe("Folder", () => {
+        let createdFolders= [] as Folder[];
+
+        afterEach(() => {
+            Folder.deleteDocuments(createdFolders.map(folder => folder.id));
+            createdFolders= [];
+        });
+
+        //the folder property allows setting the parent folder
+        async function createFolder(data: Partial<Folder & {folder?: string}>){
+            const folder = await Folder.create(data) as Folder
+            createdFolders.push(folder);
+            return folder;
+        }
+
+        it("should only return Item folders when requested", async () => {
+            const itemFolder= await createFolder({name: "Test Item Folder", type: "Item"});
+            const actorFolder = await createFolder({name: "Test Actor Folder", type: "Actor"});
+
+            const folders = foundryApi.getFolders("Item");
+
+            expect(folders.map(folder => folder.id)).to.contain(itemFolder.id);
+            expect(folders.map(folder => folder.id)).to.not.contain(actorFolder.id);
+        });
+
+        it("should only return Actor folders when requested", async () => {
+            const itemFolder = await createFolder({name: "Test Item Folder", type: "Item"});
+            const actorFolder = await createFolder({name: "Test Actor Folder", type: "Actor"});
+
+            const folders = foundryApi.getFolders("Actor");
+
+            expect(folders.map(folder => folder.id)).to.not.contain(itemFolder.id);
+            expect(folders.map(folder => folder.id)).to.contain(actorFolder.id);
+        });
+
+        it("should return all folders when no type is specified", async () => {
+            const itemFolder = await createFolder({name: "Test Item Folder", type: "Item"});
+            const actorFolder = await createFolder({name: "Test Actor Folder", type: "Actor"});
+
+            const folders = foundryApi.getFolders();
+
+            expect(folders.map(folder => folder.id)).to.contain(itemFolder.id);
+            expect(folders.map(folder => folder.id)).to.contain(actorFolder.id);
+        });
+
+        it("should return parent and child folders flattened", async () => {
+            const parent= await createFolder({name: "Test Item Folder", type: "Item"});
+            const child= await createFolder({name: "Test Actor Folder", type: "Item", folder:parent.id});
+
+            const folders = foundryApi.getFolders("Item");
+
+            expect(folders.map(folder => folder.id),"Parent folder not included").to.contain(parent.id);
+            expect(folders.map(folder => folder.id), "Child folder not included").to.contain(child.id);
         });
     });
 }

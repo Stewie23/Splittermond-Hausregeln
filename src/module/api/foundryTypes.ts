@@ -77,7 +77,22 @@ export interface SettingsConfig<T extends SettingTypes> {
 }
 
 declare global {
-    type Collection<T> = ReadonlyMap<string, T> & ReadonlyArray<T>
+    type Collection<T> = ReadonlyMap<string, T> & Omit<ReadonlyArray<T>,"length"|"push"|"pop"|"shift"|"unshift"|"splice"|"sort"|"reverse">
+
+    /**
+     * A folder in the Foundry VTT file system. Incomplete typing
+     */
+    class Folder extends FoundryDocument{
+
+        readonly name: string;
+        readonly id: string;
+        /**
+         * The type of {@link FoundryDocument} this folder contains. Typing is not complete.
+         */
+        readonly type: "Item"|"Actor"|"Scene";
+        readonly children: Folder[]
+        readonly ancestors: Folder[];
+    }
 
     class Actor extends FoundryDocument {
         name:string;
@@ -119,6 +134,8 @@ declare global {
         prepareBaseData(): void;
 
         static deleteDocuments(documentId: string[]): Promise<void>
+
+        static create(data:object, options?: Record<string, any>):Promise<FoundryDocument>;
 
         /**
          * Computation of values that are not put to the database
