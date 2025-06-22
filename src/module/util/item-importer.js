@@ -10,7 +10,7 @@ export default class ItemImporter {
     /**
      * Prompts the user to select a folder for the imported item.
      * @returns {Promise<string|"">} The ID of the selected folder, or an empty string if no folder is selected.
-     * @private
+     * @internal
      */
     static async _folderDialog() {
         let folderList = foundryApi.getFolders("Item")
@@ -38,7 +38,7 @@ export default class ItemImporter {
      * @param skillOptions
      * @param {"unknown"|"weapon"|"mastery"} type
      * @returns {Promise<SplittermondSkill>}
-     * @private
+     * @internal
      */
     static async _skillDialog(skillOptions, type= "unknown") {
         let optionsList = skillOptions.reduce((str, skill) => {

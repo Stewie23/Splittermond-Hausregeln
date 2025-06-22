@@ -9,7 +9,9 @@ import SplittermondActor from "../../../../../module/actor/actor";
 
 
 describe("ItemReference", () => {
-    afterEach(() => sinon.restore());
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
 
     it("should produce a Reference for items on Actors", () => {
         const itemMock = sinon.createStubInstance(SplittermondItem);
@@ -36,7 +38,7 @@ describe("ItemReference", () => {
     });
 
     it("should handle no items to reference", () => {
-        sinon.stub(foundryApi, "getItem").returns(undefined);
+        sandbox.stub(foundryApi, "getItem").returns(undefined);
         const itemMock = sinon.createStubInstance(SplittermondItem)
         Object.defineProperty(itemMock, "id", {value:"1234"})
 
@@ -47,7 +49,7 @@ describe("ItemReference", () => {
     });
 
     it("should handle no actors to reference", () => {
-        sinon.stub(foundryApi, "getActor").returns(undefined);
+        sandbox.stub(foundryApi, "getActor").returns(undefined);
         const itemMock = sinon.createStubInstance(SplittermondItem);
         const actorMock = sinon.createStubInstance(SplittermondActor);
         Object.defineProperty(itemMock, "documentName", {value:"Item"})
@@ -68,7 +70,7 @@ describe("ItemReference", () => {
         Object.defineProperty(itemMock, "actor", {value:actorMock})
         Object.defineProperty(actorMock, "items", {value:new Map()})
         Object.defineProperty(actorMock, "id", {value:"1"})
-        sinon.stub(foundryApi, "getActor").returns({id:"1", items: new Map(), documentName:"Actor"} as unknown as Actor/*mock good enough for this test */);
+        sandbox.stub(foundryApi, "getActor").returns({id:"1", items: new Map(), documentName:"Actor"} as unknown as Actor/*mock good enough for this test */);
 
         const underTest = ItemReference.initialize(itemMock);
 

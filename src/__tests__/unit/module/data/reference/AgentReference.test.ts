@@ -8,8 +8,12 @@ import SplittermondActor from "../../../../../module/actor/actor";
 
 
 describe("AgentReference", () => {
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
+
     it("should initialize a token as token", () => {
-        const mockActor = sinon.createStubInstance(SplittermondActor);
+        const mockActor = sandbox.createStubInstance(SplittermondActor);
         //mocks are incomplete but these properties are the only ones needed for the test
         const parent = {documentName: "Scene", id: "2"} as unknown as FoundryDocument
         const agent = {documentName: "Token", id: "1", parent , actor:mockActor}as unknown as TokenDocument
@@ -45,7 +49,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no tokens to reference", () => {
-        sinon.stub(foundryApi, "getToken").returns(undefined);
+        sandbox.stub(foundryApi, "getToken").returns(undefined);
 
         const underTest = new AgentReference({id: "1234", sceneId: "3456", type: "token"});
 
@@ -53,7 +57,7 @@ describe("AgentReference", () => {
     });
 
     it("should handle no actors to reference", () => {
-        sinon.stub(foundryApi, "getActor").returns(undefined);
+        sandbox.stub(foundryApi, "getActor").returns(undefined);
 
         const underTest = new AgentReference({id: "1234", sceneId: null, type: "actor"});
 

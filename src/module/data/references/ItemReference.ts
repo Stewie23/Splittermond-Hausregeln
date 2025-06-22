@@ -48,7 +48,7 @@ export class ItemReference<T extends SplittermondItem> extends SplittermondDataM
         return item as T
     }
 
-    #getFromCollection():T {
-        return foundryApi.getItem(this.id);
+    #getFromCollection(): T | undefined {
+        return foundryApi.getItem(this.id) as T|undefined;
     }
 }
