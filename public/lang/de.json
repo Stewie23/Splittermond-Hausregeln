@@ -689,7 +689,19 @@
     "itemImport": {
       "selectAFolder": "Wähle einen Ordner für den Import aus.",
       "folder": "Ordner",
-      "noFolder": "Kein Ordner"
+      "noFolder": "Kein Ordner",
+      "skillSelection": {
+        "title": {
+          "unknown": "Wählen Sie eine Fertigkeit",
+          "weapon": "Waffenimport",
+          "mastery": "Meisterschaftsimport"
+        },
+        "label": {
+          "unknown": "Fertigkeit",
+          "weapon": "Kampffertigkeit",
+          "mastery": "Fertigkeit"
+        }
+      }
     }
   },
   "COMBAT": {

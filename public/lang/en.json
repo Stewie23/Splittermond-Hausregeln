@@ -150,7 +150,19 @@
     "itemImport": {
       "selectAFolder": "Select a folder to import the item into",
       "folder": "Folder",
-      "noFolder": "No Folder"
+      "noFolder": "No Folder",
+      "skillSelection": {
+        "title": {
+          "unknown": "Choose a Skill",
+          "weapon": "Weapon Import",
+          "mastery": "Mastery Import"
+        },
+        "label": {
+          "unknown": "Skill",
+          "weapon": "Fighting skill",
+          "mastery": "Skill"
+        }
+      }
     }
   }
 }

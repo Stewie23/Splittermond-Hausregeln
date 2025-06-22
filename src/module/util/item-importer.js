@@ -26,7 +26,7 @@ export default class ItemImporter {
                     </select>`,
                 ok: {
                     label: foundryApi.localize("splittermond.ok"),
-                    callback: (event, button, dialog) => {
+                    callback: (__, button) => {
                         const selectedIndex = button.form.elements.folder.selectedIndex;
                         return button.form.elements.folder[selectedIndex].value
                     }
@@ -34,34 +34,37 @@ export default class ItemImporter {
             });
     }
 
-    static async _skillDialog(skillOptions) {
+    /**
+     * @param skillOptions
+     * @param {"unknown"|"weapon"|"mastery"} type
+     * @returns {Promise<SplittermondSkill>}
+     * @private
+     */
+    static async _skillDialog(skillOptions, type= "unknown") {
         let optionsList = skillOptions.reduce((str, skill) => {
             let skillLabel = foundryApi.localize(`splittermond.skillLabel.${skill}`);
             return `${str} <option value="${skill}">${skillLabel}</option>`;
         }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: "Waffenimport",
-                content: `<label>Kampffertigkeit</label> <select name="skill">
-            ${optionsList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: foundryApi.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="skill"]')[0].value);
-                        }
-                    }
-                }
-            });
-            dialog.render(true);
+        const title = foundryApi.localize(`splittermond.itemImport.skillSelection.title.${type}`);
+        const label = foundryApi.localize(`splittermond.itemImport.skillSelection.label.${type}`);
+        return await FoundryDialog.prompt({
+            window:{title},
+            content: `
+                <label>${label}</label> 
+                <select name="skill">
+                    ${optionsList}
+                </select>`,
+            ok: {
+                label: foundryApi.localize("splittermond.ok"),
+                callback: ((__, button)=> {
+                    const selectedIndex = button.form.elements.skill.selectedIndex;
+                    return button.form.elements.skill[selectedIndex].value
+                })
+            }
         });
-
-        return p;
     }
 
     static async pasteEventhandler(e) {
-        //let rawData = e.clipboardData.getData("text");
         let rawData = "";
 
         if (e instanceof ClipboardEvent) {
@@ -117,7 +120,7 @@ export default class ItemImporter {
                         continue;
                     }
                     if (skill === "") {
-                        skill = await this._skillDialog(splittermond.skillGroups.fighting);
+                        skill = await this._skillDialog(splittermond.skillGroups.fighting,"weapon");
                     }
 
                     this.importWeapon(m, skill, folder);
@@ -187,7 +190,7 @@ export default class ItemImporter {
     static async importMastery(rawData) {
         const itemPromises= [];
         let folder = await this._folderDialog();
-        let skill = await this._skillDialog([...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]);
+        let skill = await this._skillDialog(splittermond.skillGroups.all, "mastery");
 
         rawData.match(/Schwelle\s+[0-9]\n.+/gm).forEach((s) => {
 
@@ -394,7 +397,7 @@ export default class ItemImporter {
     static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         if (skill === "") {
-            skill = await this._skillDialog(splittermond.skillGroups.fighting);
+            skill = await this._skillDialog(splittermond.skillGroups.fighting, "weapon");
         }
 
 
