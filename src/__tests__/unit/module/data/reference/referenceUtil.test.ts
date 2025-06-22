@@ -7,7 +7,9 @@ import {foundryApi} from "module/api/foundryApi";
 import SplittermondActor from "module/actor/actor";
 
 describe('getBestActor', () => {
-    afterEach(() => sinon.restore());
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => sandbox = sinon.createSandbox());
+    afterEach(() => sandbox.restore());
     it("should return an actor for token", () => {
         const sampleToken = {scene: "scene", token: "token", actor: "actor", alias: "alias"};
         const actor = sinon.createStubInstance(SplittermondActor);
@@ -18,8 +20,8 @@ describe('getBestActor', () => {
             items: new Map(),
             actor: actor
         } as unknown as TokenDocument; /* mock good enough for this test */
-        sinon.stub(foundryApi, "getToken").returns(agentMock);
-        sinon.stub(foundryApi, "getSpeaker").returns(sampleToken);
+        sandbox.stub(foundryApi, "getToken").returns(agentMock);
+        sandbox.stub(foundryApi, "getSpeaker").returns(sampleToken);
 
         const result = referencesUtils.findBestUserActor();
 
@@ -29,9 +31,9 @@ describe('getBestActor', () => {
     it("should query the actor if no token is found", () => {
         const sampleToken = {scene: "scene", token: "token", actor: "actor", alias: "alias"};
         const agentMock = {documentName: "Actor", parent: undefined, id: "1", items: new Map()} as unknown as SplittermondActor /*mock good enough for this test */;
-        sinon.stub(foundryApi, "getToken").returns(undefined);
-        sinon.stub(foundryApi, "getActor").returns(agentMock);
-        sinon.stub(foundryApi, "getSpeaker").returns(sampleToken);
+        sandbox.stub(foundryApi, "getToken").returns(undefined);
+        sandbox.stub(foundryApi, "getActor").returns(agentMock);
+        sandbox.stub(foundryApi, "getSpeaker").returns(sampleToken);
 
         const result = referencesUtils.findBestUserActor();
 
@@ -40,9 +42,9 @@ describe('getBestActor', () => {
 
     it("should throw exception if no actor can be derived from the speaker", () => {
         const sampleToken = {scene: "scene", token: "token", actor: "actor", alias: "alias"};
-        sinon.stub(foundryApi, "getToken").returns(undefined);
-        sinon.stub(foundryApi, "getActor").returns(undefined);
-        sinon.stub(foundryApi, "getSpeaker").returns(sampleToken);
+        sandbox.stub(foundryApi, "getToken").returns(undefined);
+        sandbox.stub(foundryApi, "getActor").returns(undefined);
+        sandbox.stub(foundryApi, "getSpeaker").returns(sampleToken);
 
         expect(() => referencesUtils.findBestUserActor()).to.throw(Error);
     });

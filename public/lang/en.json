@@ -120,7 +120,7 @@
         "shadow": "shadow",
         "wind": "wind",
         "water": "water",
-        "nature": "nature",
+        "nature": "nature"
       },
       "long": {
         "physical": "physical damage",
@@ -145,6 +145,23 @@
       "paste": {
         "name": "Paste Item",
         "hint": "Permits importing items from the clipboard into the game"
+      }
+    },
+    "itemImport": {
+      "selectAFolder": "Select a folder to import the item into",
+      "folder": "Folder",
+      "noFolder": "No Folder",
+      "skillSelection": {
+        "title": {
+          "unknown": "Choose a Skill",
+          "weapon": "Weapon Import",
+          "mastery": "Mastery Import"
+        },
+        "label": {
+          "unknown": "Skill",
+          "weapon": "Fighting skill",
+          "mastery": "Skill"
+        }
       }
     }
   }

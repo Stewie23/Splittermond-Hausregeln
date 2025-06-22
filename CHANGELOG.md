@@ -1,3 +1,7 @@
+## 13.0.12
+### Fixed
+* Import von Items in Unterordner funktioniert wieder
+
 ## 13.0.11
 ### Fixed
 * Anfügen von Zaubern an einen Charakter oder NSC ist jetzt robuster gegenüber Fehleingaben 

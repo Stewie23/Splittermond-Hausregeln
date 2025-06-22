@@ -685,6 +685,23 @@
         "name": "Item Einfügen",
         "hint": "Erlaubt das Importieren von Items aus der Zwischenablage."
       }
+    },
+    "itemImport": {
+      "selectAFolder": "Wähle einen Ordner für den Import aus.",
+      "folder": "Ordner",
+      "noFolder": "Kein Ordner",
+      "skillSelection": {
+        "title": {
+          "unknown": "Wählen Sie eine Fertigkeit",
+          "weapon": "Waffenimport",
+          "mastery": "Meisterschaftsimport"
+        },
+        "label": {
+          "unknown": "Fertigkeit",
+          "weapon": "Kampffertigkeit",
+          "mastery": "Fertigkeit"
+        }
+      }
     }
   },
   "COMBAT": {

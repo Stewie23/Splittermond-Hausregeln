@@ -1,66 +1,70 @@
-import SplittermondCompendium from "./compendium.js";
-import {actorCreator, itemCreator} from "../data/EntityCreator.ts";
+import {itemCreator} from "../data/EntityCreator.ts";
 import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config.js";
 import {importSpell as spellImporter} from "./item-importer/spellImporter";
 import {importNpc as npcImporter} from "./item-importer/npcImporter";
+import {FoundryDialog} from "../api/Dialog.js";
 
 export default class ItemImporter {
 
+    /**
+     * Prompts the user to select a folder for the imported item.
+     * @returns {Promise<string|"">} The ID of the selected folder, or an empty string if no folder is selected.
+     * @internal
+     */
     static async _folderDialog() {
-        let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder.id}">${folder.name}</option>`;
-        }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: foundryApi.localize("splittermond.selectAFolder"),
-                content: `<label>Ordner</label> <select name="folder">
-                <option value="">keinen Ordner</option>
-            ${folderList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: foundryApi.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="folder"]')[0].value);
-                        }
+        let folderList = foundryApi.getFolders("Item")
+            .reduce((str, folder) => `${str} <option value="${folder.id}">${folder.name}</option>`, "");
+        const folderLabel = foundryApi.localize("splittermond.itemImport.folder");
+        const noFolderLabel = foundryApi.localize("splittermond.itemImport.noFolder");
+        return await FoundryDialog.prompt({
+                window:{title: foundryApi.localize("splittermond.itemImport.selectAFolder")},
+                content: `<label>${folderLabel}</label> 
+                    <select name="folder">
+                        <option value="">${noFolderLabel}</option>
+                        ${folderList}
+                    </select>`,
+                ok: {
+                    label: foundryApi.localize("splittermond.ok"),
+                    callback: (__, button) => {
+                        const selectedIndex = button.form.elements.folder.selectedIndex;
+                        return button.form.elements.folder[selectedIndex].value
                     }
                 }
             });
-            dialog.render(true);
-        });
-
-        return p;
     }
 
-    static async _skillDialog(skillOptions) {
+    /**
+     * @param skillOptions
+     * @param {"unknown"|"weapon"|"mastery"} type
+     * @returns {Promise<SplittermondSkill>}
+     * @internal
+     */
+    static async _skillDialog(skillOptions, type= "unknown") {
         let optionsList = skillOptions.reduce((str, skill) => {
             let skillLabel = foundryApi.localize(`splittermond.skillLabel.${skill}`);
             return `${str} <option value="${skill}">${skillLabel}</option>`;
         }, "");
-        let p = new Promise((resolve, reject) => {
-            let dialog = new Dialog({
-                title: "Waffenimport",
-                content: `<label>Kampffertigkeit</label> <select name="skill">
-            ${optionsList}
-        </select>`,
-                buttons: {
-                    ok: {
-                        label: foundryApi.localize("splittermond.ok"),
-                        callback: html => {
-                            resolve(html.find('[name="skill"]')[0].value);
-                        }
-                    }
-                }
-            });
-            dialog.render(true);
+        const title = foundryApi.localize(`splittermond.itemImport.skillSelection.title.${type}`);
+        const label = foundryApi.localize(`splittermond.itemImport.skillSelection.label.${type}`);
+        return await FoundryDialog.prompt({
+            window:{title},
+            content: `
+                <label>${label}</label> 
+                <select name="skill">
+                    ${optionsList}
+                </select>`,
+            ok: {
+                label: foundryApi.localize("splittermond.ok"),
+                callback: ((__, button)=> {
+                    const selectedIndex = button.form.elements.skill.selectedIndex;
+                    return button.form.elements.skill[selectedIndex].value
+                })
+            }
         });
-
-        return p;
     }
 
     static async pasteEventhandler(e) {
-        //let rawData = e.clipboardData.getData("text");
         let rawData = "";
 
         if (e instanceof ClipboardEvent) {
@@ -116,7 +120,7 @@ export default class ItemImporter {
                         continue;
                     }
                     if (skill === "") {
-                        skill = await this._skillDialog(splittermond.skillGroups.fighting);
+                        skill = await this._skillDialog(splittermond.skillGroups.fighting,"weapon");
                     }
 
                     this.importWeapon(m, skill, folder);
@@ -186,7 +190,7 @@ export default class ItemImporter {
     static async importMastery(rawData) {
         const itemPromises= [];
         let folder = await this._folderDialog();
-        let skill = await this._skillDialog([...splittermond.skillGroups.general, ...splittermond.skillGroups.fighting, ...splittermond.skillGroups.magic]);
+        let skill = await this._skillDialog(splittermond.skillGroups.all, "mastery");
 
         rawData.match(/Schwelle\s+[0-9]\n.+/gm).forEach((s) => {
 
@@ -393,7 +397,7 @@ export default class ItemImporter {
     static async importWeapon(rawData, skill = "", folder = "") {
         rawData = rawData.replace(/\n/g, " ");
         if (skill === "") {
-            skill = await this._skillDialog(splittermond.skillGroups.fighting);
+            skill = await this._skillDialog(splittermond.skillGroups.fighting, "weapon");
         }
 
 

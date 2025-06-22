@@ -8,7 +8,7 @@
     "compileCss": "gulp less",
     "dev": "vite serve --config config/vite.config.mts",
     "typecheck": "tsc",
-    "test": "npm run typecheck && mocha --config config/mocharc.json src/__tests__/unit/**",
+    "test": "npm run typecheck && mocha --config config/mocharc.json src/__tests__/unit",
     "build": "npm run test && vite build --config config/vite.config.mts"
   },
   "repository": {

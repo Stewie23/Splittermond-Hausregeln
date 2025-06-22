@@ -664,7 +664,7 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
 
         await super._onDropItemCreate(itemData);
         if (rerenderCombatTracker) {
-            Hooks.call("redraw-combat-tick");
+            foundryApi.hooks.call("redraw-combat-tick");
         }
     }
 

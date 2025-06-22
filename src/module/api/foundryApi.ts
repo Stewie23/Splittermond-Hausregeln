@@ -120,10 +120,7 @@ export const foundryApi = new class FoundryApi {
         return Hooks;
     }
 
-    /**
-     * @return {SplittermondItem}
-     */
-    getItem(itemId: string) {
+    getItem(itemId: string):Item | undefined {
         //@ts-ignore
         return game.items.get(itemId);
     }
@@ -205,6 +202,22 @@ export const foundryApi = new class FoundryApi {
                 game.keybindings.set(namespace, action, data);
            }
        }
+    }
 
+    getFolders(type: "Item"|"Actor"|"Scene"|null=null):Collection<Folder> {
+        switch (type) {
+        case "Actor":
+            // @ts-ignore
+            return game.actors.folders;
+        case "Scene":
+            // @ts-ignore
+            return game.scenes.folders;
+        case "Item":
+            // @ts-ignore
+            return game.items.folders;
+        default:
+            // @ts-ignore
+            return game.folders;
+        }
     }
 }
