@@ -33,16 +33,12 @@ describe ("SplittermondActorSheet", () => {
 
     describe("Addition of a spell to actor", () => {
         let actorMock: any;
-        let hooksStub: sinon.SinonStub;
 
         beforeEach(() => {
             // Mock actor and foundryApi
             actorMock = {name: "Test Actor", spells: [], items: [], id: "actor1"};
             (sheet as any).actor = actorMock;
 
-            // Mock Dialog and Hooks
-            hooksStub = sandbox.stub();
-            (global as any).Hooks = {call: hooksStub};
 
             sandbox.stub(foundryApi, "localize").callsFake((s: string) => s);
 
@@ -162,15 +158,11 @@ describe ("SplittermondActorSheet", () => {
 
     describe("Addition of a mastery to actor", () => {
         let actorMock: any;
-        let hooksStub: sinon.SinonStub;
 
         beforeEach(() => {
 
             actorMock = {name: "Test Actor", spells: [], items: [], id: "actor1"};
             (sheet as any).actor = actorMock;
-
-            hooksStub = sandbox.stub();
-            (global as any).Hooks = {call: hooksStub};
 
             sandbox.stub(foundryApi, "localize").callsFake((s: string) => s);
 
