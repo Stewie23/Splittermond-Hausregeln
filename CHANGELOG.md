@@ -1,3 +1,7 @@
+## 13.1.0
+### New Features
+* Bei Zauberproben wird nun das Bild des Zaubers, so vorhanden, in der Chatnachricht angezeigt
+
 ## 13.0.12
 ### Fixed
 * Import von Items in Unterordner funktioniert wieder

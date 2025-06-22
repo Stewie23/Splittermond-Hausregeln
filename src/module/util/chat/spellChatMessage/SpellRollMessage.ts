@@ -108,6 +108,7 @@ export class SpellRollMessage extends SplittermondDataModel<SpellRollMessageType
             .forEach(action => renderedActions[action.type]= action);
         return {
             header: {
+                img: this.spellReference.getItem().img,
                 difficulty: `${this.checkReport.difficulty}`,
                 hideDifficulty: this.checkReport.hideDifficulty,
                 rollTypeMessage: foundryApi.localize(`splittermond.rollType.${this.checkReport.rollType}`),

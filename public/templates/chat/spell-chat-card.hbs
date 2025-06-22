@@ -2,13 +2,16 @@
 <div class="splittermond check {{rollResultClass}}">
     <header class="chat-message-header">
         {{#with header}}
+            {{#if img}}
+                <img alt="Icon attached to the spell" src="{{img}}" width="36" height="36" />
+            {{/if}}
             <div>
                 <h2>{{title}}</h2>
                 <span class="roll-type">{{rollTypeMessage}}</span>
                 {{#if difficulty}}
                     <span class="{{#if hideDifficulty}}gm-only{{/if}}">
-                &nbsp;{{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
-            </span>
+                &nbsp;      {{localize "splittermond.versus"}}&nbsp;<span class="difficulty">{{difficulty}}</span>
+                    </span>
                 {{/if}}
             </div>
         {{/with}}
