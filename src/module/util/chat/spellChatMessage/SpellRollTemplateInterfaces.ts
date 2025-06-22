@@ -16,6 +16,7 @@ export function isAvailableAction(action: string): action is AvailableActions {
 export interface SpellRollMessageRenderedData {
     header: {
         title: string;
+        img: string;
         rollTypeMessage: string;
         difficulty: string;
         hideDifficulty: boolean;

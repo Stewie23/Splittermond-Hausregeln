@@ -1,7 +1,7 @@
 <div class="splittermond dice-roll check">
     <header>
         {{#if item.img}}
-        <img src="{{item.img}}" title="{{item.name}}" width="36" height="36" />
+        <img alt="Icon attached to the weapon" src="{{item.img}}" title="{{item.name}}" width="36" height="36" />
         {{/if}}
         <h2><span class="roll-type">{{rollType}}</span>{{item.name}}</h2>
     </header>
@@ -13,5 +13,4 @@
                 class="difficulty">{{difficulty}}</span>
     </div>
     <h3 class="degree-of-success{{#if succeded}} success{{/if}}">{{degreeOfSuccess}} {{degreeOfSuccessMessage}}</h3>
-</div>
 </div>
