@@ -120,7 +120,7 @@
         "shadow": "shadow",
         "wind": "wind",
         "water": "water",
-        "nature": "nature",
+        "nature": "nature"
       },
       "long": {
         "physical": "physical damage",
@@ -146,6 +146,11 @@
         "name": "Paste Item",
         "hint": "Permits importing items from the clipboard into the game"
       }
+    },
+    "itemImport": {
+      "selectAFolder": "Select a folder to import the item into",
+      "folder": "Folder",
+      "noFolder": "No Folder"
     }
   }
 }

@@ -1,5 +1,4 @@
-import SplittermondCompendium from "./compendium.js";
-import {actorCreator, itemCreator} from "../data/EntityCreator.ts";
+import {itemCreator} from "../data/EntityCreator.ts";
 import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config.js";
 import {importSpell as spellImporter} from "./item-importer/spellImporter";
@@ -8,14 +7,16 @@ import {importNpc as npcImporter} from "./item-importer/npcImporter";
 export default class ItemImporter {
 
     static async _folderDialog() {
-        let folderList = game.items.directory.folders.reduce((str, folder) => {
-            return `${str} <option value="${folder.id}">${folder.name}</option>`;
-        }, "");
-        let p = new Promise((resolve, reject) => {
+        let folderList = foundryApi.getFolders("Item")
+            .reduce((str, folder) => `${str} <option value="${folder.id}">${folder.name}</option>`, "");
+
+        return new Promise((resolve, reject) => {
+            const folderLabel = foundryApi.localize("splittermond.itemImport.folder");
+            const noFolderLabel = foundryApi.localize("splittermond.itemImport.noFolder");
             let dialog = new Dialog({
-                title: foundryApi.localize("splittermond.selectAFolder"),
-                content: `<label>Ordner</label> <select name="folder">
-                <option value="">keinen Ordner</option>
+                title: foundryApi.localize("splittermond.itemImport.selectAFolder"),
+                content: `<label>${folderLabel}</label> <select name="folder">
+                <option value="">${noFolderLabel}</option>
             ${folderList}
         </select>`,
                 buttons: {
@@ -29,8 +30,6 @@ export default class ItemImporter {
             });
             dialog.render(true);
         });
-
-        return p;
     }
 
     static async _skillDialog(skillOptions) {

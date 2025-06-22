@@ -685,6 +685,11 @@
         "name": "Item Einfügen",
         "hint": "Erlaubt das Importieren von Items aus der Zwischenablage."
       }
+    },
+    "itemImport": {
+      "selectAFolder": "Wähle einen Ordner für den Import aus.",
+      "folder": "Ordner",
+      "noFolder": "Kein Ordner"
     }
   },
   "COMBAT": {
