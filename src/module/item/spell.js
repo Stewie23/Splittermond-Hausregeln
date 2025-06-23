@@ -79,16 +79,6 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
             data["system.availableIn"] = this.availabilityParser.toInternalRepresentation(data.availableIn);
             delete data.availableIn;
         }
-        /*
-         * For some reason the damageType is transferred as null if it comes from the form. We're fixing here,
-         * because I don't know how to do it in the sheet class.
-         */
-        if (data.system?.damageType === "null") { //also apparently compendium data comes through here with an entirely different structure
-            data.system.damageType = null;
-        }
-        if (data.system?.costType === "null") { //see above
-            data.system.costType = null;
-        }
         return super.updateSource(data, context);
 
     }

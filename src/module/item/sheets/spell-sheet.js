@@ -33,4 +33,13 @@ export default class SplittermondSpellSheet extends SplittermondItemSheet {
             
     }
 
+    _updateObject(event, formData) {
+        if(formData["system.damageType"] === "null"){
+            formData["system.damageType"] = null;
+        }
+        if(formData["system.costType"] === "null"){
+            formData["system.costType"] = null;
+        }
+        return super._updateObject(event, formData);
+    }
 }
