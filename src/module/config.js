@@ -805,13 +805,13 @@ splittermond.itemSheetProperties.spell = [
                 field: "system.damageType",
                 label: "splittermond.damageType",
                 template: "select",
-                choices: {...damageTypeOptions, null: ""}
+                choices: {...damageTypeOptions, null: "splittermond.damageTypes.long.none"}
             },
             {
                 field: "system.costType",
                 label: "splittermond.damageCategory",
                 template: "select",
-                choices: {...splittermond.costTypeOptions,null:""},
+                choices: {...splittermond.costTypeOptions, null: "splittermond.noDamage"},
             },
             {
                 field: "system.range",

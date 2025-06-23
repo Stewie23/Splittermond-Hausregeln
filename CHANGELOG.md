@@ -1,3 +1,7 @@
+## 13.1.1
+### Fixed
+* Bei Zaubern kann für Schadenstyp und Schadensart nun wieder 'nichts' angegeben werden.
+
 ## 13.1.0
 ### New Features
 * Bei Zauberproben wird nun das Bild des Zaubers, so vorhanden, in der Chatnachricht angezeigt

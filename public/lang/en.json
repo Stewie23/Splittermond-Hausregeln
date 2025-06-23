@@ -4,6 +4,10 @@
     "chooseSkill": "Choose a skill!",
     "damageType": "damage type",
     "damageCategory": "damage category",
+    "channeledDamage": "channeled damage",
+    "normalDamage": "normal damage",
+    "stunDamage": "stun damage",
+    "noDamage": "no damage category",
     "unknownError": "An unknown error occurred. Please file a bug report.",
     "chatCard": {
       "noGMConnected": "Action cannot be performed, because no authorized user (GM) is connected",
@@ -120,7 +124,8 @@
         "shadow": "shadow",
         "wind": "wind",
         "water": "water",
-        "nature": "nature"
+        "nature": "nature",
+        "none": "none"
       },
       "long": {
         "physical": "physical damage",
@@ -138,7 +143,8 @@
         "shadow": "shadow damage",
         "wind": "wind damage",
         "water": "water damage",
-        "nature": "nature damage"
+        "nature": "nature damage",
+        "none": "no damage type"
       }
     },
     "keybindings": {

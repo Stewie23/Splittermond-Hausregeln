@@ -310,6 +310,7 @@
     "channeledDamage": "kanalisierter Schaden",
     "normalDamage": "normaler Schaden",
     "stunDamage": "Betäubungsschaden",
+    "noDamage": "Keine Schadensart",
     "damageType": "Schadenstyp",
     "damageCategory": "Schadensart",
     "channeled": "kanalisiert",
@@ -435,7 +436,8 @@
         "shadow": "Schatten",
         "wind": "Wind",
         "water": "Wasser",
-        "nature": "Natur"
+        "nature": "Natur",
+        "none": "Keine"
       },
       "long": {
         "physical": "Physischer Schaden",
@@ -453,7 +455,8 @@
         "shadow": "Schattenschaden",
         "wind": "Windschaden",
         "water": "Wasserschaden",
-        "nature": "Naturschaden"
+        "nature": "Naturschaden",
+        "none": "Keine Schadenstyp"
       }
     },
     "skillAbbreviation": {
