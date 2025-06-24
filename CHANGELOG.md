@@ -1,4 +1,6 @@
-## 13.1.1
+## 13.2.0
+### New Features
+* System now comes with a custom background image for all worlds.
 ### Fixed
 * Bei Zaubern kann für Schadenstyp und Schadensart nun wieder 'nichts' angegeben werden.
 
