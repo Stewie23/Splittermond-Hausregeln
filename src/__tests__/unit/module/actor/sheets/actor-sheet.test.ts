@@ -5,6 +5,7 @@ import sinon from "sinon";
 import SplittermondActorSheet from "../../../../../module/actor/sheets/actor-sheet.js";
 import {splittermond} from "../../../../../module/config";
 import {foundryApi} from "../../../../../module/api/foundryApi";
+import {FoundryDialog} from "../../../../../module/api/Dialog";
 
 declare const foundry: any;
 declare const global: any;
@@ -95,8 +96,34 @@ describe ("SplittermondActorSheet", () => {
             };
 
             await sheet._onDropItemCreate(itemData);
-            expect(itemData.system.skill).to.equal("deathmagic");
-            expect(itemData.system.skillLevel).to.equal(1);
+
+            expect(superFunctionStub.called).to.be.true;
+            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("deathmagic");
+            expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(1);
+        });
+
+        it("should not prompt for skill selection if valid skill exists at empty available in", async () => {
+            const dialogStub = sandbox.stub(global, "Dialog").callsFake(function (options: any) {
+                if (options?.buttons?.deathmagic) {
+                    options.buttons.deathmagic.callback();
+                }
+                return {
+                    render: () => {
+                    }
+                };
+            });
+
+            const itemData: any = {
+                type: "spell",
+                system: {availableIn: "", skill: "deathmagic", skillLevel: 1}
+            };
+
+            await sheet._onDropItemCreate(itemData);
+
+            expect(dialogStub.called).to.be.false;
+            expect(superFunctionStub.called).to.be.true;
+            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("deathmagic");
+            expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(1);
         });
 
         [
@@ -108,15 +135,7 @@ describe ("SplittermondActorSheet", () => {
                 .flatMap(skill => ({skill, skillLevel: 0, name: `${skill} 0`}))
                 .forEach(({skill, skillLevel, name}) => {
                     it(`${testInput.title}: should allow selection of ${name} if availableIn is not valid`, async () => {
-                        sandbox.stub(global, "Dialog").callsFake(function (options: any) {
-                            if (options?.buttons?.[skill]) {
-                                options.buttons[skill].callback();
-                            }
-                            return {
-                                render: () => {
-                                }
-                            };
-                        });
+                        sandbox.stub(FoundryDialog, "prompt").resolves({skill, level:skillLevel});
 
                         const itemData: any = {
                             type: "spell",
@@ -180,7 +199,7 @@ describe ("SplittermondActorSheet", () => {
         it("should set skill and level for valid single availableIn", async () => {
             const itemData: any = {
                 type: "mastery",
-                system: {availableIn: "athletics 3"}
+                system: {availableIn: "athletics", level: 3}
             };
             await sheet._onDropItemCreate(itemData);
 
@@ -202,12 +221,14 @@ describe ("SplittermondActorSheet", () => {
 
             const itemData: any = {
                 type: "mastery",
-                system: {availableIn: "athletics 2, acrobatics 1"}
+                system: {availableIn: "athletics, acrobatics", level: 1}
             };
 
             await sheet._onDropItemCreate(itemData);
-            expect(itemData.system.skill).to.equal("acrobatics");
-            expect(itemData.system.level).to.equal(1);
+
+            expect(superFunctionStub.called).to.be.true;
+            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("acrobatics");
+            expect(superFunctionStub.lastCall.lastArg.system.level).to.equal(1);
         });
 
         it("should return early if dialog is cancelled", async () => {
@@ -231,25 +252,39 @@ describe ("SplittermondActorSheet", () => {
             expect(superFunctionStub.called).to.be.false;
             expect(itemData.system.skill).to.be.undefined;
         });
+        it("should not prompt for skill selection if valid skill exists at empty available in", async () => {
+            const dialogStub = sandbox.stub(global, "Dialog").callsFake(function (options: any) {
+                if (options?.buttons?.melee) {
+                    options.buttons.melee.callback();
+                }
+                return {
+                    render: () => {
+                    }
+                };
+            });
 
+            const itemData: any = {
+                type: "mastery",
+                system: {availableIn: "", skill: "melee", skillLevel: 2}
+            };
+
+            await sheet._onDropItemCreate(itemData);
+
+            expect(dialogStub.called).to.be.false;
+            expect(superFunctionStub.called).to.be.true;
+            expect(superFunctionStub.lastCall.lastArg.system.skill).to.equal("melee");
+            expect(superFunctionStub.lastCall.lastArg.system.skillLevel).to.equal(2);
+        });
         [
             {title: "For no Item", availableIn: null},
             {title: "For single Item", availableIn: "invaliskill"},
             {title: "For multiple items", availableIn: "invalidskill1, invalidskill2"}
         ].forEach(testInput => {
             splittermond.skillGroups.all
-                .flatMap(skill => ({skill, skillLevel: 0, name: `${skill} 0`}))
+                .flatMap(skill => ({skill, skillLevel: 1, name: `${skill} 0`}))
                 .forEach(({skill, skillLevel, name}) => {
                     it(`${testInput.title}: should allow selection of ${name} if availableIn is not valid`, async () => {
-                        sandbox.stub(global, "Dialog").callsFake(function (options: any) {
-                            if (options?.buttons?.[skill]) {
-                                options.buttons[skill].callback();
-                            }
-                            return {
-                                render: () => {
-                                }
-                            };
-                        });
+                        sandbox.stub(FoundryDialog, "prompt").resolves({skill, level: skillLevel});
 
                         const itemData: any = {
                             type: "mastery",

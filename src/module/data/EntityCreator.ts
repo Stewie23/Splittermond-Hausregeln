@@ -8,15 +8,21 @@ import SplittermondArmorItem from "../item/armor";
 import {DataModelConstructorInput} from "../api/DataModel";
 import {ArmorDataModelType, MasteryDataModelType, SpellDataModelType} from "../item";
 
+interface CommonItemInput {
+    name?: string;
+    img?: string;
+    folder?: string;
+}
+
 export const itemCreator = {
-    createSpell(data: {type: "spell", system: Partial<DataModelConstructorInput<SpellDataModelType>>}): Promise<SplittermondSpellItem> {
+    createSpell(data: CommonItemInput & {type: "spell", system: Partial<DataModelConstructorInput<SpellDataModelType>>}): Promise<SplittermondSpellItem> {
         return foundryApi.createItem(data) as Promise<SplittermondSpellItem>;
     },
 
-    createMastery(data:{type: "mastery", system: Partial<DataModelConstructorInput<MasteryDataModelType>>}): Promise<SplittermondMasteryItem> {
+    createMastery(data: CommonItemInput & {type: "mastery", system: Partial<DataModelConstructorInput<MasteryDataModelType>>}): Promise<SplittermondMasteryItem> {
         return foundryApi.createItem(data) as Promise<SplittermondMasteryItem>;
     },
-    createArmor(data:{type: "armor", system: Partial<DataModelConstructorInput<ArmorDataModelType>>}): Promise<SplittermondArmorItem> {
+    createArmor(data: CommonItemInput & {type: "armor", system: Partial<DataModelConstructorInput<ArmorDataModelType>>}): Promise<SplittermondArmorItem> {
         return foundryApi.createItem(data) as Promise<SplittermondArmorItem>;
     }
 }

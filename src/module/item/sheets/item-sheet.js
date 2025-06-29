@@ -80,7 +80,7 @@ export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemShee
                 if (prop.template  === "select" && prop.value === undefined) {
                     prop.value = "undefined";
                 }
-                if(prop.input === "select" && prop.value === null) {
+                if(prop.template === "select" && prop.value === null) {
                     prop.value = "null";
                 }
                 prop.placeholderText = prop.placeholderText ?? prop.label;

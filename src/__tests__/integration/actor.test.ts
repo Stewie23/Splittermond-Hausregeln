@@ -4,9 +4,15 @@ import ItemImporter from "../../module/util/item-importer";
 import * as Baumwandler from "../resources/importSamples/GRW/NSC/Baumwandler.resource";
 import {foundryApi} from "../../module/api/foundryApi";
 import SplittermondActor from "../../module/actor/actor";
-import {actorCreator} from "../../module/data/EntityCreator";
+import {actorCreator, itemCreator} from "../../module/data/EntityCreator";
 import * as Cara_Aeternia from "../resources/importSamples/Hexenkönigin/Cara_Aeternia.json";
 import {CharacterDataModel} from "../../module/actor/dataModel/CharacterDataModel";
+import SplittermondMasteryItem from "../../module/item/mastery";
+import {MasteryDataModel} from "../../module/item/dataModel/MasteryDataModel";
+import SplittermondSpellItem from "../../module/item/spell";
+import {SpellDataModel} from "../../module/item/dataModel/SpellDataModel";
+import {FoundryDialog} from "../../module/api/Dialog";
+import SplittermondActorSheet from "../../module/actor/sheets/actor-sheet";
 
 declare const Actor: any;
 declare var Dialog: any;
@@ -267,6 +273,89 @@ export function actorTest(context: QuenchBatchContext) {
             // Check that consumed values were reduced
             expect(updated?.system.focus.consumed.value).to.equal(6);
             expect(updated?.system.health.consumed.value).to.equal(2);
+        });
+    });
+
+    describe("Import of Items into actor", () => {
+        let actor: SplittermondActor;
+        let originalDialog: any
+        let originalPrompt: any
+        let items: (SplittermondMasteryItem|SplittermondSpellItem)[] =[];
+
+        beforeEach(async () => {
+            originalDialog = Dialog;
+            originalPrompt = FoundryDialog.prompt;
+            actor = await actorCreator.createCharacter({type: "character", name: "Rest Test", system: {}});
+
+            Dialog = class {
+                constructor(options: any) {
+                    if (options?.buttons?.yes) options.buttons.yes.callback();
+                }
+                render() {}
+            };
+
+        });
+
+        afterEach(async () => {
+            Dialog = originalDialog;
+            FoundryDialog.prompt = originalPrompt;
+            if (actor && actor.id) await Actor.deleteDocuments([actor.id]);
+            await Item.deleteDocuments(items.map(i => i.id));
+            items = [];
+        });
+
+        async function createSpell(item: Parameters<typeof itemCreator["createSpell"]>[0]){
+            const itemData = await  itemCreator.createSpell(item);
+            items.push(itemData);
+            return itemData
+        }
+
+        async function createMastery(item: Parameters<typeof itemCreator["createMastery"]>[0]){
+            const itemData = await  itemCreator.createMastery(item);
+            items.push(itemData);
+            return itemData
+        }
+
+        it("import spell without prompting if skill is set", async() => {
+            const spell = await createSpell({type:"spell", name: "Test Spell", system: {skill: "deathmagic", skillLevel: 1}});
+            const underTest = new SplittermondActorSheet(actor, {editable: true});
+
+            await underTest._onDropItemCreate(spell)
+
+            const itemOnActor = actor.items.find(i => i.name === spell.name);
+            expect(itemOnActor).to.exist;
+            expect((itemOnActor?.system as SpellDataModel).skill).to.equal(spell.system.skill);
+        });
+
+        it("import mastery without prompting if skill is set", async() => {
+            const mastery = await createMastery({type:"mastery", name: "Test Mastery", system: {skill: "deathmagic", level: 1}});
+            const underTest = new SplittermondActorSheet(actor, {editable: true});
+
+            await underTest._onDropItemCreate(mastery)
+
+            const itemOnActor = actor.items.find(i => i.name === mastery.name);
+            expect(itemOnActor).to.exist;
+            expect((itemOnActor?.system as MasteryDataModel).skill).to.equal((mastery.system as MasteryDataModel).skill);
+        });
+
+        it("should prompt for skill if available skills are set", async () => {
+            Dialog = class {
+                constructor(options: any) {
+                    if (options?.buttons?.deathmagic) {
+                        options.buttons.deathmagic.callback();
+                    }
+                }
+                render() {}
+            };
+            const spell = await createSpell({type:"spell", name: "Spell with School options", system: {availableIn: "deathmagic 1, lightmagic 2", skill: "arcanelore", skillLevel: 0}});
+            const underTest = new SplittermondActorSheet(actor, {editable: true});
+
+            await underTest._onDropItemCreate(spell.toObject())
+
+            const itemOnActor = actor.items.find(i => i.name === spell.name);
+            expect(itemOnActor).to.exist;
+            expect((itemOnActor?.system as SpellDataModel).skill).to.equal("deathmagic");
+            expect((itemOnActor?.system as SpellDataModel).skillLevel).to.equal(1);
         });
     });
 }

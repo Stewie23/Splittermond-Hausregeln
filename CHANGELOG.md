@@ -1,3 +1,12 @@
+## 13.2.0
+### New Features
+* System now comes with a custom background image for all worlds.
+* Anfügen von Zaubern oder Meisterschaften an einen Charakter oder NSC schaut jetzt auf gesetzte Fertigkeit, wenn kein Wert in "Verfügbar in angegeben ist"
+* Dialog zur Auswahl einer beliebigen Fertigkeit beim Anfügen von Zaubern oder Meisterschaften an einen Charakter oder NSC ist nun auch bedienbar.
+### Fixed
+
+* Bei Zaubern kann für Schadenstyp und Schadensart nun wieder 'nichts' angegeben werden.
+
 ## 13.1.0
 ### New Features
 * Bei Zauberproben wird nun das Bild des Zaubers, so vorhanden, in der Chatnachricht angezeigt

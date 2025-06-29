@@ -5,7 +5,7 @@ import {DamageInitializer} from "../../util/chat/damageChatMessage/initDamage";
 import {ItemFeaturesModel} from "../../item/dataModel/propertyModels/ItemFeaturesModel.js";
 import {DamageRoll} from "../../util/damage/DamageRoll.js";
 import {CostBase} from "../../util/costs/costTypes.js";
-import {parseAvailableIn, selectSkillDialog} from "./parseAvailableIn";
+import {parseAvailableIn, selectFromAllSkills, selectFromParsedSkills} from "./parseAvailableIn";
 
 export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSheet {
     constructor(...args) {
@@ -593,40 +593,57 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
      * @returns {Promise<void>}
      */
     async _onDropItemCreate(itemData) {
-        if (itemData.type === "spell" || itemData.type === "mastery") {
-            const isSpell = itemData.type === "spell";
-            const allowedSkills = isSpell
-                ? splittermond.skillGroups.magic
-                : splittermond.skillGroups.all;
-            const defaultLevel = isSpell ? 0 : (itemData.system.level ?? 0);
-            const dialogTitle = isSpell
-                ? foundryApi.localize("splittermond.chooseMagicSkill")
-                : foundryApi.localize("splittermond.chooseSkill");
-
-                const parsed = parseAvailableIn(
-                    itemData.system?.availableIn ?? "",
+        if(itemData.type === "spell"){
+            const allowedSkills = splittermond.skillGroups.magic;
+            const dialogTitle = foundryApi.localize("splittermond.chooseMagicSkill")
+            const parsed = parseAvailableIn(itemData.system?.availableIn ?? "", allowedSkills);
+            let selectedSkill;
+            if(parsed.length === 0 && allowedSkills.includes(itemData.system?.skill)) {
+                selectedSkill = {skill: itemData.system.skill, level: itemData.system.skillLevel ?? 0};
+            } else if (parsed.length > 1){
+                selectedSkill = await selectFromParsedSkills(parsed.filter(s => s.level !== null ), dialogTitle);
+            } else if (parsed.length === 0) {
+                selectedSkill = await selectFromAllSkills(
                     allowedSkills,
-                    defaultLevel
+                    [0,1,2,3,4,5],
+                    dialogTitle,
                 );
-                let selectedSkill;
-                if (parsed.length > 1 || parsed.length === 0) {
-                    selectedSkill = await selectSkillDialog(
-                        parsed,
-                        allowedSkills,
-                        dialogTitle,
-                        defaultLevel
-                    );
-                } else if (parsed.length === 1) {
-                    selectedSkill = {skill: parsed[0].skill, level: parsed[0].level ?? 0 };
-                }
+            } else if (parsed.length === 1) {
+                selectedSkill = {skill: parsed[0].skill, level: parsed[0].level ?? 0};
+            }
 
-                if (!selectedSkill) return;
+            if (!selectedSkill) return;
 
-                itemData.system.skill = selectedSkill.skill;
-                itemData.system[isSpell ? "skillLevel" : "level"] = selectedSkill.level;
+            itemData.system.skill = selectedSkill.skill;
+            itemData.system.skillLevel = selectedSkill.level;
+
+        }
+        if(itemData.type === "mastery"){
+            const allowedSkills = splittermond.skillGroups.all;
+            const dialogTitle = foundryApi.localize("splittermond.chooseSkill")
+            const parsed = parseAvailableIn(itemData.system?.availableIn ?? "", allowedSkills)
+            .map(s => ({...s, level: itemData.system.level ?? 1}));
+            let selectedSkill;
+            if(parsed.length === 0 && allowedSkills.includes(itemData.system?.skill)) {
+                selectedSkill = {skill: itemData.system.skill, level: itemData.system.skillLevel ?? 0};
+            } else if (parsed.length > 1){
+                selectedSkill = await selectFromParsedSkills(parsed, dialogTitle);
+            } else if (parsed.length === 0) {
+                selectedSkill = await selectFromAllSkills(
+                    allowedSkills,
+                    [1,2,3,4],
+                    dialogTitle,
+                );
+            } else if (parsed.length === 1) {
+                selectedSkill = {skill: parsed[0].skill, level: parsed[0].level ?? 0};
+            }
+            if (!selectedSkill) return;
+
+            itemData.system.skill = selectedSkill.skill;
+            itemData.system.level = selectedSkill.level;
         }
 
-        var rerenderCombatTracker = false;
+        let rerenderCombatTracker = false;
         if (itemData.type === "statuseffect") {
             const currentScene = game.scenes.current?.id || null;
             let combats = game.combats.filter(c => (c.scene === null) || (c.scene.id === currentScene));
