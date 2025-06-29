@@ -145,6 +145,7 @@ global.foundry = {
                 render(){};
                 addEventListener(){};
                 close(){};
+                static prompt(){};
             }
         }
     }
