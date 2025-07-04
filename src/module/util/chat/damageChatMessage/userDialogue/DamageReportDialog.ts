@@ -1,4 +1,4 @@
-import {DialogV2ConstructorInput, DialogV2RenderOptions, FoundryDialog} from "../../../../api/Dialog";
+import {DialogV2ConstructorInput, DialogV2RenderOptions, FoundryDialog} from "../../../../api/Application";
 import {UserReport} from "./UserReporterImpl";
 import {Renderer} from "./Renderer";
 import {foundryApi} from "../../../../api/foundryApi";

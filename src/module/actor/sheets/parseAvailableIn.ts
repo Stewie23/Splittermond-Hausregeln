@@ -1,5 +1,5 @@
 import {foundryApi} from "../../api/foundryApi";
-import {FoundryDialog} from "../../api/Dialog";
+import {FoundryDialog} from "../../api/Application";
 import {SpellDataModel} from "../../item/dataModel/SpellDataModel";
 import {MasteryDataModel} from "../../item/dataModel/MasteryDataModel";
 

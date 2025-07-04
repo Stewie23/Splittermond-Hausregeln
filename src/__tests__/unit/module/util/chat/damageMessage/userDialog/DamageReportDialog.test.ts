@@ -10,7 +10,7 @@ import {foundryApi} from "../../../../../../../module/api/foundryApi";
 import {createHtml} from "../../../../../../handlebarHarness";
 import {expect} from "chai";
 import {DOMWindow, JSDOM} from "jsdom";
-import {FoundryDialog} from "../../../../../../../module/api/Dialog";
+import {FoundryDialog} from "../../../../../../../module/api/Application";
 import {CostBase} from "../../../../../../../module/util/costs/costTypes";
 
 declare const foundry:any;

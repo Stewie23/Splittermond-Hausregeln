@@ -5,7 +5,7 @@ import sinon from "sinon";
 import SplittermondActorSheet from "../../../../../module/actor/sheets/actor-sheet.js";
 import {splittermond} from "../../../../../module/config";
 import {foundryApi} from "../../../../../module/api/foundryApi";
-import {FoundryDialog} from "../../../../../module/api/Dialog";
+import {FoundryDialog} from "../../../../../module/api/Application";
 
 declare const foundry: any;
 declare const global: any;

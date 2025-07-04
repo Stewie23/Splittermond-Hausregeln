@@ -3,7 +3,7 @@ import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config.js";
 import {importSpell as spellImporter} from "./item-importer/spellImporter";
 import {importNpc as npcImporter} from "./item-importer/npcImporter";
-import {FoundryDialog} from "../api/Dialog.js";
+import {FoundryDialog} from "../api/Application.ts";
 
 export default class ItemImporter {
 
