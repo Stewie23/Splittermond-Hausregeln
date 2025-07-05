@@ -4,7 +4,7 @@ import {chatActionFeatureTest} from "./chatActionFeature.test";
 import {dataModelTest} from "./api/dataModel.test";
 import {DamageProcessingTest} from "./DamageProcessingTest";
 import {foundryTypeDeclarationsTest} from "./api/foundryTypes.test";
-import {mergeObjectTest} from "./mergeObject.test";
+import {mergeObjectTest} from "./api/mergeObject.test";
 import {actorTest} from "./actor.test";
 import type {Quench} from "@ethaks/fvtt-quench";
 import {settingsTest} from "./settings.test";

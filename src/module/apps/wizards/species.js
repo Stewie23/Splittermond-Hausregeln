@@ -37,7 +37,7 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
     }
 
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/wizards/species.hbs",
             classes: ["splittermond", "wizard", "species"]
         });

@@ -8,7 +8,7 @@ export default class SplittermondItem extends Item {
             super(data, context);
         } else {
             //In my opinion, this line shouldn't do anything, However, I don't have the time to test.
-            foundryApi.mergeObject(context, {splittermond: {ready: true}});
+            foundryApi.utils.mergeObject(context, {splittermond: {ready: true}});
             const ItemConstructor = CONFIG.splittermond.Item.documentClasses[data.type];
             return ItemConstructor ? new ItemConstructor(data, context) : new SplittermondItem(data, context);
         }

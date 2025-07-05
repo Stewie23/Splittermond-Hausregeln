@@ -43,7 +43,7 @@ export default class TokenActionBar extends Application {
 
 
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/apps/action-bar.hbs",
             id: "token-action-bar",
             popOut: false,

@@ -3,7 +3,7 @@ import {parseFeatures} from "../dataModel/propertyModels/ItemFeaturesModel";
 
 export default class SplittermondItemSheet extends foundry.appv1.sheets.ItemSheet {
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/item/item-sheet.hbs",
             classes: ["splittermond", "sheet", "item"],
             tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "description"}],
