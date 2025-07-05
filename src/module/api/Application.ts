@@ -12,6 +12,7 @@ declare namespace foundry {
 
     import ApplicationV2 = foundry.applications.api.ApplicationV2;
     import ApplicationFormConfiguration = foundry.application.types.ApplicationFormConfiguration;
+    import ApplicationRenderContext = foundry.application.ApplicationRenderContext;
 
     interface DialogV2Configuration {
         modal: boolean;
@@ -99,6 +100,21 @@ declare namespace foundry {
                 title: string;
             }
         }
+
+        interface ApplicationRenderContext {
+            tabs?: Record<string, ApplicationTab>
+        }
+
+        interface ApplicationTab{
+            active:boolean;
+            cssClass:string;
+            group:string;
+            icon?:string;
+            id:string;
+            label?:string;
+            tooltip?:string;
+        }
+
     }
     namespace applications {
         namespace api {
@@ -120,8 +136,6 @@ declare namespace foundry {
 
                 render(options?: DialogV2RenderOptions): Promise<this>;
 
-                addEventListener(type: "close", listener: (event: Event) => void): void;
-                close():void;
             }
 
             /**
@@ -140,10 +154,18 @@ declare namespace foundry {
 
                 render(options?: boolean | ApplicationRenderOptions): Promise<this>;
                 submit(submitOptions?: object): Promise<any>;
+
+                addEventListener(type: string, listener: (event: Event) => void): void;
+                close():void;
+
+                protected _onRender(context: ApplicationRenderContext, options: RENDER_OPTIONS): Promise<void>
             }
 
             export function HandlebarsApplicationMixin(BaseApplication: typeof ApplicationV2): typeof HandlebarsApplication;
         }
+    }
+    interface HandlebarsRenderOptions {
+        parts: string[];
     }
 
     interface HandlebarsTemplatePart {
@@ -161,6 +183,28 @@ declare namespace foundry {
      */
     class HandlebarsApplication extends ApplicationV2{
         static PARTS: Record<string, HandlebarsTemplatePart>
+
+        tabGroups: Record<string, null | string>
+
+        protected _preparePartContext(
+            partId: string,
+            context: ApplicationRenderContext,
+            options: HandlebarsRenderOptions,
+        ): Promise<ApplicationRenderContext>
+
+        changeTab(tab: string, group: string,
+            options?: {
+                event?: Event;
+                force?: boolean;
+                navElement?: HTMLElement;
+                updatePosition?: boolean;
+            },
+        ): void
+
+        protected _prepareContext(options:HandlebarsRenderOptions):Promise<ApplicationRenderContext>;
+        protected _onRender(context: foundry.application.ApplicationRenderContext, options: HandlebarsRenderOptions): Promise<void>;
+
+        _configureRenderOptions(options: unknown):void;
     }
 }
 

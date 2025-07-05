@@ -1,12 +1,32 @@
 import {initializeDisplayPreparation} from "./itemDisplayPreparation.js";
 import {foundryApi} from "../../api/foundryApi";
+import {FoundryApplication, HandlebarsMixin} from "../../api/Application.js";
 
 /**
  * @returns {typeof indexSearchParameters};
  */
-export default class SplittermondCompendiumBrowser extends Application {
-    constructor(app) {
-        super(app);
+export default class SplittermondCompendiumBrowser extends HandlebarsMixin(FoundryApplication) {
+    static PARTS = {
+        form: {
+            template: "systems/splittermond/templates/apps/compendium-browser.hbs",
+        }
+    }
+    #dragDrop;
+
+    constructor(options = {}) {
+        super({
+            classes: ["splittermond", "compendium-browser"],
+            width: 600,
+            top: 70,
+            left: 120,
+            height: window.innerHeight - 100,
+            resizable: true,
+            dragDrop: [{dragSelector: ".list > ol > li"}],
+            id: "compendium-browser",
+            title: "Compendium Browser",
+            ...options,
+        });
+        this.#dragDrop = this.#createDragDropHandlers();
 
         /** @type {object} */
         this.allItems = {};
@@ -23,24 +43,26 @@ export default class SplittermondCompendiumBrowser extends Application {
         };
     }
 
-
-    static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
-            template: "systems/splittermond/templates/apps/compendium-browser.hbs",
-            classes: ["splittermond", "compendium-browser"],
-            tabs: [{navSelector: ".sheet-navigation", contentSelector: "main", initial: "spell"}],
-            width: 600,
-            top: 70,
-            left: 120,
-            height: window.innerHeight - 100,
-            resizable: true,
-            dragDrop: [{dragSelector: ".list > ol > li"}],
+    #createDragDropHandlers() {
+        return this.options.dragDrop.map((d) => {
+            d.permissions = {
+                dragstart: this._canDragStart.bind(this),
+                drop: this._canDragDrop.bind(this),
+            };
+            d.callbacks = {
+                dragstart: this._onDragStart.bind(this),
+                dragover: null,
+                drop: null,
+            };
+            return new DragDrop(d);
         });
     }
 
-    async getData() {
+
+
+    async _prepareContext(options) {
         const getDataTimerStart = performance.now();
-        const data = super.getData();
+        const data = await super._prepareContext(options);
         data.spellFilter = {
             skills: deepClone(CONFIG.splittermond.spellSkillsOption)
         };
@@ -75,15 +97,17 @@ export default class SplittermondCompendiumBrowser extends Application {
      * @param {CompendiumBrowserCompendiumPacks} compendia
      * @returns {Promise<Record<string,ItemIndexEntity[]>>} the mutated record
      */
-    recordCompendiaItemsInCategories(compendia){
+    recordCompendiaItemsInCategories(compendia) {
         let allItems = {};
 
         const indices = compendia
             .filter(pack => pack.documentName === "Item")
             .map(pack => ({
                     metadata: {id: pack.metadata.id, label: pack.metadata.label},
-                    index: pack.getIndex({fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features",
-                            "system.level", "system.spellType", "system.secondaryAttack.skill", "system.damage"]})
+                    index: pack.getIndex({
+                        fields: ["system.availableIn", "system.skill", "system.skillLevel", "system.features",
+                            "system.level", "system.spellType", "system.secondaryAttack.skill", "system.damage"]
+                    })
                 })
             );
 
@@ -104,7 +128,7 @@ export default class SplittermondCompendiumBrowser extends Application {
      * @param items
      * @returns {Record<string, ItemIndexEntity[]>} the mutated record
      */
-    appendWorldItemsToRecord(record, items){
+    appendWorldItemsToRecord(record, items) {
         items.forEach((item, idx) => {
             if (!(item.type in record)) {
                 record[item.type] = [];
@@ -125,10 +149,30 @@ export default class SplittermondCompendiumBrowser extends Application {
         return record;
     }
 
-    activateListeners(html) {
+    _onRender(context, options) {
+        const html = $(this.element)
 
-        super.activateListeners(html);
+        super._onRender(context, options);
+        this.#dragDrop.forEach((d) => d.bind(this.element));
 
+        // Tab switching logic for ApplicationV2
+        html.find('.sheet-navigation-item').on('click', ev => {
+            ev.preventDefault();
+            const tab = $(ev.currentTarget).data('tab');
+            const group = $(ev.currentTarget).closest('nav').data('group') || 'primary';
+
+            // Remove active from all nav items in group
+            html.find(`.sheet-navigation[data-group="${group}"] .sheet-navigation-item`).removeClass('active');
+            // Add active to clicked nav item
+            $(ev.currentTarget).addClass('active');
+
+            // Hide all tab sections in group
+            html.find(`section.tab[data-group="${group}"]`).hide();
+            // Show the selected tab
+            html.find(`section.tab[data-group="${group}"][data-tab="${tab}"]`).show();
+        });
+
+        // Show only the initial tab (spell) on first render
         html.find('.list li').click(async ev => {
             let itemId = $(ev.currentTarget).closestData('item-id');
             let item = await fromUuid(itemId);
@@ -338,6 +382,7 @@ export default class SplittermondCompendiumBrowser extends Application {
     get title() {
         return "Compendium Browser";
     }
+
     /**
      * A copy of foundry's escapeRegExp. For functitons of this complexity I prefer copying over relying on somebody
      * sneakily mixing in things into global objects
