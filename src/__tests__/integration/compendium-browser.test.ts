@@ -48,16 +48,6 @@ export function compendiumBrowserTest(context:QuenchBatchContext) {
         it("i18n contains a format function ignores no template args input", async () => {
             expect(game.i18n.format("splittermond.skillLabel.deathmagic")).to.equal("Todesmagie");
         });
-
-        it("deepClone clones deeply", () => {
-            const probe = {
-               topLevel :{secondLevel: "value2", deleteMe:""},
-               next: "value",
-            };
-            const clone = deepClone(probe);
-            delete clone.topLevel.deleteMe;
-            expect(probe.topLevel).to.have.property("deleteMe");
-        });
     });
 
     describe("getData", () => {

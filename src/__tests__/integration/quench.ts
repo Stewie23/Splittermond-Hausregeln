@@ -4,7 +4,7 @@ import {chatActionFeatureTest} from "./chatActionFeature.test";
 import {dataModelTest} from "./api/dataModel.test";
 import {DamageProcessingTest} from "./DamageProcessingTest";
 import {foundryTypeDeclarationsTest} from "./api/foundryTypes.test";
-import {mergeObjectTest} from "./api/mergeObject.test";
+import {apiUtilsTest} from "./api/apiUtils.test";
 import {actorTest} from "./actor.test";
 import type {Quench} from "@ethaks/fvtt-quench";
 import {settingsTest} from "./settings.test";
@@ -24,7 +24,7 @@ function registerQuenchTests(quench: Quench) {
     quench.registerBatch("splittermond.dataModel", dataModelTest);
     quench.registerBatch("splittermond.damageProcessing", DamageProcessingTest);
     quench.registerBatch("splittermond.foundryTypes", foundryTypeDeclarationsTest);
-    quench.registerBatch("splittermond.mergeObjects", mergeObjectTest);
+    quench.registerBatch("splittermond.apiUtils", apiUtilsTest);
     quench.registerBatch("splittermond.SettingsModule", settingsTest);
     quench.registerBatch("splittermond.modifier", modifierTest);
     quench.registerBatch("splittermond.keybindings", foundryKeybindingsTest);
