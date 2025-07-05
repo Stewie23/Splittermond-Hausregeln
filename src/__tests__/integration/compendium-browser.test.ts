@@ -65,7 +65,7 @@ export function compendiumBrowserTest(context:QuenchBatchContext) {
             if(game.packs.length === 0) {
                 it.skip("No compendiums found");
             }
-            const data = await game.splittermond.compendiumBrowser.getData();
+            const data = await game.splittermond.compendiumBrowser._prepareContext();
             expect(data).to.have.property("items");
             expect(data.items).to.have.property("mastery");
             expect(data.items).to.have.property("spell");

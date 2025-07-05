@@ -1,6 +1,5 @@
 import {initializeDisplayPreparation} from "./itemDisplayPreparation.js";
-import {foundryApi} from "../../api/foundryApi";
-import {FoundryApplication, HandlebarsMixin} from "../../api/Application.js";
+import {FoundryApplication, HandlebarsMixin} from "../../api/Application";
 
 /**
  * @returns {typeof indexSearchParameters};
