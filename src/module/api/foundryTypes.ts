@@ -187,6 +187,7 @@ declare namespace foundry{
                 index: Collection<Record<string|symbol|number,unknown>>;
                 documentName: string;
                 name:string;
+                getIndex<T extends string>(options?: {fields?: T[];}): Promise<Collection<Record<T,unknown>>>;
             }
         }
 

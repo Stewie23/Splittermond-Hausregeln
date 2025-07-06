@@ -117,9 +117,14 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
             underTest.forEach((pack) => {
                 expect(pack.name, `Pack does not have a name`).to.be.a("string")
                 expect(pack.metadata, `Pack ${pack.name} does not have metadata`).to.be.a("object")
-                expect(pack.index, `Pack ${pack.name} does not have an index`).to.be.a("object")
+                expect(pack.index, `Pack ${pack.name} does not have an index`).to.be.a("Map")
                 expect(pack.documentName, `Pack ${pack.name}index does not have a documentName`).to.be.a("string");
             })
+        });
+
+        it("should have a method called getIndex", () => {
+            expect(game.packs.find(()=>true), `compendium collection prototype does not have getIndex`).to.have.property("getIndex");
+            expect(game.packs.find(()=>true).getIndex).to.be.a("function");
         });
     });
 
