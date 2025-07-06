@@ -1,9 +1,11 @@
-
+/**
+ * All types Straight from the foundry V13 API
+ */
 export interface DialogV2RenderOptions {
     force: boolean
 }
 
-export interface DialogV2ConstructorInput extends foundry.application.types.ApplicationConfiguration, foundry.DialogV2Configuration {
+export interface DialogV2ConstructorInput extends foundry.applications.types.ApplicationConfiguration, foundry.DialogV2Configuration {
 
 }
 
@@ -11,8 +13,8 @@ export interface DialogV2ConstructorInput extends foundry.application.types.Appl
 declare namespace foundry {
 
     import ApplicationV2 = foundry.applications.api.ApplicationV2;
-    import ApplicationFormConfiguration = foundry.application.types.ApplicationFormConfiguration;
-    import ApplicationRenderContext = foundry.application.ApplicationRenderContext;
+    import ApplicationFormConfiguration = foundry.applications.types.ApplicationFormConfiguration;
+    import ApplicationRenderContext = foundry.applications.types.ApplicationRenderContext;
 
     interface DialogV2Configuration {
         modal: boolean;
@@ -30,8 +32,7 @@ declare namespace foundry {
         callback: ((event: PointerEvent | SubmitEvent, button: HTMLButtonElement, dialog: foundry.applications.api.DialogV2) => Promise<unknown>);
     }
 
-    namespace application{
-        /** All types Straight from the foundry V12 API */
+    namespace applications {
         namespace types {
 
             type ApplicationClickAction = (event: PointerEvent, target: unknown) => Promise<void>
@@ -48,6 +49,7 @@ declare namespace foundry {
                 actions: Record<string, ApplicationAction>;
                 form: Partial<ApplicationFormConfiguration>;
                 position: Partial<ApplicationPosition>;
+                [x: string]: unknown;
             }
 
             interface ApplicationWindowConfiguration {
@@ -99,27 +101,26 @@ declare namespace foundry {
                 icon: string | false;
                 title: string;
             }
+
+            interface ApplicationRenderContext {
+                tabs?: Record<string, ApplicationTab>
+                [x:string]: unknown;
+            }
+            interface ApplicationTab{
+                active:boolean;
+                cssClass:string;
+                group:string;
+                icon?:string;
+                id:string;
+                label?:string;
+                tooltip?:string;
+            }
         }
 
-        interface ApplicationRenderContext {
-            tabs?: Record<string, ApplicationTab>
-        }
-
-        interface ApplicationTab{
-            active:boolean;
-            cssClass:string;
-            group:string;
-            icon?:string;
-            id:string;
-            label?:string;
-            tooltip?:string;
-        }
-
-    }
-    namespace applications {
         namespace api {
-            import ApplicationConfiguration = foundry.application.types.ApplicationConfiguration;
-            import ApplicationRenderOptions = foundry.application.types.ApplicationRenderOptions;
+            import ApplicationConfiguration = foundry.applications.types.ApplicationConfiguration;
+            import ApplicationRenderOptions = foundry.applications.types.ApplicationRenderOptions;
+            import ApplicationRenderContext = foundry.applications.types.ApplicationRenderContext;
 
             /**
              * Type declarations for applications. incomplete, copied at V13
@@ -163,7 +164,31 @@ declare namespace foundry {
 
             export function HandlebarsApplicationMixin(BaseApplication: typeof ApplicationV2): typeof HandlebarsApplication;
         }
+
+        namespace ux {
+            class DragDrop {
+                constructor(config: Partial<DragDropConfiguration>);
+                bind(html:HTMLElement): this;
+            }
+        }
     }
+
+
+    interface DragDropConfiguration {
+        callbacks?: Record<
+            | "dragstart"
+            | "drop"
+            | "dragover"
+            | "dragenter"
+            | "dragleave"
+            | "dragend",
+            (event: DragEvent) => void
+        >;
+        dragSelector?: null | string;
+        dropSelector?: null | string;
+        permissions?: Record<"dragstart" | "drop", (selector: string) => boolean>;
+    }
+
     interface HandlebarsRenderOptions {
         parts: string[];
     }
@@ -202,7 +227,7 @@ declare namespace foundry {
         ): void
 
         protected _prepareContext(options:HandlebarsRenderOptions):Promise<ApplicationRenderContext>;
-        protected _onRender(context: foundry.application.ApplicationRenderContext, options: HandlebarsRenderOptions): Promise<void>;
+        protected _onRender(context: foundry.applications.types.ApplicationRenderContext, options: HandlebarsRenderOptions): Promise<void>;
 
         _configureRenderOptions(options: unknown):void;
     }
@@ -210,4 +235,6 @@ declare namespace foundry {
 
 export const FoundryDialog = foundry.applications.api.DialogV2
 export const FoundryApplication = foundry.applications.api.ApplicationV2;
-export const HandlebarsMixin = foundry.applications.api.HandlebarsApplicationMixin;
+export const FoundryHandlebarsMixin = foundry.applications.api.HandlebarsApplicationMixin
+export class FoundryDragDrop extends foundry.applications.ux.DragDrop{}
+

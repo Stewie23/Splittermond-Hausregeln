@@ -53,7 +53,7 @@ export class DamageReportDialog extends FoundryDialog {
     }
 
 
-    constructor(options: DialogV2ConstructorInput, originalDamage: number, private currentCostType: CostType, private target: SplittermondActor) {
+    constructor(options: Partial<DialogV2ConstructorInput>, originalDamage: number, private currentCostType: CostType, private target: SplittermondActor) {
         super(options);
         this.originalDamage = originalDamage;
     }
