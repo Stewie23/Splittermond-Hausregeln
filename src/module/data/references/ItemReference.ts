@@ -1,8 +1,8 @@
 import {AgentReference} from "./AgentReference";
-import {foundryApi} from "module/api/foundryApi";
 import {DataModelSchemaType, fields, SplittermondDataModel} from "../SplittermondDataModel";
 import SplittermondItem from "../../item/item.js";
 import {IllegalStateException} from "../exceptions";
+import {itemRetriever} from "../EntityRetriever";
 
 function ItemReferenceSchema() {
     return {
@@ -49,6 +49,6 @@ export class ItemReference<T extends SplittermondItem> extends SplittermondDataM
     }
 
     #getFromCollection(): T | undefined {
-        return foundryApi.getItem(this.id) as T|undefined;
+        return itemRetriever.get(this.id) as T|undefined;
     }
 }
