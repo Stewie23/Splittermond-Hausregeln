@@ -1,6 +1,7 @@
 import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 import {foundryApi} from "../../../module/api/foundryApi";
 import {actorCreator} from "../../../module/data/EntityCreator";
+import {ChatMessage} from "../../../module/api/ChatMessage";
 
 declare const game: any
 
@@ -9,10 +10,10 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
 
     describe("ChatMessage", () => {
         it("should be a class", () => {
-            expect(typeof Item).to.equal("function");
+            expect(typeof ChatMessage).to.equal("function");
         });
 
-        ["img", "name", "type",].forEach(property => {
+        ["img", "name", "type","uuid"].forEach(property => {
             it(`should have a string property ${property}`, () => {
                     game.items.forEach((item: FoundryDocument) => {
                         expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
@@ -22,7 +23,7 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
                 }
             )
         });
-        ["system"].forEach(property => {
+        ["system","folder"].forEach(property => {
             it(`should have an object property ${property}`, () => {
                     game.items.forEach((item: FoundryDocument) => {
                         expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
@@ -46,7 +47,7 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
             expect(typeof Item).to.equal("function");
         });
 
-        ["img", "name", "type",].forEach(property => {
+        ["img", "name", "type","uuid"].forEach(property => {
             it(`should have a string property ${property}`, () => {
                     game.items.forEach((item: FoundryDocument) => {
                         expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
@@ -56,7 +57,7 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
                 }
             )
         });
-        ["system"].forEach(property => {
+        ["system","folder"].forEach(property => {
             it(`should have an object property ${property}`, () => {
                     game.items.forEach((item: FoundryDocument) => {
                         expect(item, `Item ${item.id} does not have ${property}`).to.have.property(property);
@@ -77,7 +78,17 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
     });
 
     describe("Actor", () => {
-        ["system"].forEach(property => {
+        ["img", "name", "type","uuid"].forEach(property => {
+            it(`should have a string property ${property}`, () => {
+                    game.items.forEach((actor: FoundryDocument) => {
+                        expect(actor, `Actor ${actor.id} does not have ${property}`).to.have.property(property);
+                        expect(typeof actor[property as keyof typeof actor], `actor property ${property} is not a string`)
+                            .to.equal("string");
+                    });
+                }
+            )
+        });
+        ["system","folder"].forEach(property => {
             it(`should have an object property ${property}`, () => {
                     game.actors.forEach((actor: FoundryDocument) => {
                         expect(actor, `Item ${actor.id} does not have ${property}`).to.have.property(property);
@@ -94,6 +105,21 @@ export function foundryTypeDeclarationsTest(context: QuenchBatchContext) {
                     .to.equal("function");
 
             });
+        });
+    });
+
+    describe("Compendium Packs", () => {
+        it("should have well formed compendium data", function() {
+            const underTest = foundryApi.collections.packs
+            if(underTest.size === 0) {
+                this.skip();
+            }
+            underTest.forEach((pack) => {
+                expect(pack.name, `Pack does not have a name`).to.be.a("string")
+                expect(pack.metadata, `Pack ${pack.name} does not have metadata`).to.be.a("object")
+                expect(pack.index, `Pack ${pack.name} does not have an index`).to.be.a("object")
+                expect(pack.documentName, `Pack ${pack.name}index does not have a documentName`).to.be.a("string");
+            })
         });
     });
 

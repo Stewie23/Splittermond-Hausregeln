@@ -1,5 +1,5 @@
 import type {
-    ChatMessageTypes,
+    ChatMessageTypes, CompendiumPacks,
     Hooks, KeybindingActionBinding, KeybindingActionConfig,
     MergeObjectOptions,
     SettingsConfig,
@@ -230,4 +230,19 @@ export const foundryApi = new class FoundryApi {
             return foundry.utils.mergeObject(original, other, options);
         }
     } as const
+
+    collections = {
+        get items():Collection<Item> {
+            // @ts-ignore
+            return game.items;
+        },
+        get actors():Collection<Actor> {
+            // @ts-ignore
+            return game.actors;
+        },
+        get packs():CompendiumPacks {
+            // @ts-ignore
+            return game.packs;
+        }
+    }
 }
