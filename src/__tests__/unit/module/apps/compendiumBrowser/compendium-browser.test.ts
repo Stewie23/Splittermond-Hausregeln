@@ -1,12 +1,16 @@
 import "../../../foundryMocks.js";
-
+import sinon, {SinonSandbox} from "sinon";
+import {afterEach, beforeEach, describe, it} from "mocha";
 import {expect} from 'chai';
-import {produceJQuery} from "../../../../jQueryHarness.js";
-import {createHtml} from "../../../../handlebarHarness.ts";
-import SplittermondCompendiumBrowser from "../../../../../module/apps/compendiumBrowser/compendium-browser.js";
+import {createHtml} from "../../../../handlebarHarness";
+import SplittermondCompendiumBrowser from "../../../../../module/apps/compendiumBrowser/compendium-browser";
+import {JSDOM} from "jsdom";
 
 describe('compendium-browser filters spells', async () => {
-    const probe = {
+    let sandbox: SinonSandbox;
+    beforeEach(() => { sandbox = sinon.createSandbox(); });
+    afterEach(() => { sandbox.restore(); });
+    const probe: any = {
         spellFilter: {
             skills: {
                 lightmagic: "splittermond.skilllabel.lightmagic",
@@ -14,8 +18,8 @@ describe('compendium-browser filters spells', async () => {
                 none: "splittermond.skilllabel.none"
             }
         },
-        masteryFilter: {skill: {none: "splittermond.skilllabel.none"}},
-        weaponFilter: {skill: {none: "splittermond.skilllabel.none"}},
+        masteryFilter: { skill: { none: "splittermond.skilllabel.none" } },
+        weaponFilter: { skill: { none: "splittermond.skilllabel.none" } },
         items: {
             mastery: [],
             weapon: [],
@@ -64,14 +68,17 @@ describe('compendium-browser filters spells', async () => {
     };
 
     it("should filter all spells if checkbox filter that no spell matches is activated", () => {
-            const objectUnderTest = new SplittermondCompendiumBrowser();
-            const domUnderTest = produceJQuery(createHtml("./templates/apps/compendium-browser.hbs", probe));
-            domUnderTest("*").find(`[data-tab="spell"] input#skill-level-spell-0`).prop("checked", true);
-            objectUnderTest.activateListeners(domUnderTest("*"));
-            domUnderTest("*").find(`[data-tab="spell"] li.list-item draggable`).each((index,element) => {
-                expect(domUnderTest(element).attr("style"), `List item at index ${index} with inner html: ${domUnderTest(element).html()}`)
-                    .to.equal("display: none;");
-            });
-        }
-    );
+        const objectUnderTest = new SplittermondCompendiumBrowser();
+        const domUnderTest = new JSDOM(createHtml("./templates/apps/compendium-browser.hbs", probe));
+        // @ts-expect-error element should be not writable, but we need to set it for the test
+        objectUnderTest.element = domUnderTest.window.document.documentElement;
+        (objectUnderTest.element.querySelector(`[data-tab="spell"] input#skill-level-spell-0`) as HTMLInputElement).checked = true;
+        objectUnderTest._onRender({},{});
+        (objectUnderTest.element.querySelectorAll('[data-tab="spell"] li.list-item .draggable').forEach(
+            (element, index) => {
+                expect(element.getAttribute("style"), `List item at index ${index} with inner html: ${element.innerHTML}`).to.equal("display: none;");
+            }
+        ));
+    });
 });
+

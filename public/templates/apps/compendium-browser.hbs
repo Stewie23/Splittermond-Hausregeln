@@ -135,9 +135,9 @@
                     {{#each items.weapon}}
                     <li class="list-item draggable" data-item-id="{{this.uuid}}"
                         data-skill="{{this.system.skill}}" data-secondary-skill="{{this.system.secondaryAttack.skill}}"
-                        data-features="{{this.system.features}}" data-damage="{{this.system.damage}}"
-                        data-secondary-damage="{{this.system.secondaryAttack.damage}}"
-                        data-secondary-features="{{this.system.secondaryAttack.features}}">
+                        data-features="{{this.system.features.internalFeatureList}}" data-damage="{{this.system.damage.stringInput}}"
+                        data-secondary-damage="{{this.system.secondaryAttack.damage.stringInput}}"
+                        data-secondary-features="{{this.system.secondaryAttack.features.internalFeatureList}}">
                         <div>
                             <label>{{this.name}}</label>
                             <div class="features">
@@ -158,7 +158,7 @@
                             
                         </div>
                         <div class="damage">
-                            {{this.system.damage}}
+                            {{this.system.damage.stringInput}}
                         </div>
                         <div class="compendium">
                             {{#if this.compendium}}

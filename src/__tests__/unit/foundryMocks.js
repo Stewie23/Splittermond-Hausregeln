@@ -140,8 +140,23 @@ global.foundry = {
         }
     },
     applications:{
+        ux: {
+            DragDrop: class {}
+        },
         api:{
+            HandlebarsApplicationMixin: function(arg) {
+                return arg
+            },
             DialogV2: class {
+                render(){};
+                addEventListener(){};
+                close(){};
+                static prompt(){};
+            },
+            ApplicationV2: class {
+                constructor(options){
+                    this.options = options;
+                }
                 render(){};
                 addEventListener(){};
                 close(){};
