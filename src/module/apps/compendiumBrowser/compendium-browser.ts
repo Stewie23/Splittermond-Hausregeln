@@ -33,9 +33,28 @@ interface BrowserContext {
 }
 
 export default class SplittermondCompendiumBrowser extends ClosestDataMixin(FoundryHandlebarsMixin(FoundryApplication)) {
+    static TABS = {
+        sheet: {
+            tabs: [
+                { id: 'spell', group: 'primary', label: 'splittermond.spells' },
+                { id: 'mastery', group: 'primary', label: 'splittermond.masteries' },
+                { id: 'weapon', group: 'primary', label: 'splittermond.weapons' },
+            ],
+            initial: "spell"
+        }
+    }
     static PARTS = {
-        form: {
-            template: "systems/splittermond/templates/apps/compendium-browser.hbs",
+        tabs:  {
+            template: "systems/splittermond/templates/apps/compendium-browser/parts/tabs.hbs",
+        },
+        "spell": {
+            template: "systems/splittermond/templates/apps/compendium-browser/parts/spell.hbs",
+        },
+        "mastery": {
+            template: "systems/splittermond/templates/apps/compendium-browser/parts/mastery.hbs",
+        },
+        "weapon": {
+            template: "systems/splittermond/templates/apps/compendium-browser/parts/weapon.hbs",
         }
     };
     #dragDrop: FoundryDragDrop[];
@@ -46,6 +65,10 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
 
     constructor(options: ConstructorParameters<typeof FoundryApplication>[0] = {}) {
         super({
+            tag: "form",
+            form: {
+                submitOnChange:false,
+            },
             classes: ["splittermond", "compendium-browser"],
             window: {
                 //width: 600,
@@ -117,7 +140,7 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
             .then(this.sortCategories);
         return new Promise(async (resolve, __) => {
             data.items = await allItems;
-            console.debug(`Splittermond|Compendium Browser  getData took ${performance.now() - getDataTimerStart} ms`);
+            console.debug(`Splittermond | Compendium Browser getData took ${performance.now() - getDataTimerStart} ms`);
             resolve(data);
         });
     }

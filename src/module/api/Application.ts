@@ -15,6 +15,7 @@ declare namespace foundry {
     import ApplicationV2 = foundry.applications.api.ApplicationV2;
     import ApplicationFormConfiguration = foundry.applications.types.ApplicationFormConfiguration;
     import ApplicationRenderContext = foundry.applications.types.ApplicationRenderContext;
+    import ApplicationTabsConfiguration = foundry.applications.types.ApplicationTabsConfiguration;
 
     interface DialogV2Configuration {
         modal: boolean;
@@ -40,6 +41,17 @@ declare namespace foundry {
              * Not a foundry type
              */
             type ApplicationAction = string | ApplicationClickAction | { buttons: number[], handler: ApplicationClickAction };
+            interface ApplicationTabsConfiguration {
+                initial?: string;
+                labelPrefix?: string;
+                tabs: {
+                    cssClass?: string;
+                    icon?: string;
+                    id: string;
+                    label?: string;
+                    tooltip?: string;
+                }[];
+            }
             interface ApplicationConfiguration {
                 id: string;
                 uniqueId: string;
@@ -207,6 +219,7 @@ declare namespace foundry {
      * @see https://foundryvtt.com/api/classes/foundry.HandlebarsApplication.html
      */
     class HandlebarsApplication extends ApplicationV2{
+        static TABS:  Record<string, ApplicationTabsConfiguration>
         static PARTS: Record<string, HandlebarsTemplatePart>
 
         tabGroups: Record<string, null | string>

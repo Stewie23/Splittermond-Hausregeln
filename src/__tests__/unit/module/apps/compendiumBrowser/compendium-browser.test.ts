@@ -69,7 +69,7 @@ describe('compendium-browser filters spells', async () => {
 
     it("should filter all spells if checkbox filter that no spell matches is activated", () => {
         const objectUnderTest = new SplittermondCompendiumBrowser();
-        const domUnderTest = new JSDOM(createHtml("./templates/apps/compendium-browser.hbs", probe));
+        const domUnderTest = new JSDOM(createHtml("./templates/apps/compendium-browser/parts/spell.hbs", probe));
         // @ts-expect-error element should be not writable, but we need to set it for the test
         objectUnderTest.element = domUnderTest.window.document.documentElement;
         (objectUnderTest.element.querySelector(`[data-tab="spell"] input#skill-level-spell-0`) as HTMLInputElement).checked = true;
