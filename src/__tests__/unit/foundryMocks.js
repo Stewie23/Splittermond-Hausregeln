@@ -26,6 +26,9 @@ class FoundryDocument {
             this[key] = data[key];
         }
     }
+
+    get id() {}
+    get uuid() {}
 }
 
 global.Actor = class Actor extends FoundryDocument{
@@ -141,7 +144,9 @@ global.foundry = {
     },
     applications:{
         ux: {
-            DragDrop: class {}
+            DragDrop: class {
+                bind(){};
+            }
         },
         api:{
             HandlebarsApplicationMixin: function(arg) {
@@ -158,6 +163,7 @@ global.foundry = {
                     this.options = options;
                 }
                 render(){};
+                _onRender(){};
                 addEventListener(){};
                 close(){};
                 static prompt(){};

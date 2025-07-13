@@ -36,7 +36,7 @@ declare namespace foundry {
     namespace applications {
         namespace types {
 
-            type ApplicationClickAction = (event: PointerEvent, target: unknown) => Promise<void>
+            type ApplicationClickAction = (event: PointerEvent, target: HTMLElement) => Promise<void>
             /**
              * Not a foundry type
              */

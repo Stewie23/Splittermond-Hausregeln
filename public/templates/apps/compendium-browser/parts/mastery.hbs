@@ -2,21 +2,21 @@
     <div class="filter column">
         <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
-            <input type="checkbox" value="true" name="show-world-items-mastery" id="show-world-items-mastery"><label
+            <input type="checkbox" value="true" name="show-world-items" id="show-world-items-mastery" data-action="showWorldItemMastery"><label
                     for="show-world-items-mastery">{{localize "splittermond.showWorldItems"}}</label>
         </div>
-        <div class="row">
-            <select name="skill">
+        <div class="row compendium-item-filters">
+            <select name="skill" data-action="filterForSkill">
                 {{selectOptions masteryFilter.skills selected="none" localize=true}}
             </select>
             <label>{{localize "splittermond.masteryItem.level"}}</label>
-            <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-1"><label
+            <input type="checkbox" value="1" name="skill-level-mastery" id="skill-level-mastery-1" data-action="filterForLevel"><label
                 for="skill-level-mastery-1">1</label>
-            <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-2"><label
+            <input type="checkbox" value="2" name="skill-level-mastery" id="skill-level-mastery-2" data-action="filterForLevel"><label
                 for="skill-level-mastery-2"> 2</label>
-            <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-3"><label
+            <input type="checkbox" value="3" name="skill-level-mastery" id="skill-level-mastery-3" data-action="filterForLevel"><label
                 for="skill-level-mastery-3"> 3</label>
-            <input type="checkbox" value="true" name="skill-level-mastery" id="skill-level-mastery-4"><label
+            <input type="checkbox" value="4" name="skill-level-mastery" id="skill-level-mastery-4" data-action="filterForLevel"><label
                 for="skill-level-mastery-4"> 4</label>
         </div>
     </div>

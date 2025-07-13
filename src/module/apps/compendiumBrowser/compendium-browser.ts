@@ -1,8 +1,5 @@
-import { initializeDisplayPreparation } from "./itemDisplayPreparation";
-import {
-    FoundryApplication,
-    FoundryDragDrop, FoundryHandlebarsMixin,
-} from "../../api/Application";
+import {initializeDisplayPreparation} from "./itemDisplayPreparation";
+import {FoundryApplication, FoundryDragDrop, FoundryHandlebarsMixin,} from "../../api/Application";
 import {foundryApi} from "../../api/foundryApi";
 import {splittermond} from "../../config";
 import {itemRetriever} from "../../data/EntityRetriever";
@@ -32,9 +29,11 @@ interface BrowserContext {
     [key: string]: any;
 }
 
+export type ApplicationOptions = ConstructorParameters<typeof FoundryApplication>[0]
+
 export default class SplittermondCompendiumBrowser extends ClosestDataMixin(FoundryHandlebarsMixin(FoundryApplication)) {
     static TABS = {
-        sheet: {
+        primary: {
             tabs: [
                 { id: 'spell', group: 'primary', label: 'splittermond.spells' },
                 { id: 'mastery', group: 'primary', label: 'splittermond.masteries' },
@@ -46,6 +45,7 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
     static PARTS = {
         tabs:  {
             template: "systems/splittermond/templates/apps/compendium-browser/parts/tabs.hbs",
+            //template: "templates/generic/tab-navigation.hbs"
         },
         "spell": {
             template: "systems/splittermond/templates/apps/compendium-browser/parts/spell.hbs",
@@ -57,36 +57,34 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
             template: "systems/splittermond/templates/apps/compendium-browser/parts/weapon.hbs",
         }
     };
-    #dragDrop: FoundryDragDrop[];
 
-    allItems: Record<string, ItemIndexEntity[]>;
-    skillsFilter: Record<string, any>;
-    _produceDisplayableItems: ((...args: any[]) => any) | undefined;
 
-    constructor(options: ConstructorParameters<typeof FoundryApplication>[0] = {}) {
+
+    private dragDrop: FoundryDragDrop[];
+    private _produceDisplayableItems: ((...args: any[]) => any) | undefined;
+
+    constructor(options: ApplicationOptions = {}) {
         super({
             tag: "form",
+            position: {
+                width: 600,
+                top: 70,
+                left: 120,
+                height: 700,
+            },
             form: {
                 submitOnChange:false,
             },
             classes: ["splittermond", "compendium-browser"],
             window: {
-                //width: 600,
-                //top: 70,
-                //left: 120,
-                //height: window.innerHeight - 100,
                 resizable: true,
+                title: "Compendium Browser",
             },
             dragDrop: [{ dragSelector: ".list > ol > li" }],
             id: "compendium-browser",
-            title: "Compendium Browser",
             ...options,
         });
-        this.#dragDrop = this.#createDragDropHandlers();
-
-        this.allItems = {};
-        this.skillsFilter = {};
-
+        this.dragDrop = this.createDragDropHandlers();
         this._produceDisplayableItems = undefined;
     }
 
@@ -101,7 +99,7 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
         return this._produceDisplayableItems;
     };
 
-    #createDragDropHandlers(): FoundryDragDrop[] {
+    private createDragDropHandlers(): FoundryDragDrop[] {
         return (this.options.dragDrop as Record<string,unknown>[]).map((d) => {
             d.permissions = {
                 dragstart: this._canDragStart.bind(this),
@@ -194,39 +192,34 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
     }
 
     async _onRender(context: any, options: any): Promise<void> {
-        const html = $(this.element);
-
         await super._onRender(context, options);
-        this.#dragDrop.forEach((d) => d.bind(this.element));
 
-        html.find('.sheet-navigation-item').on('click', (ev: JQuery.ClickEvent) => {
-            ev.preventDefault();
-            const tab = $(ev.currentTarget).data('tab');
-            const group = $(ev.currentTarget).closest('nav').data('group') || 'primary';
-
-            html.find(`.sheet-navigation[data-group="${group}"] .sheet-navigation-item`).removeClass('active');
-            $(ev.currentTarget).addClass('active');
-
-            html.find(`section.tab[data-group="${group}"]`).hide();
-            html.find(`section.tab[data-group="${group}"][data-tab="${tab}"]`).show();
-        });
+        this.dragDrop.forEach((d) => d.bind(this.element));
 
         this.element.querySelectorAll(".list li")
             .forEach(el =>el.addEventListener('click', async (e) => this.listElementClickHandler(e)));
 
         this.element.querySelectorAll('[data-tab="spell"] input, [data-tab="spell"] select').forEach(
             el=>el.addEventListener('change', () => {
-            this._onSearchFilterSpell(html);
+            this._onSearchFilterSpell();
         }));
         this.element.querySelectorAll('[data-tab="mastery"] input, [data-tab="mastery"] select').forEach(
             el => el.addEventListener('change', () => {
-            this._onSearchFilterMastery(html);
+            this._onSearchFilterMastery();
         }));
         this.element.querySelectorAll('[data-tab="weapon"] input, [data-tab="weapon"] select').forEach(
             el => el.addEventListener('change', () => {
-            this._onSearchFilterWeapon(html);
+            this._onSearchFilterWeapon();
         }));
-        this._onSearchFilterWeapon(html); //No clue why this is here.
+    }
+
+    async render(options: Parameters<InstanceType<typeof FoundryApplication>["render"]>[0] ={}): Promise<this> {
+        const renderResult = await super.render(options);
+        // Initialize the spell section so that everything is visible.
+        this._onSearchFilterSpell();
+        this.element.querySelector('a[data-tab="spell"]')?.classList.add("active");
+        this.element.querySelector('section[data-tab="spell"]')?.classList.add("active");
+        return renderResult;
     }
 
     private async listElementClickHandler(e: Event) {
@@ -246,8 +239,8 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
     }
 
     _canDragStart(selector:string) {
-        //Check if closest data can be replaced by this.
-        const itemId = this.element.querySelector(selector)?.closest("[data-item-id]")?.attributes.getNamedItem("data-item-id")!.value;
+        const selectedElement = this.element.querySelector(selector) as HTMLElement;
+        const itemId = closestData(selectedElement,"item-id");
         return itemId !== undefined;
     }
 
@@ -263,153 +256,126 @@ export default class SplittermondCompendiumBrowser extends ClosestDataMixin(Foun
         }));
     }
 
-    _onSearchFilterSpell(html: JQuery<HTMLElement>): void {
-        const rgx = new RegExp(this._escape_regex((html.find(`[data-tab="spell"] input[name="search"]`)[0] as HTMLInputElement).value), "i");
-        let filterSkill = (html.find(`[data-tab="spell"] select[name="skill"]`)[0] as HTMLSelectElement).value;
-        let filterWorldItems = (html.find(`[data-tab="spell"] input[name="show-world-items-spell"]`)[0] as HTMLInputElement).checked;
-        let filterSkillLevel = [
-            (html.find(`[data-tab="spell"] input#skill-level-spell-0`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="spell"] input#skill-level-spell-1`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="spell"] input#skill-level-spell-2`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="spell"] input#skill-level-spell-3`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="spell"] input#skill-level-spell-4`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="spell"] input#skill-level-spell-5`)[0] as HTMLInputElement).checked
-        ];
+    _onSearchFilterSpell(): void {
+        const currentSection = this.element.querySelector('section.tab[data-tab="spell"]') as HTMLElement;
+        const {nameFilter, skillFilter, displayWorldItems} = this.getCommonFilters(currentSection);
+        const allowedLevels = this.getAllowedLevels(currentSection);
 
-        if (filterSkill === "none") {
-            filterSkill = "";
-        }
-        let idx = 0;
-        for (let li of (html.find(`[data-tab="spell"] .list > ol`)[0] as HTMLUListElement).children) {
-            const name = li.querySelector("label")!.textContent!;
-            let availableIn = closestData(li,"available-in") ?? "";
-            let skill = closestData(li, "skill");
-            let skillLevel = closestData(li,"skill-level");
-            let itemId = closestData(li, "item-id") ?? "";
-            let displayListItem = rgx.test(name) && (availableIn.includes(filterSkill) || skill === filterSkill);
+        filterItems(currentSection, (el) => {
+            const availabilities = this.getAvailablities(el);
 
-            if (displayListItem && filterSkillLevel.includes(true)) {
-                displayListItem = displayListItem && filterSkillLevel.reduce((acc, element, idx) => {
-                    if (element) {
-                        return acc || (availableIn.includes(filterSkill + " " + idx) || skillLevel === `${idx}`);
-                    }
-                    return acc;
-                }, false);
-            }
+            const nameMatches = nameFilter.test(el.querySelector("label")?.textContent ?? "");
+            const shouldDisplayWorldItem = displayWorldItems || !!el.dataset.itemId?.startsWith("Compendium");
+            const skillAndLevelMatches = allowedLevels.includes(parseInt(el.dataset.level ?? "")) &&
+                (el.dataset.skill === skillFilter || skillFilter === "none");
+            const availabilitiesMatch = availabilities.some(a =>
+               allowedLevels.includes(a.level) && (a.skill === skillFilter || skillFilter === "none")
+            );
 
-            if (!filterWorldItems) {
-                displayListItem = displayListItem && itemId.startsWith("Compendium");
-            }
-            (li as HTMLElement).style.display = displayListItem ? "flex" : "none";
-
-            if (displayListItem) {
-                idx++;
-                if (idx % 2) {
-                    $(li).addClass("odd");
-                    $(li).removeClass("even");
-                } else {
-                    $(li).addClass("even");
-                    $(li).removeClass("odd");
-                }
-            }
-        }
+            return nameMatches && shouldDisplayWorldItem && (skillAndLevelMatches || availabilitiesMatch);
+        });
     }
 
-    _onSearchFilterMastery(html: JQuery<HTMLElement>): void {
-        const rgx = new RegExp(this._escape_regex((html.find(`[data-tab="mastery"] input[name="search"]`)[0] as HTMLInputElement).value), "i");
-        let filterSkill = (html.find(`[data-tab="mastery"] select[name="skill"]`)[0] as HTMLSelectElement).value;
-        let filterWorldItems = (html.find(`[data-tab="mastery"] input[name="show-world-items-mastery"]`)[0] as HTMLInputElement).checked;
-        let filterSkillLevel = [
-            (html.find(`[data-tab="mastery"] input#skill-level-mastery-1`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="mastery"] input#skill-level-mastery-2`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="mastery"] input#skill-level-mastery-3`)[0] as HTMLInputElement).checked,
-            (html.find(`[data-tab="mastery"] input#skill-level-mastery-4`)[0] as HTMLInputElement).checked
-        ];
+    _onSearchFilterMastery(): void {
+        const currentSection = this.element.querySelector('section.tab[data-tab="mastery"]') as HTMLElement;
+        const {nameFilter, skillFilter, displayWorldItems} = this.getCommonFilters(currentSection);
+        const allowedLevels = this.getAllowedLevels(currentSection);
 
-        if (filterSkill === "none") {
-            filterSkill = "";
-        }
-        let idx = 0;
-        for (let li of (html.find(`[data-tab="mastery"] .list > ol`)[0] as HTMLUListElement).children) {
-            const name = li.querySelector("label")!.textContent!;
-            let availableIn = (closestData(li, "available-in")??"").split(",").map((s: string) => s.trim());
-            let skill = closestData(li, "skill");
-            const protoSkillLevel = closestData(li, "level");
-            const itemId = closestData(li, "item-id") ?? "";
+        filterItems(currentSection, (el) => {
+            const availabilities = this.getAvailablities(el);
 
-            const skillLevel = protoSkillLevel ? parseInt(protoSkillLevel) : null;
-            let test = rgx.test(name) && (!filterSkill || availableIn.includes(filterSkill) || skill === filterSkill);
+            const nameMatches = nameFilter.test(el.querySelector("label")?.textContent ?? "");
+            const shouldDisplayWorldItem = displayWorldItems || !!el.dataset.itemId?.startsWith("Compendium");
+            const levelsMatch = allowedLevels.includes(parseInt(el.dataset.level ?? ""))
+            const availabilitiesMatch= availabilities.some(a => a.skill === skillFilter || skillFilter === "none");
 
-            if (test && filterSkillLevel.includes(true)) {
-                test = test && filterSkillLevel.reduce((acc, element, idx) => {
-                    if (element) {
-                        return acc || skillLevel === idx + 1;
-                    }
-                    return acc;
-                }, false);
-            }
-
-            if (!filterWorldItems) {
-                test = test && itemId.startsWith("Compendium");
-            }
-            (li as HTMLElement).style.display = test ? "flex" : "none";
-
-            if (test) {
-                idx++;
-                if (idx % 2) {
-                    $(li).addClass("odd");
-                    $(li).removeClass("even");
-                } else {
-                    $(li).addClass("even");
-                    $(li).removeClass("odd");
-                }
-            }
-        }
+            const skillsMatch= (el.dataset.skill === skillFilter || skillFilter === "none") || availabilitiesMatch;
+            return nameMatches && shouldDisplayWorldItem && levelsMatch && skillsMatch;
+        });
     }
 
-    _onSearchFilterWeapon(html: JQuery<HTMLElement>): void {
-        const rgx = new RegExp(this._escape_regex((html.find(`[data-tab="weapon"] input[name="search"]`)[0] as HTMLInputElement).value), "i");
-        let filterSkill = (html.find(`[data-tab="weapon"] select[name="skill"]`)[0] as HTMLSelectElement).value;
-        let filterWorldItems = (html.find(`[data-tab="weapon"] input[name="show-world-items-weapon"]`)[0] as HTMLInputElement).checked;
+    _onSearchFilterWeapon(): void {
+        const currentSection = this.element.querySelector('section.tab[data-tab="weapon"]') as HTMLElement;
+        const {nameFilter, skillFilter, displayWorldItems} = this.getCommonFilters(currentSection);
 
-        if (filterSkill === "none") {
-            filterSkill = "";
-        }
-        let idx = 0;
-        for (let li of (html.find(`[data-tab="weapon"] .list > ol`)[0] as HTMLUListElement).children) {
-            const name = li.querySelector("label")!.textContent!;
-            let skill = closestData(li, "skill")
-            let secondarySkill = closestData(li, "secondary-skill")
-            let features = closestData(li, "features") + " " + closestData(li, "secondary-features");
-            let damage = `${closestData(li, "damage")}${closestData(li, "secondary-damage")}`;
-            let itemId = closestData(li, "item-id");
+        filterItems(currentSection, (el) => {
+            const name = el.querySelector("label")!.textContent!;
+            const itemData = el.dataset;
+            let features = `${itemData.features} ${itemData.secondaryFeatures}`;
+            let damage = `${itemData.damage} ${itemData.seconaryDamage}`;
 
-            let test = (rgx.test(name + " " + features + " " + damage)) && (skill === filterSkill || secondarySkill === filterSkill || filterSkill === "");
+            const nameMatches= nameFilter.test(`${name} ${features} ${damage}`);
+            const shouldDisplayWorldItem = displayWorldItems || !! itemData.itemId?.startsWith("Compendium");
 
-            if (!filterWorldItems) {
-                test = test && (itemId?.startsWith("Compendium") ?? false);
-            }
-            (li as HTMLElement).style.display = test ? "flex" : "none";
-
-            if (test) {
-                idx++;
-                if (idx % 2) {
-                    $(li).addClass("odd");
-                    $(li).removeClass("even");
-                } else {
-                    $(li).addClass("even");
-                    $(li).removeClass("odd");
-                }
-            }
-        }
+            const skillsMatch= (itemData.skill === skillFilter || itemData.secondarySkill == skillFilter||  skillFilter === "none" );
+            return nameMatches && shouldDisplayWorldItem && skillsMatch;
+        });
     }
 
-    get title(): string {
-        return "Compendium Browser";
+    private getCommonFilters(currentSection: HTMLElement) {
+        return {
+            nameFilter: this.getNameFilter(currentSection),
+            skillFilter: this.getSkillFilter(currentSection),
+            displayWorldItems: this.getWorldItemsFilter(currentSection),
+        }
+    }
+    private getWorldItemsFilter(currentSection: HTMLElement): boolean {
+        const checkbox: HTMLInputElement|null = currentSection.querySelector('.row.flex-gap input[name="show-world-items"]');
+        return checkbox?.checked ?? false;
     }
 
-    _escape_regex(pattern: string): string {
+    private getSkillFilter(currentSection: HTMLElement): string {
+        const selectElement:HTMLSelectElement|null = currentSection.querySelector('.compendium-item-filters select[name="skill"]');
+        return selectElement?.value ?? "none";
+    }
+
+    private getNameFilter(currentSection: HTMLElement): RegExp {
+        const nameFilterInput:HTMLInputElement|null = currentSection.querySelector('input[name="search"]');
+        return new RegExp(this.escape_regex(nameFilterInput?.value ??""), "i");
+    }
+
+    private escape_regex(pattern: string): string {
         return pattern.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    }
+
+    private getAllowedLevels(currentSection: HTMLElement): number[] {
+        const levelFilters:NodeListOf<HTMLInputElement>|undefined= currentSection?.querySelectorAll('.compendium-item-filters input[type="checkbox"]')
+        let noneChecked = true;
+        levelFilters?.forEach(filter => {noneChecked = noneChecked && !filter.checked})
+
+        const allowedLevels:number[] = [];
+        levelFilters?.forEach(filter => {
+            if(noneChecked ||filter.checked) {
+                allowedLevels.push(parseInt(filter.value))
+            }
+        });
+        return allowedLevels
+    }
+
+    private getAvailablities(el: HTMLElement) {
+        const availabilities = (el.dataset.availableIn ?? "").split(",").map((s: string) => s.trim());
+        return availabilities.map((s: string) => {
+            const [skill, level] = s.split(" ");
+            return { skill, level: parseInt(level) };
+        });
     }
 }
 
+function filterItems(section: HTMLElement|null, shouldDisplay:(item: HTMLElement) => boolean) {
+    if(!section){
+        console.debug("Splittermond | CompendiumBrowser: no section to filter Items from");
+        return;
+    }
+    const listItems = section.querySelectorAll('.list > ol > li') as NodeListOf<HTMLElement>;
+
+    listItems.forEach((li) => {
+        li.style.display = shouldDisplay(li) ? 'flex':'none';
+    })
+
+    let index = 0;
+    listItems.forEach(li => {
+        li.classList.remove('even', 'odd');
+        li.classList.add(index % 2 == 0? 'even' :'odd');
+        index= index + 1;
+    });
+}

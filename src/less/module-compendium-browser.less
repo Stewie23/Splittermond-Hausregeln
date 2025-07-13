@@ -1,68 +1,87 @@
-.compendium-browser {
-    .filter {
-        align-content: center;
-        .row {
-            align-items: center;
-        }
+@import "base";
+
+#compendium-browser.compendium-browser {
+
+  nav.tabs.sheet-navigation {
+    border: none;
+    background: none;
+    padding-bottom: 5px;
+  }
+
+  .filter {
+    align-content: center;
+
+    .row {
+      align-items: center;
     }
-    .list {
-    align-items: stretch;
+
+    .compendium-item-filters {
+      margin-top: 5px;
+      margin-bottom: 5px;
+
+      select {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .list {
 
     div:first-child {
-        flex-direction: column;
-        align-items: flex-start;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .level {
-        width: 80px;
-        text-align: center;
+      width: 80px;
+      text-align: center;
     }
 
     .skill {
-        width: 100px;
-        text-align: center;
+      width: 100px;
+      text-align: center;
     }
 
     .damage {
-        width: 60px;
-        text-align: center;
+      width: 60px;
+      text-align: center;
     }
 
-    .available-in{
-        font-family: "Signika";
-        font-size: 10px;
-        white-space: normal;
+    .available-in {
+      font-family: "Signika";
+      font-size: 10px;
+      white-space: normal;
     }
 
     .features {
-        font-family: "Signika";
-        font-size: 10px;
-        white-space: normal;
+      font-family: "Signika";
+      font-size: 10px;
+      white-space: normal;
     }
 
     .compendium {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        //padding: @paddingSmall;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      //padding: @paddingSmall;
 
-        width: 160px;
+      width: 160px;
 
-        .id {
-            font-family: "Signika";
-            font-size: 10px;
-        }
+      .id {
+        font-family: "Signika";
+        font-size: 10px;
+      }
     }
 
     .taglist li {
-        font-family: "Signika";
-        font-size: 10px;
+      font-family: "Signika";
+      font-size: 10px;
 
     }
 
     .list-item {
-        padding-top: 3px;
-        padding-bottom: 3px;
+      padding-top: 3px;
+      padding-bottom: 3px;
     }
-}
+  }
 }
