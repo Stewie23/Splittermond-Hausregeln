@@ -1,10 +1,10 @@
 <section class="tab {{tab.cssClass}}" data-group="primary" data-tab="weapon">
     <div class="filter column">
-        <div class="row flex-gap"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+        <div class="row flex-gap compendium-item-filters"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
 
             <input type="checkbox" value="true" name="show-world-items" id="show-world-items-weapon" data-action="showWorldItemWeapon"><label
                     for="show-world-items-weapon">{{localize "splittermond.showWorldItems"}}</label>
-            <select name="skill">
+            <select name="skill" data-action="filterForSkill">
                 {{selectOptions weaponFilter.skills selected="none" localize=true}}
             </select>
         </div>

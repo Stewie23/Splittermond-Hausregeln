@@ -10,6 +10,7 @@ export function createHtml(templateFilePath:string, context:unknown):string {
     Handlebars.registerHelper("selectOptions", selectOptionsMock);
     Handlebars.registerHelper("eq", equals);
     Handlebars.registerHelper("editor", () =>"");
+    Handlebars.registerHelper("concat", concat)
     return template(context);
 }
 
@@ -28,4 +29,8 @@ function selectOptionsMock(choices:Record<string,string> = {}, options:Record<st
 
 function equals(one:unknown, other:unknown){
     return one === other;
+}
+
+function concat(...args:unknown[]):string {
+    return args.map(arg => `${arg}`).join("");
 }
