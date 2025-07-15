@@ -15,7 +15,7 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
     }
 
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             classes: ["splittermond", "sheet", "actor"]
         });
     }

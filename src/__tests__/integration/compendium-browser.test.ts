@@ -48,16 +48,6 @@ export function compendiumBrowserTest(context:QuenchBatchContext) {
         it("i18n contains a format function ignores no template args input", async () => {
             expect(game.i18n.format("splittermond.skillLabel.deathmagic")).to.equal("Todesmagie");
         });
-
-        it("deepClone clones deeply", () => {
-            const probe = {
-               topLevel :{secondLevel: "value2", deleteMe:""},
-               next: "value",
-            };
-            const clone = deepClone(probe);
-            delete clone.topLevel.deleteMe;
-            expect(probe.topLevel).to.have.property("deleteMe");
-        });
     });
 
     describe("getData", () => {
@@ -65,7 +55,7 @@ export function compendiumBrowserTest(context:QuenchBatchContext) {
             if(game.packs.length === 0) {
                 it.skip("No compendiums found");
             }
-            const data = await game.splittermond.compendiumBrowser.getData();
+            const data = await game.splittermond.compendiumBrowser._prepareContext();
             expect(data).to.have.property("items");
             expect(data.items).to.have.property("mastery");
             expect(data.items).to.have.property("spell");

@@ -4,7 +4,7 @@ import {parseFeatures} from "../dataModel/propertyModels/ItemFeaturesModel";
 
 export default class SplittermondWeaponSheet extends SplittermondItemSheet {
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             classes: ["splittermond", "sheet", "item", "weapon"]
         });
     }

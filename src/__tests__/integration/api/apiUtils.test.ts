@@ -3,7 +3,7 @@ import type {QuenchBatchContext} from "@ethaks/fvtt-quench";
 declare const foundry: any;
 const mergeObject = foundry.utils.mergeObject;
 
-export function mergeObjectTest(context: QuenchBatchContext) {
+export function apiUtilsTest(context: QuenchBatchContext) {
     const {describe, it, expect} = context;
 
     describe('mergeObject', () => {
@@ -80,4 +80,44 @@ export function mergeObjectTest(context: QuenchBatchContext) {
             expect(result).to.deep.equal({k1: 'v1', k2: 'v2'});
         });
     });
+
+        it("deepClone clones deeply", () => {
+            const probe = {
+                topLevel :{secondLevel: "value2", deleteMe:""},
+                next: "value",
+            };
+            const clone = foundry.utils.deepClone(probe);
+            delete clone.topLevel.deleteMe;
+            expect(probe.topLevel).to.have.property("deleteMe");
+        });
+
+        describe('fromUUID', () => {
+            let items:Item[] = [];
+
+            afterEach(() => {
+                Item.deleteDocuments(items.map(item => item.id));
+                items = [];
+            });
+            async function createItem(data: object) {
+                const item =  await Item.create(data) as Item;
+                items.push(item);
+                return item;
+            }
+
+            it('fromUUID returns document', async () => {
+                const item = await createItem({
+                    name: "Test Item",
+                    type: "mastery",
+                    system: {
+                        availableIn: "endurance, strength",
+                    }});
+
+                const uuid = item.uuid;
+
+                const foundItem = await foundry.utils.fromUuid(uuid);
+
+                expect(foundItem).to.be.instanceOf(Item);
+                expect(foundItem.name).to.equal(item.name);
+            });
+        });
 }

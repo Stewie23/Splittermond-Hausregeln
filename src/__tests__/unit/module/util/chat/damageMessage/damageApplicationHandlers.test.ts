@@ -198,10 +198,13 @@ function* createMockTarget(sandbox: SinonSandbox, targetSize: number): Generator
     for (let i = 0; i < targetSize; i++) {
         yield {
             document: {
-                parent: {id: "sceneId"} as any,
+                parent: {id: "sceneId"} as any, //No point setting up an entire document for this test
                 actor: createTargetActor(sandbox, i),
                 id: `${i}`,
+                metadata: {} as any, //No point in mocking metadata for this test
                 documentName: "Token",
+                uuid: `Token.${i}`,
+                folder:"",
                 updateSource: function (): void {
                 },
                 prepareBaseData: function (): void {

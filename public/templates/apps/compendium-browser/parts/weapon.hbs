@@ -1,0 +1,55 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="weapon">
+    <div class="filter column">
+        <div class="row flex-gap compendium-item-filters"><i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+
+            <input type="checkbox" value="true" name="show-world-items" id="show-world-items-weapon" data-action="showWorldItemWeapon"><label
+                    for="show-world-items-weapon">{{localize "splittermond.showWorldItems"}}</label>
+            <select name="skill" data-action="filterForSkill">
+                {{selectOptions weaponFilter.skills selected="none" localize=true}}
+            </select>
+        </div>
+    </div>
+    <div class="list">
+        <ol class="list-body">
+            {{#each items.weapon}}
+                <li class="list-item draggable" data-item-id="{{this.uuid}}"
+                    data-skill="{{this.system.skill}}" data-secondary-skill="{{this.system.secondaryAttack.skill}}"
+                    data-features="{{this.system.features.internalFeatureList}}" data-damage="{{this.system.damage.stringInput}}"
+                    data-secondary-damage="{{this.system.secondaryAttack.damage.stringInput}}"
+                    data-secondary-features="{{this.system.secondaryAttack.features.internalFeatureList}}">
+                    <div>
+                        <label>{{this.name}}</label>
+                        <div class="features">
+                            <ul class="taglist-small">
+                                {{#each this.featuresList}}
+                                    <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="skill">
+                        <ul class="taglist-small">
+                            <li class="active">{{localize (concat "splittermond.skillLabel." this.system.skill) 'string'}}</li>
+                            {{#if this.hasSecondaryAttack}}
+                                <li>{{localize (concat "splittermond.skillLabel." this.system.secondaryAttack.skill) 'string'}}</li>
+                            {{/if}}
+                        </ul>
+
+                    </div>
+                    <div class="damage">
+                        {{this.system.damage.stringInput}}
+                    </div>
+                    <div class="compendium">
+                        {{#if this.compendium}}
+                            <span class="label">{{this.compendium.metadata.label}}</span>
+                            <span class="id">{{this.compendium.metadata.id}}</span></span>
+                        {{else}}
+                            <span class="label">{{this.collection.name}}</span>
+                            <span class="id">world.{{this.collectionName}}</span></span>
+                        {{/if}}
+                    </div>
+                </li>
+            {{/each}}
+        </ol>
+    </div>
+</section>

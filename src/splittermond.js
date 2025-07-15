@@ -14,7 +14,7 @@ import * as Macros from "./module/util/macros"
 import SplittermondCombat from "./module/combat/combat";
 import SplittermondCombatTracker from "./module/apps/sidebar/combat-tracker";
 import ItemImporter from "./module/util/item-importer";
-import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser";
+import SplittermondCompendiumBrowser from "./module/apps/compendiumBrowser/compendium-browser.js";
 import {registerRequestedSystemSettings} from "./module/settings";
 import TickBarHud from "./module/apps/tick-bar-hud";
 

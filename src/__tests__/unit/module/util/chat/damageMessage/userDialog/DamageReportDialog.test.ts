@@ -10,7 +10,7 @@ import {foundryApi} from "../../../../../../../module/api/foundryApi";
 import {createHtml} from "../../../../../../handlebarHarness";
 import {expect} from "chai";
 import {DOMWindow, JSDOM} from "jsdom";
-import {FoundryDialog} from "../../../../../../../module/api/Dialog";
+import {FoundryDialog} from "../../../../../../../module/api/Application";
 import {CostBase} from "../../../../../../../module/util/costs/costTypes";
 
 declare const foundry:any;
@@ -43,6 +43,7 @@ describe("DamageReportDialog", () => {
                 this.window = dom.window;
                 //@ts-expect-error see above
                 windows.push(this.window)
+               //@ts-expect-error We're mocking the base class, that's why we can write to this.element
                 this.element = dom.window.document.documentElement
                 return this;
             };
@@ -169,7 +170,6 @@ function createActor(sandbox: SinonSandbox, props: { name?: string } = {}): Spli
 async function getDomUnderTest(sandbox: SinonSandbox, props: Partial<UserReport> = {}) {
     const dialogStub = await DamageReportDialog.create(createUserReport(sandbox, props));
     await dialogStub.render({force: true})
-    //@ts-expect-error element is protected, but we need to access it in order to produce behavior.
     const dom = dialogStub.element;
     return {dialogStub: asMock(dialogStub), dom};
 }

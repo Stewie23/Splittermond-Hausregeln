@@ -245,7 +245,7 @@ describe("Spell item damage report", () => {
     });
 
     it("should produce a printable damage report via a getter", () =>{
-        sandbox.stub(foundryApi, "mergeObject").returns({});
+        sandbox.stub(foundryApi.utils, "mergeObject").returns({});
         const parser =getSpellAvailabilityParser({ localize: (str) => str.split(".").pop() ?? str },[]);
         const underTest = new SplittermondSpellItem({},{ splittermond: { ready: true } }, parser);
         defineValue(underTest, "actor", setUpActor(sandbox));

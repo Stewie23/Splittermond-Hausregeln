@@ -1,4 +1,4 @@
-import {DialogV2ConstructorInput, DialogV2RenderOptions, FoundryDialog} from "../../../../api/Dialog";
+import {DialogV2ConstructorInput, DialogV2RenderOptions, FoundryDialog} from "../../../../api/Application";
 import {UserReport} from "./UserReporterImpl";
 import {Renderer} from "./Renderer";
 import {foundryApi} from "../../../../api/foundryApi";
@@ -53,7 +53,7 @@ export class DamageReportDialog extends FoundryDialog {
     }
 
 
-    constructor(options: DialogV2ConstructorInput, originalDamage: number, private currentCostType: CostType, private target: SplittermondActor) {
+    constructor(options: Partial<DialogV2ConstructorInput>, originalDamage: number, private currentCostType: CostType, private target: SplittermondActor) {
         super(options);
         this.originalDamage = originalDamage;
     }

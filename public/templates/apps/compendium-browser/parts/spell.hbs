@@ -1,0 +1,59 @@
+<section class="tab {{tab.cssClass}}" data-group="primary" data-tab="spell">
+    <div class="filter column">
+        <div class="row flex-gap">
+            <i class="fas fa-search"></i><input type="text" placeholder="Suche" name="search">
+            <input type="checkbox" value="true" name="show-world-items" id="show-world-items-spell" data-action="showWorldItemsSpell"><label
+                    for="show-world-items-spell">{{localize "splittermond.showWorldItems"}}</label>
+        </div>
+        <div class="row compendium-item-filters">
+            <select name="skill" data-action="filterForSkill">
+                {{selectOptions spellFilter.skills selected="none" localize=true}}
+            </select>
+            <label>{{localize "splittermond.spellLevel"}}</label>
+            <input type="checkbox" value="0" name="skill-level-spell" id="skill-level-spell-0" data-action="filterForLevel"><label
+                for="skill-level-spell-0" data-action="filterForLevel"> 0</label>
+            <input type="checkbox" value="1" name="skill-level-spell" id="skill-level-spell-1" data-action="filterForLevel"><label
+                for="skill-level-spell-1">1</label>
+            <input type="checkbox" value="2" name="skill-level-spell" id="skill-level-spell-2" data-action="filterForLevel"><label
+                for="skill-level-spell-2"> 2</label>
+            <input type="checkbox" value="3" name="skill-level-spell" id="skill-level-spell-3" data-action="filterForLevel"><label
+                for="skill-level-spell-3"> 3</label>
+            <input type="checkbox" value="4" name="skill-level-spell" id="skill-level-spell-4" data-action="filterForLevel"><label
+                for="skill-level-spell-4"> 4</label>
+            <input type="checkbox" value="5" name="skill-level-spell" id="skill-level-spell-5" data-action="filterForLevel"><label
+                for="skill-level-spell-5"> 5</label>
+        </div>
+    </div>
+    <div class="list">
+        <ol class="list-body">
+            {{#each items.spell}}
+                <li class="list-item draggable" data-item-id="{{this.uuid}}"
+                    data-available-in="{{this.system.availableIn}}" data-skill="{{this.system.skill}}"
+                    data-level="{{this.system.skillLevel}}">
+                    <div><label>{{this.name}}</label>
+                        <div class="available-in">
+                            <ul class="taglist-small">
+                                {{#each this.availableInList}}
+                                    <li class="active">{{this.label}}</li>
+                                {{/each}}
+                                {{#each this.spellTypeList}}
+                                    <li>{{this}}</li>
+                                {{/each}}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="compendium">
+                        {{#if this.compendium}}
+                            <span class="label">{{this.compendium.metadata.label}}</span>
+                            <span class="id">{{this.compendium.metadata.id}}</span>
+                        {{else}}
+                            <span class="label">{{this.collection.name}}</span>
+                            <span class="id">world.{{this.collectionName}}</span>
+                        {{/if}}
+                    </div>
+
+                </li>
+            {{/each}}
+        </ol>
+    </div>
+</section>

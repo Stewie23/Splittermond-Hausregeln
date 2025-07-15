@@ -8,7 +8,7 @@ import {foundryApi} from "../../api/foundryApi";
 export default class SplittermondNPCSheet extends SplittermondActorSheet {
 
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             template: "systems/splittermond/templates/sheets/actor/npc-sheet.hbs",
             classes: ["splittermond", "sheet", "actor", "npc"],
             tabs: [{ navSelector: ".sheet-navigation[data-group='primary']", contentSelector: "main", initial: "general" },

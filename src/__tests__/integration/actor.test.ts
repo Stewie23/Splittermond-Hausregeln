@@ -11,7 +11,7 @@ import SplittermondMasteryItem from "../../module/item/mastery";
 import {MasteryDataModel} from "../../module/item/dataModel/MasteryDataModel";
 import SplittermondSpellItem from "../../module/item/spell";
 import {SpellDataModel} from "../../module/item/dataModel/SpellDataModel";
-import {FoundryDialog} from "../../module/api/Dialog";
+import {FoundryDialog} from "../../module/api/Application";
 import SplittermondActorSheet from "../../module/actor/sheets/actor-sheet";
 
 declare const Actor: any;

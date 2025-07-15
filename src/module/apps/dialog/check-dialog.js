@@ -8,7 +8,7 @@ export default class CheckDialog extends Dialog {
     }
 
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             classes:["splittermond", "dialog","dialog-check"],
             width: 450,
         });

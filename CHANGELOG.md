@@ -1,3 +1,11 @@
+## 13.2.1
+### Fixed
+ * Das Hintergrundbild im Setup is jetzt deutlich kleiner
+ * Die Kompendiumbrowserliste kann jetzt gescrollt werden
+### Other
+ * Der Kompendiumbrowser ist basiert jetzt auf Application V2
+ * Die Größe des Kompendiumbrowserfensters kann nun angepasst werden
+
 ## 13.2.0
 ### New Features
 * System now comes with a custom background image for all worlds.

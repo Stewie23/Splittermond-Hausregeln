@@ -1,5 +1,5 @@
 import type {
-    ChatMessageTypes,
+    ChatMessageTypes, CompendiumPacks,
     Hooks, KeybindingActionBinding, KeybindingActionConfig,
     MergeObjectOptions,
     SettingsConfig,
@@ -120,7 +120,7 @@ export const foundryApi = new class FoundryApi {
         return Hooks;
     }
 
-    getItem(itemId: string):Item | undefined {
+    getItem(itemId: string): Item | undefined {
         //@ts-ignore
         return game.items.get(itemId);
     }
@@ -165,11 +165,6 @@ export const foundryApi = new class FoundryApi {
         }
     }
 
-    mergeObject<T extends object, U extends object>(original: T, other?: U, options?: MergeObjectOptions): Partial<T> & Partial<U> {
-        // @ts-ignore
-        return foundry.utils.mergeObject(original, other, options);
-    }
-
     get settings() {
         return {
             set(namespace: string, key: string, value: unknown): void {
@@ -188,36 +183,66 @@ export const foundryApi = new class FoundryApi {
     }
 
     get keybindings() {
-       return {
-           get(namespace:string, action:string):KeybindingActionBinding[]{
+        return {
+            get(namespace: string, action: string): KeybindingActionBinding[] {
                 // @ts-ignore
                 return game.keybindings.get(namespace, action);
-           },
-           register(namespace:string, action:string, data: KeybindingActionConfig){
+            },
+            register(namespace: string, action: string, data: KeybindingActionConfig) {
                 // @ts-ignore
                 game.keybindings.register(namespace, action, data);
-           },
-           set(namespace:string, action:string, data: KeybindingActionBinding[]){
+            },
+            set(namespace: string, action: string, data: KeybindingActionBinding[]) {
                 // @ts-ignore
                 game.keybindings.set(namespace, action, data);
-           }
-       }
+            }
+        }
     }
 
-    getFolders(type: "Item"|"Actor"|"Scene"|null=null):Collection<Folder> {
+    getFolders(type: "Item" | "Actor" | "Scene" | null = null): Collection<Folder> {
         switch (type) {
-        case "Actor":
+            case "Actor":
+                // @ts-ignore
+                return game.actors.folders;
+            case "Scene":
+                // @ts-ignore
+                return game.scenes.folders;
+            case "Item":
+                // @ts-ignore
+                return game.items.folders;
+            default:
+                // @ts-ignore
+                return game.folders;
+        }
+    }
+
+    utils = {
+        fromUUID(uuid: string): Promise<FoundryDocument> {
             // @ts-ignore
-            return game.actors.folders;
-        case "Scene":
+            return fromUuid(uuid);
+        },
+        deepClone<T extends object>(object: T): T {
             // @ts-ignore
-            return game.scenes.folders;
-        case "Item":
+            return foundry.utils.deepClone(object);
+        },
+        mergeObject<T extends object, U extends object>(original: T, other?: U, options?: MergeObjectOptions): Partial<T> & Partial<U> {
             // @ts-ignore
-            return game.items.folders;
-        default:
+            return foundry.utils.mergeObject(original, other, options);
+        }
+    } as const
+
+    collections = {
+        get items():Collection<Item> {
             // @ts-ignore
-            return game.folders;
+            return game.items;
+        },
+        get actors():Collection<Actor> {
+            // @ts-ignore
+            return game.actors;
+        },
+        get packs():CompendiumPacks {
+            // @ts-ignore
+            return game.packs;
         }
     }
 }

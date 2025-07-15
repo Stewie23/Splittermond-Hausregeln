@@ -3,7 +3,7 @@ import {foundryApi} from "../../api/foundryApi";
 
 export default class SplittermondSpellSheet extends SplittermondItemSheet {
     static get defaultOptions() {
-        return foundryApi.mergeObject(super.defaultOptions, {
+        return foundryApi.utils.mergeObject(super.defaultOptions, {
             classes: ["splittermond", "sheet", "item", "npcattack"]
         });
     }
