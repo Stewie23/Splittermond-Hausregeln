@@ -280,6 +280,7 @@ export function modifierTest(context: QuenchBatchContext) {
             const actor = await createActor("WoundedCharacter");
             (actor.system as CharacterDataModel).attributes.agility.updateSource({initial: 2, advances: 0});
             (actor.system as CharacterDataModel).attributes.strength.updateSource({initial: 2, advances: 0});
+            (actor.system as CharacterDataModel).attributes.intuition.updateSource({initial: 2, advances: 0});
             (actor.system as CharacterDataModel).updateSource({
                 skills: {
                     ...actor.system.skills,
@@ -357,6 +358,41 @@ export function modifierTest(context: QuenchBatchContext) {
                 subject.prepareDerivedData();
 
                 expect(subject.skills.acrobatics.value).to.equal(6 - reduction);
+            });
+
+            it(`should apply initiative penalty of ${level} at perfect health`, async () => {
+                const subject = await setUpActor();
+                await addWoundedEffect(subject, level);
+
+                subject.prepareBaseData();
+                await subject.prepareEmbeddedDocuments();
+                subject.prepareDerivedData();
+
+                expect(subject.derivedValues.initiative.value).to.equal(8 + reduction);
+            });
+
+            it(`should apply initiative penalty of ${level} with 1hp missing`, async () => {
+                const subject = await setUpActor();
+                await addWoundedEffect(subject, level);
+                await subject.consumeCost("health", "1V1", "");
+
+                subject.prepareBaseData();
+                await subject.prepareEmbeddedDocuments();
+                subject.prepareDerivedData();
+
+                expect(subject.derivedValues.initiative.value).to.equal(8 + reduction);
+            });
+
+            it(`should apply initiative penalty of ${level} with full bar missing`, async () => {
+                const subject = await setUpActor();
+                await addWoundedEffect(subject, level);
+                await subject.consumeCost("health", `7V7`, "");
+
+                subject.prepareBaseData();
+                await subject.prepareEmbeddedDocuments();
+                subject.prepareDerivedData();
+
+                expect(subject.derivedValues.initiative.value).to.equal(8 + reduction);
             });
         });
     });

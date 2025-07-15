@@ -14,6 +14,7 @@ import Attribute from "module/actor/attribute";
 import {clearMappers} from "module/actor/modifiers/parsing/normalizer";
 import {evaluate, of} from "module/actor/modifiers/expressions/scalar";
 import {stubRollApi} from "../../../RollMock";
+import {InitiativeModifier} from "../../../../../module/actor/InitiativeModifier";
 
 //Duplicated, because I don't want to export the original type definition
 interface PreparedSystem {
@@ -223,10 +224,15 @@ describe('addModifier', () => {
     ["Initiative", "INI"].forEach(iniRepresentation => {
         it(`should handle initiative modifier inversion for ${iniRepresentation}`, () => {
             addModifier(actor, item, '', `${iniRepresentation} +2`);
-            expect(modifierManager.add.lastCall.args).to.have.deep.members(['initiative', {
-                name: '',
-                type: null
-            }, of(2), item, false]);
+
+            const createdModifier = modifierManager.addModifier.lastCall.args[0]
+            expect(createdModifier).to.be.instanceof(InitiativeModifier);
+            expect(createdModifier.groupId).to.equal('initiative');
+            expect(createdModifier.attributes.name).to.equal('');
+            expect(createdModifier.attributes.type).to.be.null;
+            expect(createdModifier.value).to.deep.equal(of(2));
+            expect(createdModifier.origin).to.equal(item);
+            expect(createdModifier.selectable).to.be.false;
         });
     });
 

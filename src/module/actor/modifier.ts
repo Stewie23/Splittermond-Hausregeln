@@ -29,6 +29,7 @@ export type ModifierType = "magic"|"equipment"|"innate"|null;
 export interface IModifier {
    readonly value:Expression;
    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string):void;
+   readonly isBonus:boolean;
    readonly groupId:string;
    readonly selectable:boolean;
    readonly attributes: ModifierAttributes
