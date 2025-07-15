@@ -17,6 +17,7 @@ import {addModifier} from "./modifiers/modifierAddition";
 import {evaluate, of} from "./modifiers/expressions/scalar";
 import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
 import {DamageModel} from "../item/dataModel/propertyModels/DamageModel";
+import {InitiativeModifier} from "./InitiativeModifier";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -377,6 +378,16 @@ export default class SplittermondActor extends Actor {
                 of(data.health.woundMalus.value),
                 this
             )
+            this.modifier.addModifier(new InitiativeModifier(
+                "initiativewoundmalus",
+                of(-data.health.woundMalus.value),
+                {
+                    name: foundryApi.localize("splittermond.woundMalus"),
+                    type: "innate",
+                },
+                this,
+                false
+            ));
         }
 
 

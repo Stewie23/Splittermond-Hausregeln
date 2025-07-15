@@ -1,10 +1,12 @@
 ## 13.2.1
 ### Fixed
+ * Wundmalus addiert sich nun korrekt zu Initiative
  * Das Hintergrundbild im Setup is jetzt deutlich kleiner
  * Die Kompendiumbrowserliste kann jetzt gescrollt werden
 ### Other
  * Der Kompendiumbrowser ist basiert jetzt auf Application V2
- * Die Größe des Kompendiumbrowserfensters kann nun angepasst werden
+ * Die Größe des Kompendiumbrowserfensters kann nun
+ * Darstellung der Initiativemali verbessert
 
 ## 13.2.0
 ### New Features

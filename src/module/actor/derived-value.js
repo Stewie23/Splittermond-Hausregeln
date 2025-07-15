@@ -9,7 +9,8 @@ export default class DerivedValue extends Modifiable {
      */
     constructor(actor, id) {
         let path = [id]
-        if (["initiative", "speed"].includes(id)) path.push("woundmalus");
+        if ("speed" === id) path.push("woundmalus");
+        if( ["initiative" === id]) path.push("initiativewoundmalus");
         super(actor, path);
         this.id = id;
         this.multiplier = 1;
@@ -34,14 +35,14 @@ export default class DerivedValue extends Modifiable {
     }
 
     get baseValue() {
-        if (this.actor.type != "character" && this.actor.system.derivedAttributes[this.id].value > 0) return this.actor.system.derivedAttributes[this.id].value;
+        if (this.actor.type !== "character" && this.actor.system.derivedAttributes[this.id].value > 0) return this.actor.system.derivedAttributes[this.id].value;
         if (this._cache.enabled && this._cache.baseValue !== null) return this._cache.baseValue;
         let baseValue = 0;
         const attributes = this.actor.attributes;
         const derivedValues = this.actor.derivedValues;
         switch (this.id) {
             case "size":
-                baseValue = this.actor.type == "npc" ? this.actor.system.derivedAttributes[this.id].value : parseInt(this.actor.system.species.size);
+                baseValue = this.actor.type === "npc" ? this.actor.system.derivedAttributes[this.id].value : parseInt(this.actor.system.species.size);
                 break;
             case "speed":
                 baseValue = attributes.agility.value + derivedValues.size.value;
@@ -88,7 +89,8 @@ export default class DerivedValue extends Modifiable {
                 formula.addPart(derivedValues.size.value, derivedValues.size.label.short);
                 break;
             case "initiative":
-                formula.addOperator("10 -");
+                formula.addPart("10")
+                formula.addOperator("-");
                 formula.addPart(attributes.intuition.value, attributes.intuition.label.short);
                 break;
             case "healthpoints":
@@ -129,12 +131,7 @@ export default class DerivedValue extends Modifiable {
                 break;
 
         }
-        if (this.id != "initiative") {
-            this.addModifierTooltipFormulaElements(formula);
-        } else {
-            this.addModifierTooltipFormulaElements(formula, "-", "+");
-        }
-
+        this.addModifierTooltipFormulaElements(formula);
         return formula.render();
     }
 

@@ -11,6 +11,7 @@ import {evaluate as evaluateCost, times as timesCost} from "./expressions/cost";
 import {ModifierType} from "../modifier";
 import {validateDescriptors} from "./parsing/validators";
 import {normalizeDescriptor} from "./parsing/normalizer";
+import {InitiativeModifier} from "../InitiativeModifier";
 
 type Regeneration = { multiplier: number, bonus: number };
 
@@ -40,6 +41,18 @@ function isRegeneration(regeneration: unknown): regeneration is Regeneration {
 
 //this function is used in item.js to add modifiers to the actor
 export function addModifier(actor: SplittermondActor, item: SplittermondItem, emphasisFromName = "", str = "", type: ModifierType = null, multiplier = 1) {
+
+    function addInitiativeModifier(value: ScalarExpression, attributes: Record<string, string>) {
+        if (isZero(value)) {
+            return;
+        }
+        const emphasis = (attributes.emphasis as string) ?? ""; /*conversion validated by descriptor validator*/
+        if (emphasis) {
+            actor.modifier.addModifier(new InitiativeModifier("initiative",condense(value),{...attributes, name: emphasis, type}, item, true));
+        } else {
+            actor.modifier.addModifier(new InitiativeModifier("initiative", condense(value), {...attributes, name: emphasisFromName, type}, item, false));
+        }
+    }
 
     function addModifierHelper(path: string, value: ScalarExpression, attributes: Record<string, string>, emphasisOverride?: string) {
         if (isZero(value)) {
@@ -217,7 +230,11 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                     element = modifier.path;
                 }
                 let adjustedValue = times(of(multiplier), modifier.value);
-                addModifierHelper(element, adjustedValue, modifier.attributes);
+                if(element === "initiative") {
+                    addInitiativeModifier(adjustedValue, modifier.attributes);
+                }else {
+                    addModifierHelper(element, adjustedValue, modifier.attributes);
+                }
 
                 break;
         }
