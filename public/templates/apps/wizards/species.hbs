@@ -1,4 +1,4 @@
-<form class="{{cssClass}}" autocomplete="off">
+<div>
     <header>
         <h1>{{species.name}}</h1>
     </header>
@@ -19,9 +19,9 @@
         </section>
 
     </main>
-    <footer>
-        <button name="cancel" type="button">{{localize "splittermond.cancel"}}</button>
-        <button name="save" type="button" {{#unless this.ready}}disabled{{/unless}}>{{localize
+    <footer class="row flex-gap-large">
+        <button name="cancel" type="button" data-action="cancel">{{localize "splittermond.cancel"}}</button>
+        <button name="save" type="button" {{#unless this.ready}}disabled{{/unless}} data-action="save">{{localize
             "splittermond.save"}}</button>
     </footer>
-</form>
+</div>

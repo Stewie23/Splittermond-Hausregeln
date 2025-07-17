@@ -1,11 +1,12 @@
 import {initializeDisplayPreparation} from "./itemDisplayPreparation";
-import {FoundryApplication, FoundryDragDrop, FoundryHandlebarsMixin,} from "../../api/Application";
+import {FoundryApplication, FoundryDragDrop} from "../../api/Application";
 import {foundryApi} from "../../api/foundryApi";
 import {splittermond} from "../../config";
 import {itemRetriever} from "../../data/EntityRetriever";
 import SplittermondItem from "../../item/item";
 import {CompendiumPacks} from "../../api/foundryTypes";
-import {closestData, ClosestDataMixin} from "../../data/ClosestDataMixin";
+import {closestData} from "../../data/ClosestDataMixin";
+import {SplittermondApplication} from "../../data/SplittermondApplication";
 
 
 type ItemIndexEntity = {
@@ -31,7 +32,7 @@ interface BrowserContext {
 
 export type ApplicationOptions = ConstructorParameters<typeof FoundryApplication>[0]
 
-export default class SplittermondCompendiumBrowser extends ClosestDataMixin(FoundryHandlebarsMixin(FoundryApplication)) {
+export default class SplittermondCompendiumBrowser extends SplittermondApplication {
     static TABS = {
         primary: {
             tabs: [

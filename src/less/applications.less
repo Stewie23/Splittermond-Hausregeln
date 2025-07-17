@@ -150,3 +150,29 @@ form.application .window-content {
     }
   }
 }
+
+//Style the species wizard
+.splittermond.application.species.wizard {
+  div>header>h1 {
+    text-align: center;
+  }
+  //style the attribute number modifiers to have buttons below each other and enough space for numbers
+  .attribute-mod {
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+
+    .value {
+      min-width: 1em;
+      width: 1em;
+      text-align: right;
+      display: inline-block;
+    }
+  }
+  //places the buttons at the bottom of the page in the center
+  footer {
+    justify-content: center;
+  }
+}

@@ -1,4 +1,4 @@
-import SplittermondSpeciesWizard from "../../apps/wizards/species.js"
+import SplittermondSpeciesWizard from "../../apps/wizards/species.ts"
 import SplittermondActorSheet from "./actor-sheet.js"
 import {foundryApi} from "../../api/foundryApi";
 
