@@ -140,7 +140,7 @@ export class Modifiers extends Array<IModifier>{
         return new Modifiers(...super.filter(predicate, thisArg));
     }
 
-    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
+    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string) {
         this.forEach(mod => mod.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix));
     }
 }
