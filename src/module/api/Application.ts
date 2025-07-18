@@ -16,6 +16,7 @@ declare namespace foundry {
     import ApplicationFormConfiguration = foundry.applications.types.ApplicationFormConfiguration;
     import ApplicationRenderContext = foundry.applications.types.ApplicationRenderContext;
     import ApplicationTabsConfiguration = foundry.applications.types.ApplicationTabsConfiguration;
+    import ApplicationConfiguration = foundry.applications.types.ApplicationConfiguration;
 
     interface DialogV2Configuration {
         modal: boolean;
@@ -176,6 +177,8 @@ declare namespace foundry {
 
                 get form(): HTMLFormElement | null;
 
+                protected _prepareContext(options: RENDER_OPTIONS): Promise<ApplicationRenderContext>;
+
                 render(options?: boolean | ApplicationRenderOptions): Promise<this>;
 
                 submit(submitOptions?: object): Promise<any>;
@@ -254,7 +257,7 @@ declare namespace foundry {
                   },
         ): void
 
-        protected _prepareContext(options: HandlebarsRenderOptions): Promise<ApplicationRenderContext>;
+        protected _prepareContext(options: HandlebarsRenderOptions ): Promise<ApplicationRenderContext>;
 
         protected _onRender(context: ApplicationRenderContext, options: HandlebarsRenderOptions): Promise<void>;
 

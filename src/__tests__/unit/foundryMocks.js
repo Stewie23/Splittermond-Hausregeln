@@ -163,6 +163,7 @@ global.foundry = {
                     this.options = options;
                 }
                 render(){};
+                _prepareContext(){};
                 _onRender(){};
                 addEventListener(){};
                 close(){};

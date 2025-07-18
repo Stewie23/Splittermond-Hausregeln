@@ -5,6 +5,13 @@ import {ApplicationContextOptions, ApplicationRenderContext} from "../../data/Sp
 import SplittermondActor from "../../actor/actor";
 import SplittermondItem from "../../item/item";
 import {SpeciesDataModel} from "../../item/dataModel/SpeciesDataModel";
+import {initMapper} from "../../util/LanguageMapper";
+import {attributes, SplittermondAttribute} from "../../config/attributes";
+
+const attributeMapper = initMapper(attributes)
+    .withTranslator((t) => `splittermond.attribute.${t}.long`)
+    .andOtherMappers((t) => `splittermond.attribute.${t}.short`)
+    .build();
 
 type AttributeModifier = {
     label: string;
@@ -15,7 +22,7 @@ type AttributeModifier = {
     decDisabled?: boolean;
 };
 
-type AttributeModifiers = Record<string, AttributeModifier>;
+type AttributeModifiers = Record<SplittermondAttribute, AttributeModifier>;
 type SplittermondSpecies = SplittermondItem & {system: SpeciesDataModel}
 
 export default class SplittermondSpeciesWizard extends SplittermondWizard {
@@ -42,22 +49,19 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
         this.actor = actor;
         this.species = item;
 
-        this.attributeModifiers = {};
-        const translator: Record<string, string> = {};
-
-        splittermond.attributes.forEach((attr: string) => {
+        this.attributeModifiers = {} as AttributeModifiers;
+        splittermond.attributes.forEach((attr) => {
             this.attributeModifiers[attr] = {
                 label: `splittermond.attribute.${attr}.long`,
                 value: 0,
                 min: 0,
                 max: 1
             };
-            translator[foundryApi.localize(`splittermond.attribute.${attr}.short`).toLowerCase()] = attr;
         });
 
         (item.system.attributeMod??"").split(',').forEach((elem: string) => {
             const elemParts = elem.trim().split(" ");
-            const attribute = translator[elemParts[0].toLowerCase()];
+            const attribute = attributeMapper().toCode(elemParts[0].toLowerCase());
             const value = parseInt(elemParts[1]);
             if (attribute) {
                 this.attributeModifiers[attribute].value = value;
@@ -73,11 +77,11 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
         data.attributeModifiers = this.attributeModifiers;
 
         let sum = 0;
-        splittermond.attributes.forEach((attr: string) => {
+        splittermond.attributes.forEach((attr ) => {
             sum += this.attributeModifiers[attr].value;
         });
 
-        splittermond.attributes.forEach((attr: string) => {
+        splittermond.attributes.forEach((attr) => {
             //we know these are AttributeModifiers, we just set them above
             (data.attributeModifiers as AttributeModifiers)[attr].incDisabled = this.attributeModifiers[attr].value >= this.attributeModifiers[attr].max || sum >= 2;
             (data.attributeModifiers as AttributeModifiers)[attr].decDisabled = this.attributeModifiers[attr].value <= this.attributeModifiers[attr].min || sum <= 0;
@@ -99,7 +103,7 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
         return data;
     }
 
-    async _onRender(context: ApplicationRenderContext, options?: ApplicationContextOptions) {
+    async _onRender(context: ApplicationRenderContext, options?: {parts: string[]}): Promise<void> {
         await super._onRender(context, options);
 
         // Replace jQuery with direct DOM manipulation
@@ -108,12 +112,18 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
                 const target = event.currentTarget as HTMLButtonElement;
                 const value = parseInt(target.value);
                 const attr = target.name;
-                if (this.attributeModifiers[attr]) {
-                    this.attributeModifiers[attr].value += value;
-                    this.render(true);
+                if(!this.isAttribute(attr)) {
+                    console.warn(`Splittermond | Unknown attribute: ${attr}`);
+                    return;
                 }
+                this.attributeModifiers[attr].value += value;
+                this.render(true); //Phew! we're using a render to update a single value. Probably better to use a readonly input.
             });
         });
+    }
+
+    private isAttribute(attr: string|null|undefined): attr is SplittermondAttribute {
+        return !!attr && (splittermond.attributes as readonly string[]).includes(attr);
     }
 
     protected _onSaveEvent() {
@@ -125,7 +135,7 @@ export default class SplittermondSpeciesWizard extends SplittermondWizard {
             }
         };
 
-        splittermond.attributes.forEach((attr: string) => {
+        splittermond.attributes.forEach(attr => {
             actorData.attributes[attr] = {
                 species: this.attributeModifiers[attr].value
             };

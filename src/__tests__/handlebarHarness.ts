@@ -7,6 +7,7 @@ export function createHtml(templateFilePath:string, context:unknown):string {
     const adjustedContent = templateContent.replace(/(\{\{selectOptions.*?}})/,"{$1}")
     const template= Handlebars.compile(adjustedContent);
     Handlebars.registerHelper("localize", localizeMock);
+    Handlebars.registerHelper("numberFormat", localizeMock); //functionally equivalent
     Handlebars.registerHelper("selectOptions", selectOptionsMock);
     Handlebars.registerHelper("eq", equals);
     Handlebars.registerHelper("editor", () =>"");
