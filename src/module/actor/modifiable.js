@@ -29,14 +29,8 @@ export default class Modifiable {
         this._modifierPath.push(path);
     }
 
-    /**
-     *
-     * @param {TooltipFormula} formula
-     * @param {string|undefined} bonusPrefix
-     * @param {string|undefined} malusPrefix
-     */
-    addModifierTooltipFormulaElements(formula, bonusPrefix, malusPrefix) {
+    addModifierTooltipFormulaElements(formula) {
         this.actor.modifier.getForIds(...this._modifierPath).notSelectable().getModifiers()
-            .addTooltipFormulaElements(formula, bonusPrefix, malusPrefix);
+            .addTooltipFormulaElements(formula);
     }
 }
