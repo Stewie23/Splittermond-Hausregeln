@@ -1,3 +1,10 @@
+## 13.2.2.
+### Fixed
+* Initiativewundmalus wird nur noch für Initiative verwendet
+* Schilde haben wieder einen Waffenschaden
+* Vorzeichen für Initativemali werden jetzt korrekt angezeigt
+### Other
+* Der Spezieszauberer wurder auf Application V2 umgestellt
 ## 13.2.1
 ### Fixed
  * Wundmalus addiert sich nun korrekt zu Initiative
