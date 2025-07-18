@@ -4,6 +4,7 @@ import {getDefense, getDescriptorFields, getPhysicalProperties, validatedBoolean
 import {from0_12_20_migrateFeatures, migrateFrom0_12_13, migrateFrom0_12_20} from "./migrations";
 import {SplittermondAttribute} from "../../config/attributes";
 import {ItemFeaturesModel} from "./propertyModels/ItemFeaturesModel";
+import {DamageModel} from "./propertyModels/DamageModel";
 
 function ItemShieldDataModelSchema() {
     return {
@@ -35,5 +36,14 @@ export class ShieldDataModel extends SplittermondDataModel<ShieldDataModelType, 
 
     get attribute2():SplittermondAttribute{
         return "strength";
+    }
+
+    //all shields have a damage value of 1W6+1
+    get damage():DamageModel{
+     return new DamageModel({stringInput: "1W6+1"})
+    }
+
+    get weaponSpeed():number {
+        return 7;
     }
 }
