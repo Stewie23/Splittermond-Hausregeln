@@ -10,7 +10,7 @@ export default class DerivedValue extends Modifiable {
     constructor(actor, id) {
         let path = [id]
         if ("speed" === id) path.push("woundmalus");
-        if( ["initiative" === id]) path.push("initiativewoundmalus");
+        if( "initiative" === id ) path.push("initiativewoundmalus");
         super(actor, path);
         this.id = id;
         this.multiplier = 1;

@@ -55,8 +55,8 @@ function withDefaults(data: Options<AttackItemData>): AttackItemData {
         get damageLevel() {return data.damageLevel ?? 0},
         get range() {return data.range ?? 0},
         get features() {return data.features ?? new ItemFeaturesModel({internalFeatureList:[]})},
-        get damage() {return data.damage ?? new DamageModel({stringInput: null})},
-        get weaponSpeed() {return data.weaponSpeed ?? 7},
+        get damage() {return data.damage ?? new DamageModel({stringInput: "1W6"})}, //assume that an attack does do some damage
+        get weaponSpeed() {return data.weaponSpeed ?? 6}, //Splittermond balances damage at 1/tick so with 6 we achieve that average
         get damageType() {return data.damageType ?? "physical"},
         get costType() {return data.costType ?? "V"},
         //@formatter:on

@@ -28,7 +28,7 @@ export interface ModifierAttributes {
 export type ModifierType = "magic"|"equipment"|"innate"|null;
 export interface IModifier {
    readonly value:Expression;
-   addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix?:string, malusPrefix?:string):void;
+   addTooltipFormulaElements(formula:TooltipFormula):void;
    readonly isBonus:boolean;
    readonly groupId:string;
    readonly selectable:boolean;
@@ -67,12 +67,12 @@ export default class Modifier implements IModifier {
         return this._isBonus;
     }
 
-    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
+    addTooltipFormulaElements(formula:TooltipFormula ) {
         if (this.isBonus) {
-            const term = `${bonusPrefix}${asString(abs(condense(this.value)))}`
+            const term = `+${asString(abs(condense(this.value)))}`
             formula.addBonus(term, this.name);
         } else {
-            const term = `${malusPrefix}${asString(abs(condense(this.value)))}`
+            const term = `-${asString(abs(condense(this.value)))}`
             formula.addMalus(term, this.name);
         }
     }
@@ -140,7 +140,7 @@ export class Modifiers extends Array<IModifier>{
         return new Modifiers(...super.filter(predicate, thisArg));
     }
 
-    addTooltipFormulaElements(formula:TooltipFormula, bonusPrefix = "+", malusPrefix = "-") {
-        this.forEach(mod => mod.addTooltipFormulaElements(formula, bonusPrefix, malusPrefix));
+    addTooltipFormulaElements(formula:TooltipFormula) {
+        this.forEach(mod => mod.addTooltipFormulaElements(formula));
     }
 }

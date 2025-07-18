@@ -36,9 +36,9 @@ export class InitiativeModifier implements IModifier {
         return this._isBonus;
     }
 
-    addTooltipFormulaElements(formula: TooltipFormula, bonusPrefix: string="-", malusPrefix: string="+"): void {
+    addTooltipFormulaElements(formula: TooltipFormula ): void {
         const partClass = this.isBonus ? 'bonus' : 'malus'
-        const operator = this.isBonus ? bonusPrefix : malusPrefix;
+        const operator = this.isBonus ? "-" : "+";
         //formula default to a + operator for bonuses, so we have to use the low level API to get a decent display
         formula.addOperator(operator);
         formula.addPart(asString(abs(condense(this.value))), this.attributes.name, partClass);
