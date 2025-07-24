@@ -21,7 +21,7 @@ declare class SplittermondSpellItem extends AttackableItem(SplittermondItem) {
    get range(): any;
    get effectDuration(): any;
    get effectArea(): any;
-   get description(): any;
+   get description(): string;
    get enhancementDescription(): any;
    get degreeOfSuccessOptions(): Exclude<SpellDataModelType["degreeOfSuccessOptions"],null|undefined>;
    get spellType(): string;

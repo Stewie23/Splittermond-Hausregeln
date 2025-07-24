@@ -118,7 +118,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get description() {
-        return this.system.description;
+        return this.system.description ?? "";
     }
 
     get enhancementDescription() {

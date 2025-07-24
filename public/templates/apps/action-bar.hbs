@@ -1,4 +1,5 @@
-<div id="{{id}}" class="app token-action-bar">
+<!--DO NOT CHANGE THIS FILE without also changing the templateInterface file of token-action-bar -->
+<div class="app token-action-bar">
     {{#if name}}
     <div class="token-action-bar-skills">
         
@@ -35,7 +36,7 @@
                         {{/each}}
                     </div>
                 </div>
-                {{{this.system.description}}}
+                {{{this.description}}}
 
                 <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.enhancementCosts}}): {{this.enhancementDescription}}</p>
                 <div class="item-stats">
@@ -95,8 +96,8 @@
                     </li>
                     <li class="tooltip">
                         <h3>{{this.name}}</h3>
-                        {{{this.system.description}}}
-                        <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.enhancementCosts}}): {{this.system.enhancementDescription}}</p>
+                        {{{this.description}}}
+                        <p><strong>{{localize "splittermond.enhancementDescription"}}</strong> ({{this.enhancementCosts}}): {{this.enhancementDescription}}</p>
                     </li>
                     {{/each}}
                     {{/each}}

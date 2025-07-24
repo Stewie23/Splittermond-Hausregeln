@@ -29,7 +29,7 @@ import SplittermondMastery from "./module/item/mastery";
 import {referencesUtils} from "./module/data/references/referencesUtils";
 import {foundryApi} from "./module/api/foundryApi";
 import {canEditMessageOf} from "./module/util/chat";
-import "./module/apps/token-action-bar";
+import "./module/apps/token-action-bar/token-action-bar";
 
 import './less/splittermond.less';
 import {initTheme} from "./module/theme";
