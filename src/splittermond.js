@@ -29,7 +29,7 @@ import SplittermondMastery from "./module/item/mastery";
 import {referencesUtils} from "./module/data/references/referencesUtils";
 import {foundryApi} from "./module/api/foundryApi";
 import {canEditMessageOf} from "./module/util/chat";
-import "./module/apps/token-action-bar/token-action-bar";
+import {initTokenActionBar} from "./module/apps/token-action-bar/token-action-bar";
 
 import './less/splittermond.less';
 import {initTheme} from "./module/theme";
@@ -40,6 +40,7 @@ import {DamageInitializer} from "./module/util/chat/damageChatMessage/initDamage
 import {CostBase} from "./module/util/costs/costTypes";
 import {DamageRoll} from "./module/util/damage/DamageRoll.js";
 import {ItemFeaturesModel} from "./module/item/dataModel/propertyModels/ItemFeaturesModel.js";
+import {toggleElement} from "./module/util/animatedDisplay";
 
 
 $.fn.closestData = function (dataName, defaultValue = "") {
@@ -76,8 +77,9 @@ function handlePdf(links) {
     });
 };
 
-Hooks.once("ready", function () {
+Hooks.once("ready", async function () {
     game.splittermond.tickBarHud = new TickBarHud();
+    await initTokenActionBar(game.splittermond);
 });
 
 Hooks.once("init", async function () {
@@ -721,32 +723,6 @@ Hooks.on('renderChatMessageHTML', /**@param {HTMLElement} html*/function (app, h
         await Hooks.call("redraw-combat-tick");
     }));
 });
-
-function toggleElement(element) {
-    if (element.style.display === 'none' || !element.style.display) {
-        // Show with animation
-        element.style.display = 'block';
-        element.animate(
-            [
-                { opacity: 0, maxHeight: '0' },
-                { opacity: 1, maxHeight: `${element.scrollHeight}px` }
-            ],
-            { duration: 200, easing: 'ease-in-out' }
-        );
-    } else {
-        // Hide with animation
-        const animation = element.animate(
-            [
-                { opacity: 1, maxHeight: `${element.scrollHeight}px` },
-                { opacity: 0, maxHeight: '0' }
-            ],
-            { duration: 200, easing: 'ease-in-out' }
-        );
-        animation.onfinish = () => {
-            element.style.display = 'none';
-        };
-    }
-}
 
 
 Hooks.on("renderCompendiumDirectory", (app,/**@type HTMLElement*/ html) => {

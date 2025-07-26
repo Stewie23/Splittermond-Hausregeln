@@ -3,7 +3,7 @@
     {{#if name}}
     <div class="token-action-bar-skills">
         
-        <div class="token-action-bar-char-stats" data-action="open-sheet">
+        <div class="token-action-bar-char-stats" data-action="open-sheet" style="cursor: pointer;">
             <img src="{{img}}" data-edit="img" title="{{name}}" height="128" width="128" />
             <h1 class="token-action-bar-name">
                 {{name}}
@@ -14,7 +14,7 @@
             <div class="token-action-bar-popup">
                 <ul data-roll-type="skill">
                     {{#each skills.general}}
-                    <li class="rollable" data-skill="{{this.id}}"><label>{{localize this.label}}</label><div>{{this.value}}</div></li>
+                    <li class="rollable" data-action="rollSkill" data-skill="{{this.id}}"><label>{{localize this.label}}</label><div>{{this.value}}</div></li>
                     {{/each}}
                 </ul>
             </div>
@@ -24,7 +24,7 @@
     <div class="token-action-bar-spells">
         {{#if preparedSpell}}
         <ul>
-            <li class="rollable" data-roll-type="spell" data-item-id="{{preparedSpell.id}}"  style="background-image: url({{preparedSpell.img}})"></li>
+            <li class="rollable" data-roll-type="spell" data-item-id="{{preparedSpell.id}}" data-action="rollSpell" style="background-image: url({{preparedSpell.img}})"></li>
             {{#with preparedSpell}}
             <li class="tooltip">
                 <h3>{{this.name}}</h3>
@@ -85,8 +85,8 @@
                         <div class="effect-duration">{{localize "splittermond.effectDurationAbbrev"}}</div>
                     </li>
                     {{#each this.spells}}
-                    <li class="prepare-spell {{#if this.enoughFocus}}available{{/if}}" data-spell-id="{{this.id}}">
-                        <img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" />
+                    <li class="prepare-spell {{#if this.enoughFocus}}available{{/if}}" data-spell-id="{{this.id}}" data-action="prepareSpell">
+                        <img alt="spell icon" src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" />
                         <label>{{this.name}}</label>
                         <div class="difficulty">{{this.difficulty}}</div>
                         <div class="costs">{{this.costs}} ({{this.enhancementCosts}})</div>
@@ -109,7 +109,7 @@
     <div class="token-action-bar-attacks">
         <ul>
             {{#each attacks}}
-            <li class="rollable" data-roll-type="attack" data-prepared="{{this.isPrepared}}" data-attack-id="{{this.id}}" style="background-image: url({{this.img}})">
+            <li class="rollable" data-roll-type="attack" data-prepared="{{this.isPrepared}}" data-attack-id="{{this.id}}" data-action="rollAttack" style="background-image: url({{this.img}})">
             </li>
             <li class="tooltip">
                 <h3>{{this.name}}</h3>
@@ -142,7 +142,15 @@
             <div class="token-action-bar-popup">
                 <ul>
                     {{#each weapons}}
-                    <li class="toggle-equipped {{#if this.system.equipped}}equipped{{/if}}" data-item-id="{{this._id}}"><img src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" /><label>{{this.name}}</label></li>
+                    <li
+                            class="toggle-equipped
+                            {{#if this.system.equipped}}equipped{{/if}}"
+                            data-item-id="{{this._id}}"
+                            data-action="toggleEquipped"
+                    >
+                        <img alt="weapon icon" src="{{this.img}}" data-edit="img" title="{{this.name}}" height="24" width="24" />
+                        <label>{{this.name}}</label>
+                    </li>
                     {{/each}}
                 </ul>
             </div>
@@ -150,15 +158,15 @@
     </div>
     <div class="token-action-bar-defense">
         <ul>
-            <li class="rollable" data-roll-type="activeDefense" data-defense-type="defense">
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="defense" data-action="rollDefense">
                 <div>{{localize "splittermond.derivedAttribute.defense.short"}}</div>
                 <div class="value">{{derivedValues.defense.value}}</div>
             </li>
-            <li class="rollable" data-roll-type="activeDefense" data-defense-type="bodyresist">
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="bodyresist" data-action="rollDefense">
                 <div>{{localize "splittermond.derivedAttribute.bodyresist.short"}}</div>
                 <div class="value">{{derivedValues.bodyresist.value}}</div>
             </li>
-            <li class="rollable" data-roll-type="activeDefense" data-defense-type="mindresist">
+            <li class="rollable" data-roll-type="activeDefense" data-defense-type="mindresist" data-action="rollDefense">
                 <div>{{localize "splittermond.derivedAttribute.mindresist.short"}}</div>
                 <div class="value">{{derivedValues.mindresist.value}}</div>
             </li>

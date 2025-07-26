@@ -12,6 +12,7 @@ import SplittermondSpellItem from "module/item/spell";
 import {SplittermondSkill} from "module/config/skillGroups";
 import {closestData} from "module/data/ClosestDataMixin";
 import {TokenActionBarTemplateData} from "./templateInterface";
+import {ElementToggler} from "./ElementToggler";
 
 
 let theInstance: TokenActionBar | null = null;
@@ -69,7 +70,17 @@ export default class TokenActionBar extends SplittermondApplication {
     }
 
     constructor() {
-        super();
+        super({
+            actions:{
+                toggleEquipped: (e,t) => this.toogleEquipped(e,t),
+                "open-sheet": ()=> {this.openSheet();return Promise.resolve();},
+                prepareSpell: (e,t)=> {this.prepareSpell(e,t);return Promise.resolve();},
+                rollAttack: (e,t)=> this.rollAttack(e,t),
+                rollDefense: (e,t)=> {this.rollDefense(e,t);return Promise.resolve();},
+                rollSkill:(e,t)=>{this.rollSkill(e,t);return Promise.resolve();},
+                rollSpell:(e,t)=> this.rollSpell(e,t),
+            }
+        });
         this._currentActor = null;
     }
 
@@ -82,7 +93,7 @@ export default class TokenActionBar extends SplittermondApplication {
             if (!showActionBarGetter()) {
                 this._currentActor = null;
                 await this.render(true);
-                $("#hotbar").show(200);
+                this.hotbar.show();
                 return;
             }
 
@@ -91,22 +102,28 @@ export default class TokenActionBar extends SplittermondApplication {
             if (speaker.token) this._currentActor = foundryApi.getToken(speaker.scene, speaker.token)!.actor as SplittermondActor;
             if (!this._currentActor && speaker.actor) this._currentActor = foundryApi.getActor(speaker.actor) as SplittermondActor;
 
+            const customHotbar = document.querySelector("#custom-hotbar");
             if (this._currentActor == null) {
-                $("#hotbar").parent().show(200);
-                if ($("#custom-hotbar").length > 0) {
-                    $("#custom-hotbar").attr("style", "display: flex !important");
+                this.hotbar.show();
+                if (!!customHotbar) {
+                    customHotbar.setAttribute("style", "display: flex !important");
                 }
             } else {
                 if (!showActionBar()) {
-                    $("#hotbar").parent().hide(200);
-                    if ($("#custom-hotbar").length > 0) {
-                        $("#custom-hotbar").attr("style", "display: none !important");
+                    this.hotbar.hide();
+                    if (!!customHotbar) {
+                        customHotbar.setAttribute("style", "display: none !important");
                     }
                 }
 
             }
             await this.render(true);
         }, 100);
+    }
+
+    private get hotbar() {
+        const hotbar: HTMLElement | null = document.querySelector("#hotbar");
+        return new ElementToggler(hotbar);
     }
 
     async _prepareContext(options: ApplicationContextOptions) {
@@ -134,26 +151,26 @@ export default class TokenActionBar extends SplittermondApplication {
             data.weapons = this._currentActor.items.filter(item => ["weapon", "shield"].includes(item.type)).sort((a, b) => (a.sort - b.sort)).map(w => w.toObject());
 
 
-            data.spells = this._currentActor.spells.filter((spell:SplittermondSpellItem) => spell.skill && spell.skill.id)
+            data.spells = this._currentActor.spells.filter((spell: SplittermondSpellItem) => spell.skill && spell.skill.id)
                 .reduce((result: Partial<Record<SplittermondSkill, {
-                label: string;
-                skillValue: number;
-                spells: any[];
-            }>>, item: SplittermondSpellItem) => {
-                const skillName = item.skill.id as SplittermondSkill;
-                if (!splittermond.skillGroups.all.includes(skillName)) {
-                    throw new Error(`${skillName} is not a know skill`)
-                }
-                if (!result[skillName]) {
-                    result[skillName] = {
-                        label: `splittermond.skillLabel.${skillName}`,
-                        skillValue: item.skill.value,
-                        spells: []
-                    };
-                }
-                result[skillName].spells.push(item);
-                return result;
-            }, {});
+                    label: string;
+                    skillValue: number;
+                    spells: any[];
+                }>>, item: SplittermondSpellItem) => {
+                    const skillName = item.skill.id as SplittermondSkill;
+                    if (!splittermond.skillGroups.all.includes(skillName)) {
+                        throw new Error(`${skillName} is not a known skill`)
+                    }
+                    if (!result[skillName]) {
+                        result[skillName] = {
+                            label: `splittermond.skillLabel.${skillName}`,
+                            skillValue: item.skill.value,
+                            spells: []
+                        };
+                    }
+                    result[skillName].spells.push(item);
+                    return result;
+                }, {});
 
             if (Object.keys(data.spells as object/*see above*/).length == 0) {
                 data.spells = undefined;
@@ -195,13 +212,11 @@ export default class TokenActionBar extends SplittermondApplication {
     }
 
     async _onRender() {
-        const html = $(this.element);
-        const document = this.element.ownerDocument.documentElement;
-
-
+        //TODO: We're messing up the hotbar position for gamemasters! need to fix that
+        //try to place the action bar above the game and any custom hotbar
         if (showActionBar()) {
             let bottomPosition = Math.min($("#ui-bottom").outerHeight() ?? Number.POSITIVE_INFINITY, $("#hotbar").outerHeight() ?? Number.POSITIVE_INFINITY);
-            const bodyHeight = document.ownerDocument.body.offsetHeight;
+            const bodyHeight = document.body.offsetHeight;
             if (document.querySelectorAll("#custom-hotbar").length) {
                 bottomPosition = Math.max(bodyHeight - $("#custom-hotbar").position().top, bottomPosition);
             }
@@ -212,94 +227,82 @@ export default class TokenActionBar extends SplittermondApplication {
                 (this.element.querySelector(".token-action-bar")! as HTMLElement).style.bottom = `${bottomPosition}px`;
             }, 200);
         }
-
-        this.element.querySelectorAll(".rollable").forEach(rollable => {
-            rollable.addEventListener("click", async (event:Event) => {
-                const target = event.currentTarget as HTMLElement;
-
-                const type = closestData(target, 'roll-type');
-                if (type === "skill") {
-                    const skill = closestData(target, 'skill');
-                    this._currentActor?.rollSkill(skill);
-                }
-
-                if (type === "attack") {
-                    const attackId = closestData(target, 'attack-id');
-                    const prepared = closestData(target, 'prepared');
-                    if (prepared) {
-                        let success = await this._currentActor?.rollAttack(attackId);
-                        if (success) this._currentActor?.setFlag("splittermond", "preparedAttack", {})
-                        return;
-                    }
-                    const attack = this._currentActor?.attacks.find(attack => attack.toObject().id === attackId);
-                    if (!attack) {
-                        console.debug(`Splittermond | Attack of id ${attackId} not found on actor`);
-                        return;
-                    }
-                    this._currentActor?.addTicks(attack.weaponSpeed, `${foundryApi.localize("splittermond.attack")}: ${attack.name}`);
-                    this._currentActor?.setFlag("splittermond", "preparedAttack", attackId);
-                }
-                if (type === "spell") {
-                    const itemId = closestData(target, 'item-id');
-                    let success = await this._currentActor?.rollSpell(itemId);
-                    if (success) {
-                        this._currentActor?.setFlag("splittermond", "preparedSpell", null);
-                    }
-
-                }
-
-                if (type === "activeDefense") {
-                    const defenseType = closestData(target, 'defense-type') ?? undefined;
-                    if (isDefenseType(defenseType)) {
-                        this._currentActor?.activeDefenseDialog(defenseType);
-                    } else {
-                        console.debug("Splittermond | Invalid defense type", defenseType);
-                        this._currentActor?.activeDefenseDialog(undefined);
-                    }
-                }
-            });
-        });
-
-        html.find('.toggle-equipped').click(event => {
-            const itemId = closestData(event.currentTarget, 'item-id') ?? "";
-            const item = this._currentActor?.items.get(itemId);
-            if (!item || !("equipped" in item.system)) {
-                console.debug("Splittermond | Invalid item for toggle equipped", item?.uuid);
-                return;
-            }
-            item.update({"system.equipped": !item.system.equipped});
-        });
-
-        html.find('.prepare-spell').click(event => {
-            const itemId = closestData(event.currentTarget, 'spell-id') ?? "";
-            const spell = this._currentActor?.items.get(itemId);
-            if (!spell || !(spell instanceof SplittermondSpellItem)) {
-                console.debug("Splittermond | Invalid spell", spell?.uuid);
-                return;
-            }
-            this._currentActor?.addTicks(spell.castDuration, `${foundryApi.localize("splittermond.castDuration")}: ${spell.name}`);
-            this._currentActor?.setFlag("splittermond", "preparedSpell", itemId);
-        });
-
-        this.element.querySelectorAll('[data-action="open-sheet"]').forEach(element =>
-            element.addEventListener("click", async () => {
-                this._currentActor?.sheet.render(true);
-            }));
     }
 
+    async rollAttack(__:PointerEvent,target:HTMLElement){
+        const attackId = target.dataset.attackId;
+        const prepared = target.dataset.prepared;
+        if (prepared) {
+            let success = await this._currentActor?.rollAttack(attackId);
+            if (success) this._currentActor?.setFlag("splittermond", "preparedAttack", {})
+            return;
+        }
+        const attack = this._currentActor?.attacks.find(attack => attack.toObject().id === attackId);
+        if (!attack) {
+            console.debug(`Splittermond | Attack of id ${attackId} not found on actor`);
+            return;
+        }
+        this._currentActor?.addTicks(attack.weaponSpeed, `${foundryApi.localize("splittermond.attack")}: ${attack.name}`);
+        this._currentActor?.setFlag("splittermond", "preparedAttack", attackId);
+    }
+
+    rollSkill(__:PointerEvent,target:HTMLElement){
+        const skill = closestData(target, 'skill');
+        this._currentActor?.rollSkill(skill);
+    }
+
+    async rollSpell(__:PointerEvent,target:HTMLElement){
+        const itemId = closestData(target, 'item-id');
+        let success = await this._currentActor?.rollSpell(itemId);
+        if (success) {
+            this._currentActor?.setFlag("splittermond", "preparedSpell", null);
+        }
+    }
+
+    rollDefense(__:PointerEvent,target:HTMLElement){
+        const defenseType = target.dataset.defenseType ?? undefined;
+        if (isDefenseType(defenseType)) {
+            this._currentActor?.activeDefenseDialog(defenseType);
+        } else {
+            console.debug("Splittermond | Invalid defense type", defenseType);
+            this._currentActor?.activeDefenseDialog(undefined);
+        }
+    }
+
+    prepareSpell(__:PointerEvent, target: HTMLElement) {
+        const itemId = target.dataset.spellId ?? "";
+        const spell = this._currentActor?.items.get(itemId);
+        if (!spell || !(spell instanceof SplittermondSpellItem)) {
+            console.debug("Splittermond | Invalid spell", spell?.uuid);
+            return;
+        }
+        this._currentActor?.addTicks(spell.castDuration, `${foundryApi.localize("splittermond.castDuration")}: ${spell.name}`);
+        this._currentActor?.setFlag("splittermond", "preparedSpell", itemId);
+    }
+
+    openSheet() {
+        this._currentActor?.sheet.render(true);
+    }
+
+    async toogleEquipped(__: PointerEvent, target:HTMLElement){
+        const itemId = target.dataset.itemId ?? "";
+        const item = this._currentActor?.items.get(itemId);
+        if (!item || !("equipped" in item.system)) {
+            console.debug("Splittermond | Invalid item for toggle equipped", item?.uuid);
+            return;
+        }
+        await item.update({"system.equipped": !item.system.equipped});
+    }
 }
 
 function isDefenseType(defenseType: string | undefined): defenseType is "vtd" | "kw" | "gw" | "defense" {
     return defenseType === undefined || ["vtd", "kw", "gw", "defense"].includes(defenseType);
 }
 
-foundryApi.hooks.on("ready", () => {
-    if (getGame().splittermond === undefined) {
-        getGame().splittermond = {};
-    }
-    getGame().splittermond.tokenActionBar = new TokenActionBar();
-    theInstance = getGame().splittermond.tokenActionBar;
-    theInstance?.update();
+
+export async function initTokenActionBar(splittermond: Record<string, unknown>) {
+    theInstance = new TokenActionBar();
+    splittermond.tokenActionBar = theInstance;
 
     type Controlled = unknown;
     foundryApi.hooks.on("controlToken", (__: TokenDocument, ___: Controlled) => {
@@ -332,9 +335,5 @@ foundryApi.hooks.on("ready", () => {
         if (source?.parent?.id == theInstance?.currentActor?.id)
             theInstance?.update();
     });
-});
-
-function getGame():Record<string,any>{
-    //@ts-expect-error
-    return game;
+    return await theInstance.update();
 }
