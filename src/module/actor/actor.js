@@ -18,6 +18,7 @@ import {evaluate, of} from "./modifiers/expressions/scalar";
 import {ItemFeaturesModel} from "../item/dataModel/propertyModels/ItemFeaturesModel";
 import {DamageModel} from "../item/dataModel/propertyModels/DamageModel";
 import {InitiativeModifier} from "./InitiativeModifier";
+import {genesisSpellImport} from "./genesisImport/spellImport";
 
 /** @type ()=>number */
 let getHeroLevelMultiplier = () => 1;
@@ -707,49 +708,11 @@ export default class SplittermondActor extends Actor {
             })
         });
 
-        genesisData.spells.forEach((s) => {
-            let damage = /([0-9]*[wWdD][0-9]{1,2}[ \-+0-9]*)/.exec(s.longDescription);
-            damage = {stringInput: (damage?.[0] ?? null)}
-            let skill = "";
-            if (s.school === "Arkane Kunde") {
-                skill = "arcanelore";
-            } else {
-                skill = CONFIG.splittermond.skillGroups.magic.find(skill => {
-                    return s.school.toLowerCase() === game.i18n.localize(`splittermond.skillLabel.${skill}`).toLowerCase()
-                });
-            }
-
-
-            newItems.push({
-                type: "spell",
-                name: s.name,
-                img: CONFIG.splittermond.icons.spell[s.id] || CONFIG.splittermond.icons.spell.default,
-                system: {
-                    description: s.longDescription,
-                    skill: skill,
-                    skillLevel: s.schoolGrade,
-                    costs: s.focus,
-                    difficulty: s.difficulty,
-                    damage,
-                    range: s.castRange,
-                    castDuration: s.castDuration,
-                    effectDuration: s.spellDuration,
-                    features: { internalFeatureList: []},
-                    enhancementCosts: s.enhancement,
-                    enhancementDescription: s.enhancementDescription,
-                    degreeOfSuccessOptions: {
-                        castDuration: s.enhancementOptions?.search("Auslösezeit") >= 0,
-                        consumedFocus: s.enhancementOptions?.search("Verzehrter Fokus") >= 0,
-                        exhaustedFocus: s.enhancementOptions?.search("Erschöpfter Fokus") >= 0,
-                        channelizedFocus: s.enhancementOptions?.search("Kanalisierter Fokus") >= 0,
-                        effectDuration: s.enhancementOptions?.search("Wirkungsdauer") >= 0,
-                        damage: s.enhancementOptions?.search("Schaden") >= 0,
-                        range: s.enhancementOptions?.search("Reichweite") >= 0,
-                        effectArea: s.enhancementOptions?.search("Wirkungsbereich") >= 0
-                    }
-                }
-            })
-        });
+        const spells = genesisData.spells.map(genesisSpellImport)
+        if(spells.includes(null)){
+            foundryApi.warnUser("splittermond.genesisImport.spellValidation.spellsExcluded" )
+        }
+        spells.filter(spell => !!spell).forEach(spell => newItems.push(spell));
 
         genesisData.armors.forEach((a) => {
             newItems.push({
@@ -797,7 +760,7 @@ export default class SplittermondActor extends Actor {
                         attribute1: w.attribute1Id.toLowerCase(),
                         attribute2: w.attribute2Id.toLowerCase(),
                         features: toItemFeatureModel(w.features),
-                        damage: {stringInput: w.damage},
+                        damage: {stringInput: w.damage ?? null},
                         weaponSpeed: w.weaponSpeed,
                     }
                 })
