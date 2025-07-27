@@ -208,7 +208,7 @@ export class FocusCostHandler extends SplittermondDataModel<FocusCostHandlerType
 
     private updateFocus(type: "consumed" | "exhausted" | "channeled", multiplicity: number) {
         if (!this[type].isOption) {
-            console.warn(`Attempt to update option ${type}, when it should not be available`);
+            console.warn(`Splittermond | Attempt to update option ${type}, when it should not be available`);
             return {
                 usedDegreesOfSuccess: 0, action() {
                 }
