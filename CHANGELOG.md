@@ -1,4 +1,8 @@
-## 13.2.2.
+## 13.2.3
+### Fixed
+* Genesis Importer scheitert nicht an W6 Einträgen wie z.B. bei Geschärfter Klinge
+
+## 13.2.2
 ### Fixed
 * Initiativewundmalus wird nur noch für Initiative verwendet
 * Schilde haben wieder einen Waffenschaden
