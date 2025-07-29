@@ -212,7 +212,6 @@ export default class TokenActionBar extends SplittermondApplication {
     }
 
     async _onRender() {
-        //TODO: We're messing up the hotbar position for gamemasters! need to fix that
         //try to place the action bar above the game and any custom hotbar
         if (showActionBar()) {
             let bottomPosition = Math.min($("#ui-bottom").outerHeight() ?? Number.POSITIVE_INFINITY, $("#hotbar").outerHeight() ?? Number.POSITIVE_INFINITY);
@@ -335,5 +334,5 @@ export async function initTokenActionBar(splittermond: Record<string, unknown>) 
         if (source?.parent?.id == theInstance?.currentActor?.id)
             theInstance?.update();
     });
-    return await theInstance.update();
+    return theInstance.update();
 }

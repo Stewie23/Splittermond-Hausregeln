@@ -79,7 +79,7 @@ function handlePdf(links) {
 
 Hooks.once("ready", async function () {
     game.splittermond.tickBarHud = new TickBarHud();
-    await initTokenActionBar(game.splittermond);
+    return initTokenActionBar(game.splittermond);
 });
 
 Hooks.once("init", async function () {
