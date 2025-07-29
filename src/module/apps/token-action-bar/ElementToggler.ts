@@ -1,4 +1,4 @@
-import {showElementIn} from "../../util/animatedDisplay";
+import {showElementIn, hideElementIn} from "../../util/animatedDisplay";
 
 export class ElementToggler{
     constructor(private readonly element:HTMLElement|null) {
@@ -11,6 +11,6 @@ export class ElementToggler{
 
     hide(){
         if(!this.element) return;
-        this.element.style.display = 'none';
+        hideElementIn(this.element);
     }
 }
