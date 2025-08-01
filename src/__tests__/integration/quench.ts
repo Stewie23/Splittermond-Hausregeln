@@ -1,4 +1,4 @@
-import {compendiumBrowserTest} from "./compendium-browser.test";
+import {applicationTests} from "./application.tests";
 import {itemTest} from "./item.test";
 import {chatActionFeatureTest} from "./chatActionFeature.test";
 import {dataModelTest} from "./api/dataModel.test";
@@ -17,7 +17,7 @@ declare const Hooks: any;
 function registerQuenchTests(quench: Quench) {
     console.log("Splittermond | Initializing quench tests")
     quench.registerBatch("splittermond.roll", foundryRollTest);
-    quench.registerBatch("splittermond.compendium-browser", compendiumBrowserTest);
+    quench.registerBatch("splittermond.applications", applicationTests);
     quench.registerBatch("splittermond.item", itemTest);
     quench.registerBatch("splittermond.actor", actorTest)
     quench.registerBatch("splittermond.chatSystem", chatActionFeatureTest);

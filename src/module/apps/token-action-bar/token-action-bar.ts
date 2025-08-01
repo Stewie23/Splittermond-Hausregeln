@@ -5,7 +5,7 @@ import {
     ApplicationRenderContext,
     SplittermondApplication
 } from "module/data/SplittermondApplication";
-import SplittermondActor from "module/actor/actor";
+import SplittermondActor, {type DefenseType} from "module/actor/actor";
 import {splittermond} from "module/config";
 import SplittermondItem from "module/item/item";
 import SplittermondSpellItem from "module/item/spell";
@@ -74,7 +74,7 @@ export default class TokenActionBar extends SplittermondApplication {
             actions:{
                 toggleEquipped: (e,t) => this.toogleEquipped(e,t),
                 "open-sheet": ()=> {this.openSheet();return Promise.resolve();},
-                prepareSpell: (e,t)=> {this.prepareSpell(e,t);return Promise.resolve();},
+                prepareSpell: (e,t)=> this.prepareSpell(e,t),
                 rollAttack: (e,t)=> this.rollAttack(e,t),
                 rollDefense: (e,t)=> {this.rollDefense(e,t);return Promise.resolve();},
                 rollSkill:(e,t)=>{this.rollSkill(e,t);return Promise.resolve();},
@@ -136,7 +136,7 @@ export default class TokenActionBar extends SplittermondApplication {
             data.skills = {
                 general: splittermond.skillGroups.general.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
                     (parseInt(currentActor.skills[skillId].points) > 0)).map(skillId => currentActor.skills[skillId]),
-                magic: splittermond.skillGroups.magic.filter(skillId => ["acrobatics", "athletics", "determination", "stealth", "perception", "endurance"].includes(skillId) ||
+                magic: splittermond.skillGroups.magic.filter(skillId =>
                     (parseInt(currentActor.skills[skillId].points) > 0)).map(skillId => currentActor.skills[skillId])
             }
 
@@ -264,11 +264,11 @@ export default class TokenActionBar extends SplittermondApplication {
             this._currentActor?.activeDefenseDialog(defenseType);
         } else {
             console.debug("Splittermond | Invalid defense type", defenseType);
-            this._currentActor?.activeDefenseDialog(undefined);
+            this._currentActor?.activeDefenseDialog(undefined); //Undefined will trigger the default
         }
     }
 
-    prepareSpell(__:PointerEvent, target: HTMLElement) {
+    async prepareSpell(__:PointerEvent, target: HTMLElement) {
         const itemId = target.dataset.spellId ?? "";
         const spell = this._currentActor?.items.get(itemId);
         if (!spell || !(spell instanceof SplittermondSpellItem)) {
@@ -276,7 +276,7 @@ export default class TokenActionBar extends SplittermondApplication {
             return;
         }
         this._currentActor?.addTicks(spell.castDuration, `${foundryApi.localize("splittermond.castDuration")}: ${spell.name}`);
-        this._currentActor?.setFlag("splittermond", "preparedSpell", itemId);
+        await this._currentActor?.setFlag("splittermond", "preparedSpell", itemId);
     }
 
     openSheet() {
@@ -294,8 +294,8 @@ export default class TokenActionBar extends SplittermondApplication {
     }
 }
 
-function isDefenseType(defenseType: string | undefined): defenseType is "vtd" | "kw" | "gw" | "defense" {
-    return defenseType === undefined || ["vtd", "kw", "gw", "defense"].includes(defenseType);
+function isDefenseType(defenseType: string | undefined): defenseType is DefenseType|undefined {
+    return defenseType === undefined || ["mindresist", "bodyresist", "vtd", "kw", "gw", "defense"].includes(defenseType);
 }
 
 

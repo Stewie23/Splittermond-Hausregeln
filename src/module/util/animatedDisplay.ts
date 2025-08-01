@@ -9,7 +9,7 @@ export function toggleElement(element:HTMLElement) {
 
 export function showElementIn(element: HTMLElement, duration = 200) {
     // Show with animation
-    element.style.display = null;
+    element.style.display = "";
     const inheritedDisplay =   element.ownerDocument.defaultView?.getComputedStyle(element, null).getPropertyValue("display");
     if (!inheritedDisplay ||inheritedDisplay === 'none') {
         element.style.display = 'block';

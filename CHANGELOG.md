@@ -2,6 +2,8 @@
 ### Fixed
 * Genesis Importer scheitert nicht an W6 Einträgen wie z.B. bei Geschärfter Klinge
 * Herausragende Erfolge reduzieren nun Verzehrten Fokus von kanalisierten Zaubern
+### Other
+* Die Toolbar wurde Application V2 umgestellt
 
 ## 13.2.2
 ### Fixed
