@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 import SplittermondSpellItem from "../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "module/item/availabilityParser";
-import {describe} from "mocha";
+import {describe, it, beforeEach,afterEach} from "mocha";
 import {initializeSpellCostManagement} from "module/util/costs/spellCostManagement";
 import {Cost} from "module/util/costs/Cost";
 import sinon, {SinonSandbox} from "sinon";
@@ -110,27 +110,51 @@ describe("Spell item cost calculation", () => {
 });
 
 describe("Spell item roll costs", () => {
-    function createStub(): SplittermondSpellItem {
-        const stub = sinon.createStubInstance(SplittermondSpellItem);
+    let sandbox: sinon.SinonSandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => sandbox.restore());
+
+    function createStub(focusCosts:string): SplittermondSpellItem {
+        const stub = sandbox.createStubInstance(SplittermondSpellItem);
         stub.getCostsForFinishedRoll.callThrough();
-        sinon.stub(stub, "costs").get(() => "2V2");
+        sandbox.stub(stub, "costs").get(() => focusCosts);
         return stub;
     }
 
     it("should return the costs if a roll is successful", () => {
-        const stub = createStub();
+        const stub = createStub("2V2");
         const actual = stub.getCostsForFinishedRoll(0, true);
         expect(actual).to.deep.equal(new Cost(0, 2, false).asPrimaryCost());
     });
 
     it("should return reduced costs for critical successes", () => {
-        const stub = createStub();
+        const stub = createStub("2V2");
         const actual = stub.getCostsForFinishedRoll(5, true);
         expect(actual).to.deep.equal(new Cost(0, 1, false).asPrimaryCost());
     });
 
+    it("should not return reduced costs for critical successes when costing channeled focus", () => {
+        const stub = createStub("K2");
+        const actual = stub.getCostsForFinishedRoll(5, true);
+        expect(actual).to.deep.equal(new Cost(2, 0, true).asPrimaryCost());
+    });
+
+    it("should return reduced costs for critical successes when costing channeled focus", () => {
+        const stub = createStub("K4V2");
+        const actual = stub.getCostsForFinishedRoll(5, true);
+        expect(actual).to.deep.equal(new Cost(2, 1, true).asPrimaryCost());
+    });
+
+    it("should return reduced costs for critical successes when costing exhausted focus", () => {
+        const stub = createStub("2");
+        const actual = stub.getCostsForFinishedRoll(5, true);
+        expect(actual).to.deep.equal(new Cost(1, 0, false).asPrimaryCost());
+    });
+
     it("should return degrees of success as costs if a roll is not successful", () => {
-        const stub = createStub();
+        const stub = createStub("2V2");
         const actual = stub.getCostsForFinishedRoll(-2, false);
         expect(actual).to.deep.equal(new Cost(2, 0, false).asPrimaryCost());
     });

@@ -169,6 +169,16 @@
           "mastery": "Skill"
         }
       }
+    },
+    "genesisImport": {
+      "spellValidation": {
+        "nameUnknown": "unknown spell",
+        "spellsExcluded": "Upon import, some spells were omitted. See console for details.",
+        "invalidSkillLevel": "Spell '{spellName}' has no valid spell level.",
+        "invalidFocusCosts": "Spell '{spellName}' has no valid focus costs.",
+        "invalidDifficulty": "Spell '{spellName}' has no valid difficulty.",
+        "invalidDamage": "Spell '{spellName}' has no valid damage value."
+      }
     }
   }
 }

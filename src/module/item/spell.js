@@ -118,7 +118,7 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
     }
 
     get description() {
-        return this.system.description;
+        return this.system.description ?? "";
     }
 
     get enhancementDescription() {
@@ -221,13 +221,34 @@ export default class SplittermondSpellItem extends AttackableItem(SplittermondIt
      * @return {PrimaryCost}
      */
     getCostsForFinishedRoll(degreeOfSuccess, successful) {
-        const critReduction = degreeOfSuccess >= splittermond.degreeOfSuccessThresholds.critical ?
-            new Cost(0, 1, false, true) :
-            new Cost(0, 0, false, true);
         if (successful) {
-            return parseCostString(this.costs).asPrimaryCost().subtract(critReduction.asModifier());
+            const costs = parseCostString(this.costs).asPrimaryCost();
+            const critReduction = degreeOfSuccess >= splittermond.degreeOfSuccessThresholds.critical ?
+                getReductionForCriticalSuccess(costs) :
+                new Cost(0, 0, false, true);
+            return costs.subtract(critReduction.asModifier());
         } else {
             return parseCostString(`${Math.abs(degreeOfSuccess)}`).asPrimaryCost();
         }
+    }
+
+    #getReductionForCriticalSuccess(){
+        const costs = parseCostString(this.costs).asPrimaryCost();
+        if(costs.isChanneled && costs.consumed > 0){
+            return new Cost(0, 1, true , true);
+        }else if (!costs.isChanneled){
+            return new Cost(0, 1, false, true);
+        }else {
+            return new Cost(0, 0, false, true);
+        }
+    }
+}
+function getReductionForCriticalSuccess(costs) {
+    if (costs.isChanneled && costs.consumed > 0) {
+        return new Cost(0, 1, true, true);
+    } else if (!costs.isChanneled) {
+        return new Cost(0, 1, false, true);
+    } else {
+        return new Cost(0, 0, false, true);
     }
 }

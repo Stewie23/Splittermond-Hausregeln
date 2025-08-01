@@ -7,6 +7,7 @@ import {NpcDataModel} from "./dataModel/NpcDataModel";
 import {Susceptibilities} from "./modifiers/Susceptibilities";
 import ModifierManager from "./modifier-manager";
 
+export type DefenseType = "defense" | "mindresist" | "bodyresist" | "vtd" | "kw" | "gw";
 declare class SplittermondActor extends Actor {
 
     private _resistances: Susceptibilities;
@@ -17,7 +18,7 @@ declare class SplittermondActor extends Actor {
 
     system: CharacterDataModel | NpcDataModel;
 
-    async activeDefenseDialog(type?: "defense"|"vtd"|"kw"|"gw"):Promise<void>;
+    async activeDefenseDialog(type?: DefenseType):Promise<void>;
 
     get splinterpoints(): {value:number, max:number};
 

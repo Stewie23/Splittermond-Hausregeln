@@ -1,4 +1,5 @@
-.token-action-bar {
+
+#token-action-bar .token-action-bar{
     position: fixed;
     display: flex;
     flex-direction: row;
@@ -78,19 +79,30 @@
 
 }
 
-.token-action-bar-char-stats:extend(.app) {
+.token-action-bar-char-stats {
+    max-height: 100%;
+    max-width: 100%;
+
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    background: var(--splittermond-background-denim-blue),var(--splittermond-background-denim);
+    box-shadow: 0 0 20px black;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: var(--z-index-app);
+    transform-origin: top left;
+
     border: none;
-    border-radius: 0px;
+    border-radius: 0;
     position: relative;
 
     display: flex;
     flex-direction: column;
 
     
-
     .token-action-bar-name {
         position: absolute;
-        bottom: 0px;
+        bottom: 0;
         font-family: "Almendra";
         width: 128px;
         font-size: 1em;
@@ -120,7 +132,7 @@
     z-index: 1;
 
     .token-action-bar-popup {
-        max-height: 0px;
+        max-height: 0;
         overflow: hidden;
         opacity: 0;
         z-index: 100;
@@ -364,7 +376,7 @@
     
 }
 
-.token-action-bar {
+#token-action-bar .token-action-bar {
     .token-action-bar-char-stats,
     .token-action-bar-name,
     .token-action-bar-popup,
@@ -376,7 +388,7 @@
 }
 
 @supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-.token-action-bar {
+#token-action-bar .token-action-bar {
     .token-action-bar-char-stats,
     .token-action-bar-name,
     .token-action-bar-popup,

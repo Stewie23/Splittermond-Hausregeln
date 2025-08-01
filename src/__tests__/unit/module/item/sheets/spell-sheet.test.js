@@ -6,7 +6,7 @@ import {produceJQuery} from "../../../../jQueryHarness.js";
 import SplittermondSpellSheet from "../../../../../module/item/sheets/spell-sheet.js";
 import SplittermondSpellItem from "../../../../../module/item/spell.js";
 import {getSpellAvailabilityParser} from "../../../../../module/item/availabilityParser.ts";
-import {simplePropertyResolver} from "../../../../util.js";
+import {simplePropertyResolver} from "../../../../util.ts";
 
 
 describe("Spell Properties display", () => {

@@ -29,6 +29,9 @@ class FoundryDocument {
 
     get id() {}
     get uuid() {}
+
+    getFlag(){}
+    setFlag(){}
 }
 
 global.Actor = class Actor extends FoundryDocument{
