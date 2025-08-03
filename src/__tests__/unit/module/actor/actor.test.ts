@@ -12,6 +12,8 @@ import {foundryApi} from "../../../../module/api/foundryApi";
 import {calculateHeroLevels} from "../../../../module/actor/actor";
 import {asMock} from "../../settingsMock";
 import {settings} from "../../../../module/settings";
+import {JSDOM} from "jsdom";
+import {StrengthDataModel} from "../../../../module/item/dataModel/StrengthDataModel";
 
 declare const global: any
 
@@ -104,6 +106,7 @@ describe("SplittermondActor", () => {
             focus: new FocusDataModel({consumed: {value: 0}, exhausted: {value: 0}, channeled: {entries: []}}),
             currency: {S: 0, L: 0, T: 0},
         });
+        Object.defineProperty(actor, "items", {value:[], writable: true, configurable: true});
         // Mock update to avoid side effects and allow assertions
         sandbox.spy(actor, "update")
     });
@@ -300,6 +303,31 @@ describe("SplittermondActor", () => {
                 }
             ] as any;
             expect(actor.protectedDamageReduction).to.equal(0);
+        });
+    });
+
+    describe("Fumbles", ()=>{
+
+        beforeEach(() => {
+            sandbox.stub(foundryApi,"localize").callsFake((key) => key)
+            actor.prepareBaseData();
+        });
+        it("should take fumble lowering modifier into account", async () => {
+            const item = sandbox.createStubInstance(SplittermondItem);
+            item.system = sandbox.createStubInstance(StrengthDataModel);
+            actor.addModifier(item, "Stabile Magie", "lowerFumbleResult +1", "innate");
+            let input = {content: ""}
+            global.Dialog = class {
+                constructor(inp:{content:string}) {input = inp;}
+                render(){}
+            }
+
+            await actor.rollMagicFumble(3, "4V2", "firemagic");
+            const dom = new JSDOM(input.content).window.document.documentElement;
+            const lowerFumbleInput = dom.querySelector("input[name=lowerFumbleResult]") as HTMLInputElement|null;
+
+            expect(lowerFumbleInput).to.not.be.null;
+            expect(lowerFumbleInput?.value).to.equal("1");
         });
     });
 });
