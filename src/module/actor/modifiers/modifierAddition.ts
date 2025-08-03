@@ -176,7 +176,7 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 } else if ("skill" in modifier.attributes) {
                     modifier.attributes.skill = normalizeDescriptor(modifier.attributes.skill).usingMappers("skills").do();
                 }
-                addModifierHelper(modifier.path, times(of(multiplier), modifier.value), modifier.attributes, "");
+                addModifierHelper("lowerfumbleresult", times(of(multiplier), modifier.value), modifier.attributes, "");
                 break;
             case "generalskills":
                 //Within the foreach function the compiler cannot figure out that the type guard happens first and complains

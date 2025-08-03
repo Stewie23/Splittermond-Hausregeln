@@ -170,6 +170,20 @@ describe('addModifier', () => {
         ]);
     });
 
+    ["lowerFumbleResult", "lowerfumbleresult"].forEach((fumbleResultPath) => {
+        it(`should recognize fumble result modifier ${fumbleResultPath}`, () => {
+            addModifier(actor, item, "", `${fumbleResultPath} +3`);
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'lowerfumbleresult',
+                { name: '', type: null},
+                of(3),
+                item,
+                false
+            ]);
+
+        });
+    });
+
     (["fighting", "magic", "general"]as const).forEach((skillGroup) => {
         it(`should retain emphasis for skill group ${skillGroup}`, () => {
             addModifier(actor, item, "", `${skillGroup}Skills emphasis="Schwerpunkt" 3`);

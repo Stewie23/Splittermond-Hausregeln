@@ -1013,20 +1013,20 @@ export default class SplittermondActor extends Actor {
             title: "Zauberpatzer",
             content: `<form>
             <div class="properties-editor">
-            <label>${game.i18n.localize("splittermond.negativeDegreeOfSuccess")}</label><input name='eg' type='text' value='${eg}' data-dtype='Number'>
-            <label>${game.i18n.localize("splittermond.focusCosts")}</label><input name='costs' type='text' value='${costs}' data-dtype='Number'>
-            <label title="${game.i18n.localize("splittermond.lowerFumbleResultHelp")}">${game.i18n.localize("splittermond.lowerFumbleResult")}</label><input title="${game.i18n.localize("splittermond.lowerFumbleResultHelp")}"name='lowerFumbleResult' type='text' value='${lowerFumbleResult}' data-dtype='Number'>
+            <label>${foundryApi.localize("splittermond.negativeDegreeOfSuccess")}</label><input name='eg' type='text' value='${eg}' data-dtype='Number'>
+            <label>${foundryApi.localize("splittermond.focusCosts")}</label><input name='costs' type='text' value='${costs}' data-dtype='Number'>
+            <label title="${foundryApi.localize("splittermond.lowerFumbleResultHelp")}">${foundryApi.localize("splittermond.lowerFumbleResult")}</label><input title="${foundryApi.localize("splittermond.lowerFumbleResultHelp")}"name='lowerFumbleResult' type='text' value='${lowerFumbleResult}' data-dtype='Number'>
             </div>
             </form>`,
             buttons: {
 
                 cancel: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("splittermond.cancel")
+                    label: foundryApi.localize("splittermond.cancel")
                 },
                 priest: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("splittermond.priest"),
+                    label: foundryApi.localize("splittermond.priest"),
                     callback: async (html) => {
                         const rollTable = CONFIG.splittermond.fumbleTable.magic.priest;
                         let eg = parseInt(html.find('[name=eg]')[0].value || 0);
@@ -1039,7 +1039,7 @@ export default class SplittermondActor extends Actor {
                             costs = parseInt(costDataRaw[2]);
                         }
 
-                        let roll = await (new Roll(`2d10+@eg[${game.i18n.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {
+                        let roll = await (new Roll(`2d10+@eg[${foundryApi.localize("splittermond.degreeOfSuccessAbbrev")}]*@costs[${game.i18n.localize("splittermond.focusCosts")}]`, {
                             eg: eg,
                             costs: costs
                         })).evaluate();
@@ -1054,7 +1054,7 @@ export default class SplittermondActor extends Actor {
 
                         let data = {};
                         data.roll = roll;
-                        data.title = game.i18n.localize("splittermond.magicFumble");
+                        data.title = foundryApi.localize("splittermond.magicFumble");
                         data.rollType = roll.formula;
                         data.img = "";
                         data.degreeOfSuccessDescription = `<div class="fumble-table-result">`;
@@ -1068,7 +1068,7 @@ export default class SplittermondActor extends Actor {
                         });
                         data.degreeOfSuccessDescription += `</div>`;
                         if (lowerFumbleResult) {
-                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${game.i18n.localize("splittermond.lowerFumbleResultChat")}` + data.degreeOfSuccessDescription;
+                            data.degreeOfSuccessDescription = `${lowerFumbleResult} ${foundryApi.localize("splittermond.lowerFumbleResultChat")}` + data.degreeOfSuccessDescription;
                         }
                         //data.degreeOfSuccessDescription = `<div class="fumble-table-result fumble-table-result-active">"${game.i18n.localize(result.text)}</div>`;
 
@@ -1087,12 +1087,12 @@ export default class SplittermondActor extends Actor {
                             type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
-                        ChatMessage.create(chatData);
+                        foundryApi.createChatMessage(chatData);
                     }
                 },
                 sorcerer: {
                     icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("splittermond.sorcerer"),
+                    label: foundryApi.localize("splittermond.sorcerer"),
                     callback: async (html) => {
                         const rollTable = CONFIG.splittermond.fumbleTable.magic.sorcerer;
                         let eg = parseInt(html.find('[name=eg]')[0].value || 0);
@@ -1151,15 +1151,13 @@ export default class SplittermondActor extends Actor {
                             type: CONST.CHAT_MESSAGE_TYPES.OTHER
                         };
 
-                        ChatMessage.create(chatData);
-
+                        foundryApi.createChatMessage(chatData);
                     }
                 },
             },
             default: defaultTable
         }, {classes: ["splittermond", "dialog"]});
         d.render(true);
-        return;
     }
 
     async addTicks(value = 3, message = "", askPlayer = true) {

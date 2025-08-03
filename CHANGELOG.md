@@ -1,3 +1,8 @@
+## 13.2.4
+### Fixed
+ * Der Modifikator "lowerFumbleResult" wird nun korrekt ausgewertet.
+   * Die Stärke "Stabile Magie" funktioniert nun korrekt.
+
 ## 13.2.3
 ### Fixed
 * Genesis Importer scheitert nicht an W6 Einträgen wie z.B. bei Geschärfter Klinge
