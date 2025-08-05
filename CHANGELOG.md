@@ -1,3 +1,8 @@
+## 13.2.5
+### Fixed
+ * Invalide vorbereitete Zauber werden nun gelöscht
+ * Bei NPC Angriffen wird der Schaden nun korrekt angezeigt.
+ * 
 ## 13.2.4
 ### Fixed
  * Der Modifikator "lowerFumbleResult" wird nun korrekt ausgewertet.
