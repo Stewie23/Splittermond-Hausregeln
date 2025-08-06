@@ -2,7 +2,7 @@
 ### Fixed
  * Invalide vorbereitete Zauber werden nun gelöscht
  * Bei NPC Angriffen wird der Schaden nun korrekt angezeigt.
- * 
+ * weaponspeed Modifikatoren funktioniere nun wieder
 ## 13.2.4
 ### Fixed
  * Der Modifikator "lowerFumbleResult" wird nun korrekt ausgewertet.

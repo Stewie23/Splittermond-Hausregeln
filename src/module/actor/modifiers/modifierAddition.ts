@@ -217,7 +217,8 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                 }, times(of(multiplier), modifier.value), item, false);
                 break;
             case "weaponspeed":
-                actor.modifier.add(`weaponspeed.${modifier.attributes.emphasis}`, {
+                actor.modifier.add(`weaponspeed`, {
+                    ...modifier.attributes,
                     name: emphasisFromName,
                     type
                 }, times(of(multiplier), modifier.value), item, false);

@@ -201,11 +201,22 @@ describe('addModifier', () => {
     });
 
     describe("damage modifiers", () => {
-        it('should handle damage modifiers', () => {
+        it('should handle general damage modifiers', () => {
             addModifier(actor, item, 'Damage', 'Damage/fire +5');
             expect(modifierManager.add.lastCall.args).to.have.deep.members([
                 'damage',
                 {name: 'Damage', type: null, emphasis: 'fire'},
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it('should handle general damage modifiers', () => {
+            addModifier(actor, item, 'Damage', 'Damage emphasis="fire" item="Schwert" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'damage',
+                {name: 'Damage', type: null, emphasis: 'fire', item: "Schwert"},
                 of(5),
                 item,
                 false
@@ -228,6 +239,30 @@ describe('addModifier', () => {
             expect(modifierManager.add.lastCall.args).to.have.deep.members([
                 'damage',
                 {name: '', type: null},
+                of(5),
+                item,
+                false
+            ]);
+        });
+    });
+
+    describe("weaponsepeed modifiers", () => {
+        it('should handle general weaponspeed modifiers', () => {
+            addModifier(actor, item, 'Superfast', 'weaponspeed +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'weaponspeed',
+                {name: 'Superfast', type: null },
+                of(5),
+                item,
+                false
+            ]);
+        });
+
+        it('should handle weapon specific modifiers weaponspeed modifiers', () => {
+            addModifier(actor, item, 'Superfast', 'weaponspeed item="Lanze" +5');
+            expect(modifierManager.add.lastCall.args).to.have.deep.members([
+                'weaponspeed',
+                {name: 'Superfast', type: null, item: "Lanze"},
                 of(5),
                 item,
                 false
