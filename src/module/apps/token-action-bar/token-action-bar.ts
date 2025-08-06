@@ -176,7 +176,7 @@ export default class TokenActionBar extends SplittermondApplication {
                 data.spells = undefined;
             }
 
-            const preparedItemId = this._currentActor.getFlag("splittermond", "preparedSpell") as string | null
+            const preparedItemId = this._currentActor.getFlag("splittermond", "preparedSpell") as string | null| undefined
             data.preparedSpell = preparedItemId ? this.getPreparedSpell(preparedItemId) : null;
 
 
@@ -190,7 +190,8 @@ export default class TokenActionBar extends SplittermondApplication {
     private getPreparedSpell(preparedSpellId: string) {
         const preparedItem = preparedSpellId ? this._currentActor?.items.get(preparedSpellId) : null;
         if (!(preparedItem instanceof SplittermondSpellItem)) {
-            throw new Error(`${preparedSpellId} is not a spell item`);
+            this.currentActor?.setFlag("splittermond", "preparedSpell", null);
+            throw new Error(`${preparedSpellId} does not point to a valid spell item`);
         }
         return {
             castDuration: preparedItem.castDuration,
