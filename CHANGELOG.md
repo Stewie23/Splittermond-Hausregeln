@@ -1,3 +1,7 @@
+## 13.2.6
+### Fixed
+ * Private Chatnachrichten werden nun farblich hervor gehoben
+
 ## 13.2.5
 ### Fixed
  * Invalide vorbereitete Zauber werden nun gelöscht
