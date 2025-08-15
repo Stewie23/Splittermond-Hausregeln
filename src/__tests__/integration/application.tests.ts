@@ -111,7 +111,15 @@ export function applicationTests(context: QuenchBatchContext) {
             return {
                 type: "weapon",
                 name: "Test Weapon",
-                system: {equipped: true, damage: "1W6", range: "0", speed: 2,}
+                system: {
+                    equipped: true,
+                    damage: "1W6",
+                    range: "0",
+                    speed: 2,
+                    skill: null as string|null,
+                    attribute1: null as string|null,
+                    attribute2: null as string|null,
+                }
 
             }
         }
@@ -171,6 +179,34 @@ export function applicationTests(context: QuenchBatchContext) {
 
             const allWeaponDataSets = getDataSets(tokenActionBar.element.querySelectorAll("[data-action='rollAttack']"))
             expect(allWeaponDataSets.map(d => d.attackId)).to.contain.all.members([weapon.id, shield.id])
+        });
+
+        ([
+            ["longrange", false],
+            ["throwing", false],
+            ["blades", true],
+            ["staffs", true]
+        ] as const).forEach(([skill, prepared]) => {
+        const preparedTitle = prepared ? "prepared" : "not prepared";
+        it(`should display weapons for skill '${skill}' as ${preparedTitle}`, async () => {
+            const actor = await createActor();
+            const testWeapon = getTestWeapon();
+            testWeapon.system.skill = skill
+            testWeapon.system.attribute1 = "strength";
+            testWeapon.system.attribute2 = "strength";
+            await actor.update({system: {skills: {[skill]: {points: 2, value: 6}}}});
+            const createdDocuments = await actor.createEmbeddedDocuments("Item", [testWeapon]);
+            const weapon = createdDocuments[0];
+
+            actor.prepareBaseData();
+            await actor.prepareEmbeddedDocuments();
+            actor.prepareDerivedData();
+            await renderActonBarForActor(actor);
+
+            const allWeaponDataSets = getDataSets(tokenActionBar.element.querySelectorAll("[data-action='rollAttack']"))
+            expect(allWeaponDataSets.map(d => d.attackId)).to.contain(weapon.id)
+            expect(allWeaponDataSets.find(d => d.attackId == weapon.id)?.prepared).to.equal(prepared? "true" : "false");
+        })
         });
 
         it("should not contain items that are not equipped", async () => {

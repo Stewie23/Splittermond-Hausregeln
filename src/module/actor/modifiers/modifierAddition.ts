@@ -198,6 +198,16 @@ export function addModifier(actor: SplittermondActor, item: SplittermondItem, em
                     addModifierHelper(skill, times(of(multiplier), modifier.value), fightingSkillAttributes);
                 });
                 break;
+            //This setup is a bit of a hack, it uses the (private) knowledge that Attack objects add the item id as listener to skill modifiers
+            case "npcattacks":
+                const npcAttackAttributes = modifier.attributes;
+                actor.items
+                    .filter(item => item.type === "npcattack")
+                    .map(item => `skill.${item.id}`) //name would be better thematically (skill name for npc attacks is the item name) but id is more reliable
+                    .forEach((skill) => {
+                        addModifierHelper(skill, times(of(multiplier), modifier.value), npcAttackAttributes);
+                    });
+                break;
             case "damage":
                 if("damageType" in modifier.attributes) {
                     modifier.attributes.damageType = normalizeDescriptor(modifier.attributes.damageType).usingMappers("damageTypes").do();
