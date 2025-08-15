@@ -8,6 +8,7 @@ import SplittermondActor from "../../../../../module/actor/actor";
 import SplittermondSpellItem from "../../../../../module/item/spell";
 import {foundryApi} from "../../../../../module/api/foundryApi";
 import {SpellDataModel} from "../../../../../module/item/dataModel/SpellDataModel";
+import Attack from "../../../../../module/actor/attack";
 
 describe("TokenActionBar", () => {
     let sandbox: SinonSandbox;
@@ -34,10 +35,11 @@ describe("TokenActionBar", () => {
             mindresist: { value: 6 }
         }
         Object.defineProperty(actorStub, "isToken", {value:false, enumerable:true});
-        Object.defineProperty(actorStub, "skill", {value:sampleSkill, enumerable:true});
+        Object.defineProperty(actorStub, "skills", {value:sampleSkill, enumerable:true});
         Object.defineProperty(actorStub, "items", {value:sampleItemCollection, enumerable:true});
         Object.defineProperty(actorStub, "derivedValues", {value:sampleDerivedValues, enumerable:true});
         Object.defineProperty(actorStub, "sheet", {value:sampleSheet, enumerable:true});
+        Object.defineProperty(actorStub, "attacks", {value:[], enumerable:true});
         actorStub.rollAttack.resolves(true)
         actorStub.rollSpell.resolves(true)
         actorStub.activeDefenseDialog = sandbox.stub();
@@ -81,9 +83,24 @@ describe("TokenActionBar", () => {
         attackLi.dataset.prepared = "true";
         await bar.rollAttack(null as any, attackLi);
         expect(actorStub.rollAttack.calledWith("attack1")).to.be.true;
-        expect(actorStub.setFlag.calledWith("splittermond", "preparedAttack", {})).to.be.true;
+        expect(actorStub.setFlag.calledWith("splittermond", "preparedAttack", null)).to.be.true;
     });
 
+    it("should toggle prepared state for attack", async () => {
+        sandbox.stub(foundryApi, "localize").callsFake((key)=>key);
+        const attackLi = dom.window.document.createElement("li");
+        const attackId = "attack1";
+        attackLi.dataset.attackId = attackId
+        attackLi.dataset.prepared = "false";
+        const attackStub = sandbox.createStubInstance(Attack);
+        attackStub.toObject.returns({ ...getMockAttackObject(), id: attackId });
+        sandbox.stub(attackStub,"weaponSpeed").get(()=>3);
+        actorStub.attacks.push(attackStub);
+        await bar.rollAttack(null as any, attackLi);
+        expect(actorStub.rollAttack.callCount).to.equal(0);
+        expect(actorStub.setFlag.lastCall.args).to.have.members(["splittermond", "preparedAttack", attackId]);
+
+    });
     it("should call rollSkill with correct skill", () => {
         const skillLi = dom.window.document.createElement("li");
         skillLi.dataset.skill = "acrobatics";
@@ -129,4 +146,25 @@ describe("TokenActionBar", () => {
         await bar.toogleEquipped(null as any, itemLi);
         expect(itemStub.update.calledWith({ "system.equipped": true })).to.be.true;
     });
+
 });
+
+function getMockAttackObject(){
+    return  {
+        id: "",
+        img: "",
+        name: "",
+        skill: {} as any,
+        range: 0,
+        features: "",
+        damage: "",
+        damageType: "",
+        costType: "",
+        weaponSpeed: 0,
+        editable: false,
+        deletable: false,
+        isPrepared: false,
+        featureList: []
+    }
+}
+

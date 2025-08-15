@@ -231,10 +231,10 @@ export default class TokenActionBar extends SplittermondApplication {
 
     async rollAttack(__:PointerEvent,target:HTMLElement){
         const attackId = target.dataset.attackId;
-        const prepared = target.dataset.prepared;
+        const prepared = target.dataset.prepared == "true";
         if (prepared) {
             let success = await this._currentActor?.rollAttack(attackId);
-            if (success) this._currentActor?.setFlag("splittermond", "preparedAttack", {})
+            if (success) this._currentActor?.setFlag("splittermond", "preparedAttack", null)
             return;
         }
         const attack = this._currentActor?.attacks.find(attack => attack.toObject().id === attackId);
