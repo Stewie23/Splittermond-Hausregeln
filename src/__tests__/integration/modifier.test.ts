@@ -529,6 +529,28 @@ export function modifierTest(context: QuenchBatchContext) {
                 .to.equal("3V2")
         });
 
+        it("should modify npc attack values", async () => {
+            const subject = await defaultActor("Attacking NPC", "npcattacks -1");
+            const npcAttackDefinition = {
+                type: "npcattack",
+                name: "Körper",
+                system: {
+                    skillValue: 7,
+                }
+            };
+            const npcAttacks = await subject.createEmbeddedDocuments("Item", [npcAttackDefinition]);
+            const npcAttack = npcAttacks[0]
+
+            subject.prepareBaseData();
+            await subject.prepareEmbeddedDocuments();
+            subject.prepareDerivedData();
+
+            expect(subject.attacks.find(a => a.toObject().id === npcAttack.id)?.skill.value).to.equal(
+                npcAttackDefinition.system.skillValue - 1
+            );
+
+        });
+
     });
 
     describe("Roll expressions", () => {

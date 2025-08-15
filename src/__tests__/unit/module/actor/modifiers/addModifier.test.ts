@@ -69,6 +69,9 @@ describe('addModifier', () => {
             speed: {multiplier: 1}
         };
         item = {
+            id: 'item1',
+            name: 'Test Item',
+            type: 'weapon',
             system: {}
         } as unknown as SinonStubbedInstance<SplittermondItem>;
 
@@ -144,6 +147,20 @@ describe('addModifier', () => {
                 true
             ]);
         });
+    });
+
+    it('should create a modifier for all npc attacks', () => {
+        const npcAttack = sandbox.createStubInstance(SplittermondItem);
+        npcAttack.type = 'npcattack';
+        sandbox.stub(npcAttack,"id").get(()=> 'npcAttack1');
+        Object.defineProperty(actor, 'items', {value: [npcAttack]});
+
+        addModifier(actor, item, 'NPC Attack', 'npcattacks +3');
+
+        expect(modifierManager.add.lastCall.args).to.have.deep.members([`skill.npcAttack1`, {
+            name: 'NPC Attack',
+            type: null
+        }, of(3), item, false]);
     });
 
     it('should report error for invalid syntax', () => {
