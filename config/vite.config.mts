@@ -66,6 +66,12 @@ export default defineConfig({
             'module': path.resolve(__dirname, '../src/module')
         }
     },
+    esbuild:{
+        minifyWhitespace: true,
+        minifyIdentifiers:true,
+        minifySyntax:true,
+        keepNames: true,
+    },
     build: {
         outDir: path.resolve(__dirname, '../dist'),
         emptyOutDir: true,
@@ -76,6 +82,7 @@ export default defineConfig({
             formats: ['es'],
             fileName: 'splittermond'
         },
+        minify: "esbuild",
         rollupOptions: {
             output: {
                 assetFileNames: (chunkInfo) => {
