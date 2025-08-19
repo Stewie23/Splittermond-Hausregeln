@@ -1,3 +1,6 @@
+## 13.3.1
+### Fixed
+ * Ein Fehler wurde behoben, bei dem Objekte nicht angezeigt werden konnten, da im Bauprozess der Klassennamen durch einen kürzeren mit $-Zeichen ersetzt wurden.
 ## 13.3.0
 ### New Features
  * Es gibt einen neuen Modifikator "npcattacks", der es erlaubt Den "Fertigkeitswert" eines Angriffs, dessen Ursprung keine ausrüstbarer Gegenstand ist, zu modifizieren. Dieser Modifikator bei Nutzen der Zustände "Erschöpft" und "Ringend automatisch zur Anwendung."
