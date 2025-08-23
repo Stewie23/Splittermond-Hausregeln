@@ -1,3 +1,6 @@
+## 13.3.2
+### Fixed
+ * Kommata in Modifikatorzeichenketten, die sich in Attributswerten (begrenzt durch " oder ') befinden, werden nicht mehr als Trenner zwischen Modifikatoren gewertet.
 ## 13.3.1
 ### Fixed
  * Ein Fehler wurde behoben, bei dem Objekte nicht angezeigt werden konnten, da im Bauprozess der Klassennamen durch einen kürzeren mit $-Zeichen ersetzt wurden.

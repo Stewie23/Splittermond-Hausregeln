@@ -15,7 +15,7 @@ export function parseModifiers(modifiers: string | null | undefined): ParseResul
     if (!modifiers) {
         return {modifiers: [], errors: []};
     }
-    const parsedModifiers = modifiers.trim().split(",")
+    const parsedModifiers = splitModifiers(modifiers)
         .map(m => m.trim())
         .filter(m => !!m)
         .map(parseModifier);
@@ -24,6 +24,28 @@ export function parseModifiers(modifiers: string | null | undefined): ParseResul
         errors: parsedModifiers.filter(m => typeof m == "string")
     }
 
+}
+
+function splitModifiers(modifiers: string): string[] {
+    const splitModifiers = [];
+    let mode:"TOP"|"ATTRIBUTE"="TOP"
+    let currentDelimiter = null;
+    for (let i = 0; i < modifiers.length; i++) {
+        const char = modifiers.charAt(i);
+        if (mode ==="TOP" && ["'",'"'].includes(char)){
+            mode = "ATTRIBUTE";
+            currentDelimiter = char;
+        } else if(mode ==="ATTRIBUTE" && char === currentDelimiter){
+            mode = "TOP";
+            currentDelimiter = null;
+        } else if (char === "," && mode === "TOP") {
+            splitModifiers.push(modifiers.substring(0, i).trim());
+            modifiers = modifiers.substring(i + 1).trim();
+            i = -1;
+        }
+    }
+    splitModifiers.push(modifiers);
+    return splitModifiers;
 }
 
 function parseModifier(modifier: string): SingleParseResult {
