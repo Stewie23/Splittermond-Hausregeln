@@ -45,8 +45,8 @@ jobs:
         run: node ./.github/scripts/replace_links.cjs
         env:
           fileToUpdate: './public/system.json'
-          newManifest: https://github.com/SplittermondFoundry/splittermond/releases/download/${{env.prefixedVersion}}/system.json
-          newDownload: https://github.com/SplittermondFoundry/Splittermond/releases/download/${{env.prefixedVersion}}/${{env.outputFile}}
+          newManifest: https://github.com/Stewie23/Splittermond-Hausregeln/releases/download/${{env.prefixedVersion}}/system.json
+          newDownload: https://github.com/Stewie23/Splittermond-Hausregeln/releases/download/${{env.prefixedVersion}}/${{env.outputFile}}
       - name: Install dependencies
         run: npm install
       - name: Build
