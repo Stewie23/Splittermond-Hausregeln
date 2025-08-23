@@ -9,7 +9,7 @@ export const rollType = {
     },
     safety: {
         label: "splittermond.rollType.safety",
-        rollFormula: "2d10kh1"
+        rollFormula: "3d10kl2"
     },
     standardGrandmaster: {
         label: "splittermond.rollType.standardGrandmaster",
