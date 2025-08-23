@@ -102,6 +102,39 @@ describe('Modifier Parser', () => {
             expect(result.modifiers).to.be.empty;
         });
     });
+    it('split modifiers by comma', () => {
+        const input = 'npcattacks +1, generalskills +1';
+
+        const result = parseModifiers(input).modifiers
+        expect(result[0]).to.deep.equal({
+           path: "npcattacks", attributes: {value: 1},
+        });
+        expect(result[1]).to.deep.equal({
+            path: "generalskills", attributes: {value: 1},
+        });
+    });
+
+    it('should not split commas inside quotes', () => {
+        const input = 'damage Merkmale="Durchdringung 2, Kritisch 2" 1, damage Merkmale=\'Feuer 1, Kälte 2\' 1';
+
+        const result = parseModifiers(input).modifiers
+
+        expect(result).to.have.length(2);
+        expect(result[0]).to.deep.equal(
+        {
+            path: "damage",
+            attributes: {
+            Merkmale: "Durchdringung 2, Kritisch 2",
+            value: 1
+        }});
+        expect(result[1]).to.deep.equal(
+            {
+                path: "damage",
+                attributes: {
+                    Merkmale: "Feuer 1, Kälte 2",
+                    value: 1
+                }});
+    });
 
     it('should return error for duplicate emphasis declaration', () => {
         const input = 'AUS/Schaden emphasis="Schaden" +1';
@@ -194,4 +227,5 @@ describe('Modifier Normalization', () => {
 
         expect(result[0]).to.equal("splittermond.modifiers.parseMessages.duplicateValue");
     });
+
 });
