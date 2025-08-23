@@ -68,10 +68,3 @@ jobs:
           files: |
             ${{env.outputFile}}
             dist/system.json
-
-      - name: Release to Foundry
-        run: node ./.github/scripts/publish_to_foundry.mjs
-        env:
-          AUTH_TOKEN: ${{secrets.FOUNDRY_VTT_PUBLISH_TOKEN}}
-          SYSTEM_JSON_PATH: './dist/system.json'
-          DRY_RUN: 'false'
