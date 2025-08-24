@@ -82,7 +82,21 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         }
 
 
-        console.debug("Splittermond | got actor data");
+        console.debug("Splittermond | ActorSheet getData", {
+        actor: this.actor.name,
+        type: this.actor.type,
+        skills: {
+            general: Object.keys(sheetData.generalSkills),
+            fighting: Object.keys(sheetData.fightingSkills),
+            magic: Object.keys(sheetData.magicSkills)
+        },
+        attrOverrideExamples: Object.fromEntries(
+            Object.entries(this.actor.system.skills ?? {})
+            .filter(([id, data]) => data?.attrOverride)
+            .map(([id, data]) => [id, data.attrOverride])
+        ),
+        attributeList: sheetData.attributeList
+        });
 
 
         return sheetData;
