@@ -9,10 +9,6 @@ import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config";
 import { attributes } from "./config/attributes.js";
 
-
-// Skill.js
-import { attributes as ATTR_KEYS } from "./config/attributes.js";
-
 export default class Skill extends Modifiable {
   /**
    * @param {SplittermondActor} actor
@@ -27,7 +23,7 @@ export default class Skill extends Modifiable {
     this.label = skill;
 
     // full selectable list (from config/attributes.ts compiled to .js)
-    this.allAttributeKeys = Array.from(attributes); // ["charisma","agility",...]
+    this.allAttributeKeys = Array.from(ATTR_KEYS); // ["charisma","agility",...]
 
     if (this.actor.system.skills[this.id]) {
       this.label = foundryApi.localize(`splittermond.skillLabel.${this.id}`);
