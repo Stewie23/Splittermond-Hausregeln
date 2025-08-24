@@ -359,18 +359,19 @@
 
 <div class="attribute">
   <select class="skill-attr-select" data-skill="{{skillId}}" data-which="0">
-    {{#each ../attributeKeys as |akey|}}
-      <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[0] akey))}}selected{{/if}}>
-        {{localize (lookup ../attributeLabelKeys akey)}}
+    {{#each ../attributeList as |attr|}}
+      <option value="{{attr.key}}" {{#if (eq attr.key skill.attrKeys.[0])}}selected{{/if}}>
+        {{localize attr.label}}
       </option>
     {{/each}}
   </select>
 </div>
+
 <div class="attribute">
   <select class="skill-attr-select" data-skill="{{skillId}}" data-which="1">
-    {{#each ../attributeKeys as |akey|}}
-      <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[1] akey))}}selected{{/if}}>
-        {{localize (lookup ../attributeLabelKeys akey)}}
+    {{#each ../attributeList as |attr|}}
+      <option value="{{attr.key}}" {{#if (eq attr.key skill.attrKeys.[1])}}selected{{/if}}>
+        {{localize attr.label}}
       </option>
     {{/each}}
   </select>

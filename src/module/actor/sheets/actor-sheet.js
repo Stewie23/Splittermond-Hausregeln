@@ -70,13 +70,10 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         sheetData.activeDefense = sheetData.actor.activeDefense;
 
         // expose attributes for dropdowns
-        sheetData.attributeKeys = Array.from(attributes);
-        const attrObj = this.actor.attributes ?? {};
-        sheetData.attributeLabelKeys = Object.fromEntries(
-        sheetData.attributeKeys.map(
-            k => [k, attrObj[k]?.label?.short ?? `splittermond.attribute.${k}.short`]
-        )
-        );
+        sheetData.attributeList = Array.from(attributes).map(k => ({
+        key: k,
+        label: this.actor.attributes?.[k]?.label?.short ?? `splittermond.attribute.${k}.short`
+        }));
 
         // register eq helper once
         if (!Handlebars.helpers.eq) {
