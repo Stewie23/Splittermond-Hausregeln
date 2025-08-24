@@ -279,8 +279,30 @@
                             <input class="spinner spinner-horizontal" name="system.skills.{{skillId}}.points" type="text"
                                 value="{{skill.points}}">
                         </div>
+                        
+                        {{!-- BEFORE
                         <div class="attribute">{{localize skill.attribute1.label.short}}</div>
                         <div class="attribute">{{localize skill.attribute2.label.short}}</div>
+                        --}}
+
+                        <div class="attribute">
+                        <select class="skill-attr-select" data-skill="{{skillId}}" data-which="0">
+                            {{#each ../attributeKeys as |akey|}}
+                            <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[0] akey))}}selected{{/if}}>
+                                {{localize (lookup ../attributeLabelKeys akey)}}
+                            </option>
+                            {{/each}}
+                        </select>
+                        </div>
+                        <div class="attribute">
+                        <select class="skill-attr-select" data-skill="{{skillId}}" data-which="1">
+                            {{#each ../attributeKeys as |akey|}}
+                            <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[1] akey))}}selected{{/if}}>
+                                {{localize (lookup ../attributeLabelKeys akey)}}
+                            </option>
+                            {{/each}}
+                        </select>
+                        </div>
                         <div class="value">{{skill.value}}</div>
                     </li>
                     {{/each}}
@@ -330,8 +352,29 @@
                         <div class="points">
                             <input name="system.skills.{{skillId}}.points" type="text" value="{{skill.points}}">
                         </div>
-                        <div class="attribute">{{localize skill.attribute1.label.short}}</div>
-                        <div class="attribute">{{localize skill.attribute2.label.short}}</div>
+                        {{!-- BEFORE
+<div class="attribute">{{localize skill.attribute1.label.short}}</div>
+<div class="attribute">{{localize skill.attribute2.label.short}}</div>
+--}}
+
+<div class="attribute">
+  <select class="skill-attr-select" data-skill="{{skillId}}" data-which="0">
+    {{#each ../attributeKeys as |akey|}}
+      <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[0] akey))}}selected{{/if}}>
+        {{localize (lookup ../attributeLabelKeys akey)}}
+      </option>
+    {{/each}}
+  </select>
+</div>
+<div class="attribute">
+  <select class="skill-attr-select" data-skill="{{skillId}}" data-which="1">
+    {{#each ../attributeKeys as |akey|}}
+      <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[1] akey))}}selected{{/if}}>
+        {{localize (lookup ../attributeLabelKeys akey)}}
+      </option>
+    {{/each}}
+  </select>
+</div>
                         <div class="value">{{skill.value}}</div>
                     </li>
                     {{/each}}
