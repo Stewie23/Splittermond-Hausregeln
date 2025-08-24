@@ -7,7 +7,7 @@ import {parseRollDifficulty} from "../util/rollDifficultyParser";
 import {asString} from "module/actor/modifiers/expressions/scalar";
 import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config";
-import { attributes } from "./config/attributes.js";
+import {attributes} from "../config/attributes.js";
 
 export default class Skill extends Modifiable {
   /**
