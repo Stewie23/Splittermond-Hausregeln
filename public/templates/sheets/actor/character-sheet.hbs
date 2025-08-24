@@ -280,31 +280,34 @@
                                 value="{{skill.points}}">
                         </div>
                         
-                        {{!-- BEFORE
-                        <div class="attribute">{{localize skill.attribute1.label.short}}</div>
-                        <div class="attribute">{{localize skill.attribute2.label.short}}</div>
-                        --}}
+     {{!-- Alte Anzeige: --}}
+{{!--
+<div class="attribute">{{localize skill.attribute1.label.short}}</div>
+<div class="attribute">{{localize skill.attribute2.label.short}}</div>
+--}}
 
-                        <div class="attribute">
-                        <select class="skill-attr-select" data-skill="{{skillId}}" data-which="0">
-                            {{#each ../attributeKeys as |akey|}}
-                            <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[0] akey))}}selected{{/if}}>
-                                {{localize (lookup ../attributeLabelKeys akey)}}
-                            </option>
-                            {{/each}}
-                        </select>
-                        </div>
-                        <div class="attribute">
-                        <select class="skill-attr-select" data-skill="{{skillId}}" data-which="1">
-                            {{#each ../attributeKeys as |akey|}}
-                            <option value="{{akey}}" {{#if (eq akey (or skill.attrKeys.[1] akey))}}selected{{/if}}>
-                                {{localize (lookup ../attributeLabelKeys akey)}}
-                            </option>
-                            {{/each}}
-                        </select>
-                        </div>
-                        <div class="value">{{skill.value}}</div>
-                    </li>
+{{!-- Neue Auswahl mit Override-Support --}}
+<div class="attribute">
+  <select class="skill-attr-select" data-skill="{{skillId}}" data-which="0">
+    {{#each ../attributeList as |attr|}}
+      <option value="{{attr.key}}" {{#if (eq attr.key (lookup skill.attrKeys 0))}}selected{{/if}}>
+        {{localize attr.label}}
+      </option>
+    {{/each}}
+  </select>
+</div>
+
+<div class="attribute">
+  <select class="skill-attr-select" data-skill="{{skillId}}" data-which="1">
+    {{#each ../attributeList as |attr|}}
+      <option value="{{attr.key}}" {{#if (eq attr.key (lookup skill.attrKeys 1))}}selected{{/if}}>
+        {{localize attr.label}}
+      </option>
+    {{/each}}
+  </select>
+</div>
+
+<div class="value">{{skill.value}}</div
                     {{/each}}
                 </ol>
                 <div class="list-header">

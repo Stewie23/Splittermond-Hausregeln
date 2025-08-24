@@ -69,10 +69,11 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
         sheetData.attacks= mapAttacks(sheetData.actor);
         sheetData.activeDefense = sheetData.actor.activeDefense;
 
-        // expose attributes for dropdowns
+        // build attributeList = [{key:"strength",label:"splittermond.attribute.strength.short"}, ...]
+        const attrObj = this.actor.attributes ?? {};
         sheetData.attributeList = Array.from(attributes).map(k => ({
-        key: k,
-        label: this.actor.attributes?.[k]?.label?.short ?? `splittermond.attribute.${k}.short`
+            key: k,
+            label: attrObj[k]?.label?.short ?? `splittermond.attribute.${k}.short`
         }));
 
         // register eq helper once
@@ -598,30 +599,21 @@ export default class SplittermondActorSheet extends foundry.appv1.sheets.ActorSh
             }
         }
 
-  // handle <select class="skill-attr-select"> changes
-html.find(".skill-attr-select").on("change", async (ev) => {
-  const el = ev.currentTarget;
-  const skillId = el.dataset.skill;
-  const which   = Number(el.dataset.which); // 0 or 1
+        // handle <select class="skill-attr-select"> changes
+            html.find(".skill-attr-select").on("change", async (ev) => {
+            const el = ev.currentTarget;
+            const skillId = el.dataset.skill;
+            const which   = Number(el.dataset.which);
 
-  const defaults = splittermond.skillAttributes[skillId] ?? [];
-  const current  = foundry.utils.getProperty(this.actor.system, `skills.${skillId}.attrOverride`)?.slice()
-                ?? [...defaults];
+            const skillObj = this.actor.skills[skillId];
+            if (!skillObj) return;
 
-  current[which] = el.value;
+            const current = skillObj.getAttributeKeys();
+            current[which] = el.value;
 
-  if (current[0] === current[1]) {
-    ui.notifications.warn(
-      game.i18n.localize("splittermond.warn.sameAttrs")
-      || "Bitte zwei unterschiedliche Attribute wählen."
-    );
-    el.value = defaults[which]; // revert
-    return;
-  }
-
-  await this.actor.update({ [`system.skills.${skillId}.attrOverride`]: current });
-  this.render(false); // refresh
-});
+            await skillObj.setAttributeOverride(current[0], current[1]);
+            this.render(false);
+            });
 
 
         super.activateListeners(html);
