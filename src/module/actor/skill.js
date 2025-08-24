@@ -7,7 +7,7 @@ import {parseRollDifficulty} from "../util/rollDifficultyParser";
 import {asString} from "module/actor/modifiers/expressions/scalar";
 import {foundryApi} from "../api/foundryApi";
 import {splittermond} from "../config";
-import { attributes as ATTR_KEYS, SplittermondAttribute } from "./config/attributes.js";
+import { attributes } from "./config/attributes.js";
 
 
 // Skill.js
@@ -27,7 +27,7 @@ export default class Skill extends Modifiable {
     this.label = skill;
 
     // full selectable list (from config/attributes.ts compiled to .js)
-    this.allAttributeKeys = Array.from(ATTR_KEYS); // ["charisma","agility",...]
+    this.allAttributeKeys = Array.from(attributes); // ["charisma","agility",...]
 
     if (this.actor.system.skills[this.id]) {
       this.label = foundryApi.localize(`splittermond.skillLabel.${this.id}`);
